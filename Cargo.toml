@@ -1,0 +1,17 @@
+[package]
+name = "Rush"
+description = "rush aims to be a bash compatible (with more candies) written in rust."
+license = "GPL3"
+version = "0.0.1"
+authors = ["Laurent Wandrebeck <l.wandrebeck@quelquesmots.fr>"]
+
+[[bin]]
+name = "rush"
+path = "src/main.rs"
+doc = false
+test = false
+bench = false
+
+[dependencies]
+readline="*"
+term="*"
