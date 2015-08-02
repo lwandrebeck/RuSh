@@ -108,6 +108,7 @@ pub fn cd(command: &[&str]) {
     };
     env::set_var("OLD_PWD", env::current_dir().unwrap());
     env::set_current_dir(&dir);
+    env::set_var("PWD", env::current_dir().unwrap());
 }
 
 pub fn pushd(command: &[&str]) {
