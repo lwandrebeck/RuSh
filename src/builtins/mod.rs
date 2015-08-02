@@ -20,11 +20,11 @@
  *
  *
  */
+
 use std::env;
 use std::convert::From;
 use std::fs;
-use std::path::PathBuf;
-
+use std::path::{Path, PathBuf};
 
 // println_stderr is like println, but to stderr.
 //macro_rules! println_stderr(
@@ -37,285 +37,279 @@ use std::path::PathBuf;
 //);
 
 // tests, conditionnal builtins
-pub fn etest(command: &Vec<&str>) {
+pub fn etest(command: &[&str]) {
 	unimplemented!();
 }
 
-pub fn bi_if(command: &Vec<&str>) {
+pub fn bi_if(command: &[&str]) {
 	unimplemented!();
 }
 
-pub fn test(command: &Vec<&str>) {
+pub fn test(command: &[&str]) {
 	unimplemented!();
 }
 
-// I/O builtins
+// ==================
+// == I/O builtins ==
+// ==================
 
-pub fn echo(command: &Vec<&str>) {
+pub fn echo(command: &[&str]) {
     unimplemented!();
 }
 
-pub fn printf(command: &Vec<&str>) {
+pub fn printf(command: &[&str]) {
     unimplemented!();
 }
 
-pub fn read(command: &Vec<&str>) {
+pub fn read(command: &[&str]) {
     unimplemented!();
 }
 
-// Filesystem builtins
+// =========================
+// == Filesystem builtins ==
+// =========================
 
-pub fn cd(command: &Vec<&str>) {
+pub fn cd(command: &[&str]) {
+    let current = match env::current_dir() {
+        Ok(path) => path,
+        Err(e) => {
+            return;
+        }
+    };
+
     // cd is the "change directory" command. It can take either 0 or 1
     // arguments. If given no arguments, then the $HOME directory is
     // chosen.
-    let homedir = match env::home_dir() {
-        Some(home) => home,
-        None => PathBuf::from("/")
-    };
-    let current = match env::current_dir() {
-        Ok(path) => path,
-        Err(e) => homedir.clone()
-    };
-    let previous = match env::var("OLDPWD") {
-        Ok(oldpwd) => PathBuf::from(oldpwd),
-        Err(e) => homedir.clone()
-    };
-    let attr = match fs::metadata(command[1]) {
-        Ok(s) => s,
-        Err(e) => return
-    };
-    let mut next;
-    if attr.is_dir() {
-        next = PathBuf::from(command[1]);
-    } else {
-        next = current.clone();
-    }
-
-    let dir = match command.len() {
-        0 => panic!("invalid cd invocation"),
-        1 => { env::set_var("OLDPWD", &current);
-               env::set_var("PWD", &homedir);
-               homedir.clone()
-             },
-        _ => { if command[1] == "-" {
-                    env::set_var("PWD", &previous);
-                    env::set_var("OLDPWD", &current);
-                    previous
-               } else {
-                   env::set_var("OLDPWD", &current);
-                   env::set_var("PWD", &next);
-                   next
-               }
-             },
-    };
-    if dir.eq(&PathBuf::from("")) {
-        println!("cd: no directory to change to");
-        return;
-    }
-    let result = env::set_current_dir(&dir);
-    match result {
-        Err(err) => {
-            println!("cd: {:?}: {}", dir, err);
+    let dir : PathBuf = match command.len() {
+        0 => {
+            match env::home_dir() {
+                Some(home) => home,
+                None => PathBuf::from("/")
+            }
         },
-        _ => {},
-    }
+        1 if command[0] == "-" => {
+            PathBuf::from(env::var("OLD_PWD").unwrap_or(".".to_owned()))
+        },
+        1 => {
+            let attr = match fs::metadata(command[0]) {
+                Ok(s) => s,
+                Err(e) => return
+            };
+            if attr.is_dir() {
+                PathBuf::from(command[0])
+            } else {
+                current
+            }
+        }
+        _ => {
+            println!("Invalid parameter number");
+            return;
+        },
+    };
+    env::set_var("OLD_PWD", env::current_dir().unwrap());
+    env::set_current_dir(&dir);
+    env::set_var("PWD", env::current_dir().unwrap());
 }
 
-pub fn pushd(command: &Vec<&str>) {
+pub fn pushd(command: &[&str]) {
     unimplemented!();
 }
 
-pub fn popd(command: &Vec<&str>) {
+pub fn popd(command: &[&str]) {
     unimplemented!();
 }
 
-pub fn dirs(command: &Vec<&str>) {
+pub fn dirs(command: &[&str]) {
     unimplemented!();
 }
 
-// Variables builtins
+// ========================
+// == Variables builtins ==
+// ========================
 
-pub fn bi_let(command: &Vec<&str>) {
+pub fn bi_let(command: &[&str]) {
     unimplemented!();
 }
 
-pub fn eval(command: &Vec<&str>) {
+pub fn eval(command: &[&str]) {
     unimplemented!();
 }
 
-pub fn set(command: &Vec<&str>) {
+pub fn set(command: &[&str]) {
     unimplemented!();
 }
 
-pub fn unset(command: &Vec<&str>) {
+pub fn unset(command: &[&str]) {
     unimplemented!();
 }
 
-pub fn export(command: &Vec<&str>) {
+pub fn export(command: &[&str]) {
     unimplemented!();
 }
 
-pub fn declare(command: &Vec<&str>) {
+pub fn declare(command: &[&str]) {
     unimplemented!();
 }
 
-pub fn typeset(command: &Vec<&str>) {
+pub fn typeset(command: &[&str]) {
     unimplemented!();
 }
 
-pub fn readonly(command: &Vec<&str>) {
+pub fn readonly(command: &[&str]) {
     unimplemented!();
 }
 
-pub fn getopts(command: &Vec<&str>) {
+pub fn getopts(command: &[&str]) {
     unimplemented!();
 }
 
-pub fn source(command: &Vec<&str>) {
+pub fn source(command: &[&str]) {
     unimplemented!();
 }
 
-pub fn exit(command: &Vec<&str>) {
+pub fn exec(command: &[&str]) {
     unimplemented!();
 }
 
-pub fn exec(command: &Vec<&str>) {
+pub fn shopt(command: &[&str]) {
     unimplemented!();
 }
 
-pub fn shopt(command: &Vec<&str>) {
+pub fn caller(command: &[&str]) {
     unimplemented!();
 }
 
-pub fn caller(command: &Vec<&str>) {
+// =======================
+// == Commands builtins ==
+// =======================
+
+pub fn bi_true(command: &[&str]) {
     unimplemented!();
 }
 
-// Commands builtins
-
-pub fn bi_true(command: &Vec<&str>) {
+pub fn bi_false(command: &[&str]) {
     unimplemented!();
 }
 
-pub fn bi_false(command: &Vec<&str>) {
+pub fn bi_type(command: &[&str]) {
     unimplemented!();
 }
 
-pub fn bi_type(command: &Vec<&str>) {
+pub fn hash(command: &[&str]) {
     unimplemented!();
 }
 
-pub fn hash(command: &Vec<&str>) {
+pub fn bind(command: &[&str]) {
     unimplemented!();
 }
 
-pub fn bind(command: &Vec<&str>) {
+pub fn help(command: &[&str]) {
     unimplemented!();
 }
 
-pub fn help(command: &Vec<&str>) {
+// ==========================
+// == job control commands ==
+// ==========================
+
+pub fn jobs(command: &[&str]) {
     unimplemented!();
 }
 
-// job control commands
-
-pub fn jobs(command: &Vec<&str>) {
+pub fn disown(command: &[&str]) {
     unimplemented!();
 }
 
-pub fn disown(command: &Vec<&str>) {
+pub fn fg(command: &[&str]) {
     unimplemented!();
 }
 
-pub fn fg(command: &Vec<&str>) {
+pub fn bg(command: &[&str]) {
     unimplemented!();
 }
 
-pub fn bg(command: &Vec<&str>) {
+pub fn wait(command: &[&str]) {
     unimplemented!();
 }
 
-pub fn wait(command: &Vec<&str>) {
+pub fn suspend(command: &[&str]) {
     unimplemented!();
 }
 
-pub fn suspend(command: &Vec<&str>) {
+pub fn logout(command: &[&str]) {
     unimplemented!();
 }
 
-pub fn logout(command: &Vec<&str>) {
+pub fn times(command: &[&str]) {
     unimplemented!();
 }
 
-pub fn times(command: &Vec<&str>) {
+// not a builtin !
+/*pub fn kill(command: &[&str]) {
+    unimplemented!();
+}*/
+
+pub fn killall(command: &[&str]) {
     unimplemented!();
 }
 
-pub fn kill(command: &Vec<&str>) {
+pub fn command(command: &[&str]) {
     unimplemented!();
 }
 
-pub fn killall(command: &Vec<&str>) {
+pub fn builtin(command: &[&str]) {
     unimplemented!();
 }
 
-pub fn command(command: &Vec<&str>) {
+pub fn enable(command: &[&str]) {
     unimplemented!();
 }
 
-pub fn builtin(command: &Vec<&str>) {
+pub fn autoload(command: &[&str]) {
     unimplemented!();
 }
 
-pub fn enable(command: &Vec<&str>) {
-    unimplemented!();
-}
+// =============================================================
+//  == BONUS. Additionnal other commands running as builtins. ==
+// =============================================================
 
-pub fn autoload(command: &Vec<&str>) {
-    unimplemented!();
-}
-
-// BONUS. Additionnal other commands running as builtins.
-
-pub fn pwd(command: &Vec<&str>) {
+pub fn pwd(command: &[&str]) {
     let current = match env::current_dir() {
         Ok(path) => path,
-        Err(e) => panic!("no current dir !? {}",e)
+        Err(e) => panic!("no current dir !? {}", e)
     };
     let p = match command.len() {
-        0 => panic!("invalid pwd invocation"),
-        1 => &current,
-        _ => if command[1] == "-P" {
+        0 => &current,
+        _ => {
+            if command[1] == "-P" {
                 &current
-             } else {
+            } else {
                 panic!("non supported argument")
-             }
+            }
+        }
     };
-    println!("{:?}", current);
+    println!("{}", current.to_str().unwrap_or(""));
 }
 
-pub fn chown(command: &Vec<&str>) {
+pub fn chown(command: &[&str]) {
     unimplemented!();
 }
 
-pub fn chmod(command: &Vec<&str>) {
+pub fn chmod(command: &[&str]) {
     unimplemented!();
 }
 
-pub fn mkdir(command: &Vec<&str>) {
+pub fn mkdir(command: &[&str]) {
     unimplemented!();
 }
 
-pub fn rmdir(command: &Vec<&str>) {
+pub fn rmdir(command: &[&str]) {
     unimplemented!();
 }
 
-pub fn touch(command: &Vec<&str>) {
+pub fn touch(command: &[&str]) {
     unimplemented!();
 }
 
-pub fn ln(command: &Vec<&str>) {
+pub fn ln(command: &[&str]) {
     unimplemented!();
 }
-

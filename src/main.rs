@@ -36,88 +36,91 @@ trait ShellCommand {
     fn run(&self);
 }
 
-fn handle_command(user_expr: &str) {
+fn handle_command(user_expr: &str) -> bool {
     // Clean up the string by removing the newline at the end
     let expr = user_expr.trim_matches('\n');
     let components: Vec<&str> = expr.split(' ').collect();
-    if builtins(&components) {
-        return;
-    }
+    builtins(&components)
 }
 
 fn builtins(command: &Vec<&str>) -> bool {
     match command[0] {
-		"[[" => { builtins::etest(command); },
-        "autoload" => { builtins::autoload(command); },
-        "bg" => { builtins::bg(command); },
-        "bind" => { builtins::bind(command); },
-        "builtin" => { builtins::builtin(command); },
-        "caller" => { builtins::caller(command); },
-        "cd" => { builtins::cd(command); },
-        "chmod" => { builtins::chmod(command); },
-        "chown" => { builtins::chown(command); },
-        "command" => { builtins::command(command); },
-        "declare" => { builtins::declare(command); },
-        "dirs" => { builtins::dirs(command); },
-        "disown" => { builtins::disown(command); },
-        "echo" => { builtins::echo(command); },
-        "enable" => { builtins::enable(command); },
-        "eval" => { builtins::eval(command); },
-        "exec" => { builtins::exec(command); },
-        "exit" => { builtins::exit(command); },
-        "export" => {builtins::export(command); },
-        "false" => { builtins::bi_false(command); },
-        "fg" => { builtins::fg(command); },
-        "getopts" => { builtins::getopts(command); },
-        "hash" => { builtins::hash(command); },
-        "help" => { builtins::help(command); },
-        "if" => { builtins::bi_if(command); },
-        "jobs" => { builtins::jobs(command); },
-        "kill" => { builtins::kill(command); },
-        "killall" => { builtins::killall(command); },
-        "let" => { builtins::bi_let(command); },
-        "ln" => { builtins::ln(command); },
-        "logout" => { builtins::logout(command); },
-        "mkdir" => { builtins::mkdir(command); },
-        "printf" => { builtins::printf(command); },
-        "popd" => { builtins::popd(command); },
-        "pushd" => { builtins::pushd(command); },
-        "pwd" => { builtins::pwd(command); },
-        "read" => { builtins::read(command); },
-        "readonly" => { builtins::readonly(command); },
-        "rmdir" => { builtins::rmdir(command); },
-        "set" => { builtins::set(command); },
-        "shopt" => { builtins::shopt(command); },
-        "source" | "." => { builtins::source(command); },
-        "suspend" => { builtins::suspend(command); },
-        "test" | "[" => { builtins::test(command); },
-        "touch" => { builtins::touch(command); },
-        "true" => { builtins::bi_true(command); },
-        "times" => { builtins::times(command); },
-        "type" => { builtins::bi_type(command); },
-        "typeset" => { builtins::typeset(command); },
-        "unset" => { builtins::unset(command); },
-        "wait" => { builtins::wait(command); },
-        _ => { return false; },
-        //"" => { builtins::(command); },
+		"[[" => { builtins::etest(&command[1..]); },
+        "autoload" => { builtins::autoload(&command[1..]); },
+        "bg" => { builtins::bg(&command[1..]); },
+        "bind" => { builtins::bind(&command[1..]); },
+        "builtin" => { builtins::builtin(&command[1..]); },
+        "caller" => { builtins::caller(&command[1..]); },
+        "cd" => { builtins::cd(&command[1..]); },
+        "chmod" => { builtins::chmod(&command[1..]); },
+        "chown" => { builtins::chown(&command[1..]); },
+        "command" => { builtins::command(&command[1..]); },
+        "declare" => { builtins::declare(&command[1..]); },
+        "dirs" => { builtins::dirs(&command[1..]); },
+        "disown" => { builtins::disown(&command[1..]); },
+        "echo" => { builtins::echo(&command[1..]); },
+        "enable" => { builtins::enable(&command[1..]); },
+        "eval" => { builtins::eval(&command[1..]); },
+        "exec" => { builtins::exec(&command[1..]); },
+        "exit" => { return true; },
+        "export" => {builtins::export(&command[1..]); },
+        "false" => { builtins::bi_false(&command[1..]); },
+        "fg" => { builtins::fg(&command[1..]); },
+        "getopts" => { builtins::getopts(&command[1..]); },
+        "hash" => { builtins::hash(&command[1..]); },
+        "help" => { builtins::help(&command[1..]); },
+        "if" => { builtins::bi_if(&command[1..]); },
+        "jobs" => { builtins::jobs(&command[1..]); },
+        //"kill" => { builtins::kill(&command[1..]); },
+        "killall" => { builtins::killall(&command[1..]); },
+        "let" => { builtins::bi_let(&command[1..]); },
+        "ln" => { builtins::ln(&command[1..]); },
+        "logout" => { builtins::logout(&command[1..]); },
+        "mkdir" => { builtins::mkdir(&command[1..]); },
+        "printf" => { builtins::printf(&command[1..]); },
+        "popd" => { builtins::popd(&command[1..]); },
+        "pushd" => { builtins::pushd(&command[1..]); },
+        "pwd" => { builtins::pwd(&command[1..]); },
+        "read" => { builtins::read(&command[1..]); },
+        "readonly" => { builtins::readonly(&command[1..]); },
+        "rmdir" => { builtins::rmdir(&command[1..]); },
+        "set" => { builtins::set(&command[1..]); },
+        "shopt" => { builtins::shopt(&command[1..]); },
+        "source" | "." => { builtins::source(&command[1..]); },
+        "suspend" => { builtins::suspend(&command[1..]); },
+        "test" | "[" => { builtins::test(&command[1..]); },
+        "touch" => { builtins::touch(&command[1..]); },
+        "true" => { builtins::bi_true(&command[1..]); },
+        "times" => { builtins::times(&command[1..]); },
+        "type" => { builtins::bi_type(&command[1..]); },
+        "typeset" => { builtins::typeset(&command[1..]); },
+        "unset" => { builtins::unset(&command[1..]); },
+        "wait" => { builtins::wait(&command[1..]); },
+        _ => {
+            // execute non-builtin command here
+        },
     }
-    true
+    false
 }
 
 fn main() {
     let mut stdin = io::stdin();
-    let mut line = String::new();
+
     loop {
-        // Add correct prompt management
+        let mut line = String::new();
+        // Add "correct" prompt management
         print!("$ ");
         stdout().flush();
         //let line = stdin.read_line();
         let err = stdin.read_line(&mut line);
         line.pop();
         match err {
-            Ok(_) => { handle_command(&line); },
+            Ok(_) => {
+                if handle_command(&line) {
+                    return;
+                }
+            },
             Err(_) => { break; },
         }
-        line.clear();
     }
 }

@@ -13,6 +13,6 @@ What features RuSh will have (maybe one day) that bash doesn’t ?
 - implement some coreutils commands as internals (no, I don’t think I’ll implement sed or awk, that would be too much work). Avoiding some forks, we’ll gain speed.
 - allow float processing.
 - Add some kind of JIT (speed anyone ?).
-- Last but not least, a GTK3 interface à la gnome-terminal, with some GNU Screen features (which is some kind of a standalone project, I agree. There won’t be any work on it until RuSh is - kind of - finished)
+- Last but not least, I *may* begin (as a standalone project) a GTK3 interface à la gnome-terminal, with some GNU Screen features (here won’t be any work on it until RuSh is - kind of - finished).
 
 RuSh is GPL3.
