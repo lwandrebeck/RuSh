@@ -37,11 +37,27 @@ use std::path::{Path, PathBuf};
 //);
 
 // tests, conditionnal builtins
-pub fn etest(command: &[&str]) {
+pub fn and(command: &[&str]) {
 	unimplemented!();
 }
 
 pub fn bi_if(command: &[&str]) {
+	unimplemented!();
+}
+
+pub fn dand(command: &[&str]) {
+	unimplemented!();
+}
+
+pub fn dpipe(command: &[&str]) {
+	unimplemented!();
+}
+
+pub fn etest(command: &[&str]) {
+	unimplemented!();
+}
+
+pub fn pipe(command: &[&str]) {
 	unimplemented!();
 }
 
@@ -53,7 +69,23 @@ pub fn test(command: &[&str]) {
 // == I/O builtins ==
 // ==================
 
+pub fn dgtsign(command: &[&str]) {
+    unimplemented!();
+}
+
+pub fn dltsign(command: &[&str]) {
+    unimplemented!();
+}
+
 pub fn echo(command: &[&str]) {
+    unimplemented!();
+}
+
+pub fn gtsign(command: &[&str]) {
+    unimplemented!();
+}
+
+pub fn ltsign(command: &[&str]) {
     unimplemented!();
 }
 
@@ -111,7 +143,7 @@ pub fn cd(command: &[&str]) {
     env::set_var("PWD", env::current_dir().unwrap());
 }
 
-pub fn pushd(command: &[&str]) {
+pub fn dirs(command: &[&str]) {
     unimplemented!();
 }
 
@@ -119,7 +151,7 @@ pub fn popd(command: &[&str]) {
     unimplemented!();
 }
 
-pub fn dirs(command: &[&str]) {
+pub fn pushd(command: &[&str]) {
     unimplemented!();
 }
 
@@ -131,19 +163,7 @@ pub fn bi_let(command: &[&str]) {
     unimplemented!();
 }
 
-pub fn eval(command: &[&str]) {
-    unimplemented!();
-}
-
-pub fn set(command: &[&str]) {
-    unimplemented!();
-}
-
-pub fn unset(command: &[&str]) {
-    unimplemented!();
-}
-
-pub fn export(command: &[&str]) {
+pub fn caller(command: &[&str]) {
     unimplemented!();
 }
 
@@ -151,19 +171,7 @@ pub fn declare(command: &[&str]) {
     unimplemented!();
 }
 
-pub fn typeset(command: &[&str]) {
-    unimplemented!();
-}
-
-pub fn readonly(command: &[&str]) {
-    unimplemented!();
-}
-
-pub fn getopts(command: &[&str]) {
-    unimplemented!();
-}
-
-pub fn source(command: &[&str]) {
+pub fn eval(command: &[&str]) {
     unimplemented!();
 }
 
@@ -171,11 +179,35 @@ pub fn exec(command: &[&str]) {
     unimplemented!();
 }
 
+pub fn export(command: &[&str]) {
+    unimplemented!();
+}
+
+pub fn getopts(command: &[&str]) {
+    unimplemented!();
+}
+
+pub fn readonly(command: &[&str]) {
+    unimplemented!();
+}
+
+pub fn set(command: &[&str]) {
+    unimplemented!();
+}
+
 pub fn shopt(command: &[&str]) {
     unimplemented!();
 }
 
-pub fn caller(command: &[&str]) {
+pub fn source(command: &[&str]) {
+    unimplemented!();
+}
+
+pub fn typeset(command: &[&str]) {
+    unimplemented!();
+}
+
+pub fn unset(command: &[&str]) {
     unimplemented!();
 }
 
@@ -183,11 +215,27 @@ pub fn caller(command: &[&str]) {
 // == Commands builtins ==
 // =======================
 
-pub fn bi_true(command: &[&str]) {
-    unimplemented!();
+pub fn backtick(command: &[&str]) {
+	unimplemented!();
+}
+
+pub fn bi_break(command: &[&str]) {
+	unimplemented!();
+}
+
+pub fn bi_continue(command: &[&str]) {
+	unimplemented!();
 }
 
 pub fn bi_false(command: &[&str]) {
+    unimplemented!();
+}
+
+pub fn bi_for(command: &[&str]) {
+    unimplemented!();
+}
+
+pub fn bi_true(command: &[&str]) {
     unimplemented!();
 }
 
@@ -195,7 +243,7 @@ pub fn bi_type(command: &[&str]) {
     unimplemented!();
 }
 
-pub fn hash(command: &[&str]) {
+pub fn bi_while(command: &[&str]) {
     unimplemented!();
 }
 
@@ -203,23 +251,35 @@ pub fn bind(command: &[&str]) {
     unimplemented!();
 }
 
+pub fn case(command: &[&str]) {
+	unimplemented!();
+}
+
+pub fn expr(command: &[&str]) {
+	unimplemented!();
+}
+
+pub fn hash(command: &[&str]) {
+    unimplemented!();
+}
+
 pub fn help(command: &[&str]) {
     unimplemented!();
+}
+
+pub fn select(command: &[&str]) {
+	unimplemented!();
+}
+
+pub fn until(command: &[&str]) {
+	unimplemented!();
 }
 
 // ==========================
 // == job control commands ==
 // ==========================
 
-pub fn jobs(command: &[&str]) {
-    unimplemented!();
-}
-
-pub fn disown(command: &[&str]) {
-    unimplemented!();
-}
-
-pub fn fg(command: &[&str]) {
+pub fn autoload(command: &[&str]) {
     unimplemented!();
 }
 
@@ -227,19 +287,27 @@ pub fn bg(command: &[&str]) {
     unimplemented!();
 }
 
-pub fn wait(command: &[&str]) {
+pub fn builtin(command: &[&str]) {
     unimplemented!();
 }
 
-pub fn suspend(command: &[&str]) {
+pub fn command(command: &[&str]) {
     unimplemented!();
 }
 
-pub fn logout(command: &[&str]) {
+pub fn disown(command: &[&str]) {
     unimplemented!();
 }
 
-pub fn times(command: &[&str]) {
+pub fn enable(command: &[&str]) {
+    unimplemented!();
+}
+
+pub fn fg(command: &[&str]) {
+    unimplemented!();
+}
+
+pub fn jobs(command: &[&str]) {
     unimplemented!();
 }
 
@@ -252,25 +320,41 @@ pub fn killall(command: &[&str]) {
     unimplemented!();
 }
 
-pub fn command(command: &[&str]) {
+pub fn logout(command: &[&str]) {
     unimplemented!();
 }
 
-pub fn builtin(command: &[&str]) {
+pub fn suspend(command: &[&str]) {
     unimplemented!();
 }
 
-pub fn enable(command: &[&str]) {
+pub fn times(command: &[&str]) {
     unimplemented!();
 }
 
-pub fn autoload(command: &[&str]) {
+pub fn wait(command: &[&str]) {
     unimplemented!();
 }
 
 // =============================================================
 //  == BONUS. Additionnal other commands running as builtins. ==
 // =============================================================
+
+pub fn chmod(command: &[&str]) {
+    unimplemented!();
+}
+
+pub fn chown(command: &[&str]) {
+    unimplemented!();
+}
+
+pub fn ln(command: &[&str]) {
+    unimplemented!();
+}
+
+pub fn mkdir(command: &[&str]) {
+    unimplemented!();
+}
 
 pub fn pwd(command: &[&str]) {
     let current = match env::current_dir() {
@@ -290,26 +374,10 @@ pub fn pwd(command: &[&str]) {
     println!("{}", current.to_str().unwrap_or(""));
 }
 
-pub fn chown(command: &[&str]) {
-    unimplemented!();
-}
-
-pub fn chmod(command: &[&str]) {
-    unimplemented!();
-}
-
-pub fn mkdir(command: &[&str]) {
-    unimplemented!();
-}
-
 pub fn rmdir(command: &[&str]) {
     unimplemented!();
 }
 
 pub fn touch(command: &[&str]) {
-    unimplemented!();
-}
-
-pub fn ln(command: &[&str]) {
     unimplemented!();
 }
