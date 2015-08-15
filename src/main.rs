@@ -25,9 +25,8 @@ extern crate readline;
 extern crate term;
 
 use std::io;
-use std::io::stdin;
-use std::io::stdout;
-use std::io::Write;
+use std::io::{stdin, stdout, Write};
+use std::env;
 
 mod builtins;
 mod config;
@@ -45,6 +44,7 @@ fn handle_command(user_expr: &str) -> bool {
 
 fn builtins(command: &Vec<&str>) -> bool {
     match command[0] {
+		"" => { return false; },
 		"[[" => { builtins::etest(&command[1..]); },
 		"<" => { builtins::ltsign(&command[1..]); },
 		"<<" => { builtins::dltsign(&command[1..]); },
@@ -122,11 +122,22 @@ fn builtins(command: &Vec<&str>) -> bool {
 
 fn main() {
     let mut stdin = io::stdin();
+    let mut line_case: u8 = 1; // use PS1
 
+	config::init_env();
     loop {
         let mut line = String::new();
         // Add "correct" prompt management
-        print!("$ ");
+        if line_case == 1 {
+			let prompt_command = match env::var("PROMPT_COMMAND") {
+				Ok(pc) => pc,
+				Err(e) => String::from("")
+			};
+			if handle_command(&prompt_command) {
+				return;
+			}
+		}
+        print!("{}", config::prompt(line_case));
         stdout().flush();
         //let line = stdin.read_line();
         let err = stdin.read_line(&mut line);

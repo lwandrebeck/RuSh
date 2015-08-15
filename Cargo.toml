@@ -16,3 +16,5 @@ bench = false
 [dependencies]
 readline="*"
 term="*"
+libc="*"
+chrono="*"
