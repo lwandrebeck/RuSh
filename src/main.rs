@@ -21,13 +21,17 @@
  *
  */
 
+#![feature(path_ext)]
+
 extern crate readline;
 extern crate term;
+extern crate libc;
 
 use std::io;
 use std::io::{stdin, stdout, Write};
 use std::env;
 
+mod command;
 mod builtins;
 mod config;
 
@@ -63,8 +67,8 @@ fn builtins(command: &Vec<&str>) -> bool {
         "caller" => { builtins::caller(&command[1..]); },
         "case" => { builtins::case(&command[1..]); },
         "cd" => { builtins::cd(&command[1..]); },
-        "chmod" => { builtins::chmod(&command[1..]); },
-        "chown" => { builtins::chown(&command[1..]); },
+        //"chmod" => { builtins::chmod(&command[1..]); },
+        //"chown" => { builtins::chown(&command[1..]); },
         "command" => { builtins::command(&command[1..]); },
         "continue" => { builtins::bi_continue(&command[1..]); },
         "declare" => { builtins::declare(&command[1..]); },
@@ -88,23 +92,23 @@ fn builtins(command: &Vec<&str>) -> bool {
         //"kill" => { builtins::kill(&command[1..]); },
         "killall" => { builtins::killall(&command[1..]); },
         "let" => { builtins::bi_let(&command[1..]); },
-        "ln" => { builtins::ln(&command[1..]); },
+        //"ln" => { builtins::ln(&command[1..]); },
         "logout" => { builtins::logout(&command[1..]); },
-        "mkdir" => { builtins::mkdir(&command[1..]); },
+        //"mkdir" => { builtins::mkdir(&command[1..]); },
         "printf" => { builtins::printf(&command[1..]); },
         "popd" => { builtins::popd(&command[1..]); },
         "pushd" => { builtins::pushd(&command[1..]); },
         "pwd" => { builtins::pwd(&command[1..]); },
         "read" => { builtins::read(&command[1..]); },
         "readonly" => { builtins::readonly(&command[1..]); },
-        "rmdir" => { builtins::rmdir(&command[1..]); },
+        //"rmdir" => { builtins::rmdir(&command[1..]); },
         "select" => { builtins::select(&command[1..]); },
         "set" => { builtins::set(&command[1..]); },
         "shopt" => { builtins::shopt(&command[1..]); },
         "source" | "." => { builtins::source(&command[1..]); },
         "suspend" => { builtins::suspend(&command[1..]); },
         "test" | "[" => { builtins::test(&command[1..]); },
-        "touch" => { builtins::touch(&command[1..]); },
+        //"touch" => { builtins::touch(&command[1..]); },
         "true" => { builtins::bi_true(&command[1..]); },
         "times" => { builtins::times(&command[1..]); },
         "type" => { builtins::bi_type(&command[1..]); },
@@ -115,6 +119,7 @@ fn builtins(command: &Vec<&str>) -> bool {
         "while" => { builtins::bi_while(&command[1..]); },
         _ => {
             // execute non-builtin command here
+            command::execute_line(&command[0], &command[1..]);
         },
     }
     false

@@ -140,7 +140,7 @@ pub fn cd(command: &[&str]) {
     };
     env::set_var("OLD_PWD", env::current_dir().unwrap());
     env::set_current_dir(&dir);
-    env::set_var("PWD", env::current_dir().unwrap());
+    env::set_var("PWD", dir.into_os_string());
 }
 
 pub fn dirs(command: &[&str]) {
@@ -340,6 +340,7 @@ pub fn wait(command: &[&str]) {
 //  == BONUS. Additionnal other commands running as builtins. ==
 // =============================================================
 
+/* Not BUILTINS !!!
 pub fn chmod(command: &[&str]) {
     unimplemented!();
 }
@@ -354,7 +355,7 @@ pub fn ln(command: &[&str]) {
 
 pub fn mkdir(command: &[&str]) {
     unimplemented!();
-}
+}*/
 
 pub fn pwd(command: &[&str]) {
     let current = match env::current_dir() {
@@ -367,17 +368,18 @@ pub fn pwd(command: &[&str]) {
             if command[1] == "-P" {
                 &current
             } else {
-                panic!("non supported argument")
+                panic!("not supported argument")
             }
         }
     };
     println!("{}", current.to_str().unwrap_or(""));
 }
 
+/* Not BUILTINS !!!
 pub fn rmdir(command: &[&str]) {
     unimplemented!();
 }
 
 pub fn touch(command: &[&str]) {
     unimplemented!();
-}
+}*/
