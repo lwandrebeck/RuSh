@@ -215,6 +215,10 @@ pub fn unset(command: &[&str]) {
 // == Commands builtins ==
 // =======================
 
+pub fn alias(command: &[&str]) {
+    unimplemented!();
+}
+
 pub fn backtick(command: &[&str]) {
 	unimplemented!();
 }
@@ -373,10 +377,6 @@ pub fn pwd(command: &[&str]) {
         }
     };
     println!("{}", current.to_str().unwrap_or(""));
-}
-
-pub fn alias(command: &[&str]) {
-    unimplemented!();
 }
 
 /* Not BUILTINS !!!

@@ -57,6 +57,7 @@ fn builtins(command: &Vec<&str>) -> bool {
 		"&" => { builtins::and(&command[1..]); },
 		"&&" => { builtins::dand(&command[1..]); },
 		"`" => { builtins::backtick(&command[1..]); },
+		"alias" => { builtins::alias(&command[1..]); },
         "autoload" => { builtins::autoload(&command[1..]); },
         "bg" => { builtins::bg(&command[1..]); },
         "bind" => { builtins::bind(&command[1..]); },
@@ -115,7 +116,6 @@ fn builtins(command: &Vec<&str>) -> bool {
         "until" => { builtins::until(&command[1..]); },
         "wait" => { builtins::wait(&command[1..]); },
         "while" => { builtins::bi_while(&command[1..]); },
-        "alias" => { builtins::alias(&command[1..]); },
         _ => {
             // execute non-builtin command here
             command::execute_line(&command[0], &command);
