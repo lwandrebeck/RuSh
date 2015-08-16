@@ -21,8 +21,6 @@
  *
  */
 
-#![feature(path_ext)]
-
 extern crate readline;
 extern crate term;
 extern crate libc;
