@@ -106,7 +106,7 @@ pub fn execute_command(command_path: PathBuf, arguments: &[&str]) {
             wait(&mut pid);
         } else {
             // child process
-            let mut c = CString::new(command_path.as_path().to_str().unwrap()).unwrap();
+            let c = CString::new(command_path.as_path().to_str().unwrap()).unwrap();
 
             execve(c.as_ptr() as *const i8, c_a.as_mut_ptr() as *mut *const i8, c_v.as_mut_ptr() as *mut *const i8);
         }
