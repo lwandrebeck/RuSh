@@ -23,15 +23,31 @@
  */
 
 use std::path::{Path, PathBuf};
-use std::fs::PathExt;
 use std::env;
-use libc::funcs::posix88::unistd::{fork, wait, execve};
-use libc::funcs::c95::stdio::perror;
+use libc::consts::os::posix88;
+use libc::funcs::posix88::unistd::{fork, wait, execve, access};
 use std::ffi::CString;
 use std::ptr::null;
 
+trait Checker {
+    fn check_file(&self) -> bool;
+}
+
+impl Checker for Path {
+    fn check_file(&self) -> bool {
+        let file = match CString::new(self.to_str().unwrap_or("")) {
+            Ok(c) => c,
+            Err(_) => {
+                return false;
+            }
+        };
+
+        unsafe { access(file.as_ptr(), posix88::F_OK | posix88::X_OK) == 0 }
+    }
+}
+
 pub fn execute_line(command: &str, arguments: &[&str]) {
-    if Path::new(command).exists() {
+    if Path::new(command).check_file() {
         execute_command(Path::new(command).to_path_buf(), arguments)
     } else {
         match search_command(command) {
@@ -52,7 +68,7 @@ pub fn search_command(command: &str) -> Option<PathBuf> {
     for path in paths {
         let p = Path::new(path).join(command);
 
-        if p.exists() {
+        if p.check_file() {
             return Some(p);
         }
     }
@@ -90,7 +106,7 @@ pub fn execute_command(command_path: PathBuf, arguments: &[&str]) {
             wait(&mut pid);
         } else {
             // child process
-            let mut c = CString::new(command_path.as_path().to_str().unwrap()).unwrap();
+            let c = CString::new(command_path.as_path().to_str().unwrap()).unwrap();
 
             execve(c.as_ptr() as *const i8, c_a.as_mut_ptr() as *mut *const i8, c_v.as_mut_ptr() as *mut *const i8);
         }

@@ -21,8 +21,6 @@
  *
  */
 
-#![feature(libc)]
-
 extern crate chrono;
 extern crate libc;
 

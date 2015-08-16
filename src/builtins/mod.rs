@@ -375,6 +375,10 @@ pub fn pwd(command: &[&str]) {
     println!("{}", current.to_str().unwrap_or(""));
 }
 
+pub fn alias(command: &[&str]) {
+    unimplemented!();
+}
+
 /* Not BUILTINS !!!
 pub fn rmdir(command: &[&str]) {
     unimplemented!();

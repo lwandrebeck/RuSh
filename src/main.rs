@@ -21,8 +21,6 @@
  *
  */
 
-#![feature(path_ext)]
-
 extern crate readline;
 extern crate term;
 extern crate libc;
@@ -117,6 +115,7 @@ fn builtins(command: &Vec<&str>) -> bool {
         "until" => { builtins::until(&command[1..]); },
         "wait" => { builtins::wait(&command[1..]); },
         "while" => { builtins::bi_while(&command[1..]); },
+        "alias" => { builtins::alias(&command[1..]); },
         _ => {
             // execute non-builtin command here
             command::execute_line(&command[0], &command);
