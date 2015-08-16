@@ -119,7 +119,7 @@ fn builtins(command: &Vec<&str>) -> bool {
         "while" => { builtins::bi_while(&command[1..]); },
         _ => {
             // execute non-builtin command here
-            command::execute_line(&command[0], &command[1..]);
+            command::execute_line(&command[0], &command);
         },
     }
     false
