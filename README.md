@@ -9,7 +9,7 @@ Please note that this is a personal project (read not funded), in order to learn
 
 Right now, RuSh is definitely not useable on a day to day basis. Only pwd, cd commands, and classical (external) commands are implemented (and cd is still buggy). Prompt is partially implemented too. Don’t even think of running some kind of script, internals (if, while, pipe, you name it) are not yet implemented. Only a single command may (sort of) work.
 
-Parser is definitely über basic and far from finished nor in its definitive shape. It does *not* allow for now a complete implementation of POSIX shell syntax. We plan to use « [nom](https://github.com/Geal/nom) » at some time to have a fully functionnal lexer/parser. Localization is TBD. Color management is to be implemented using « [term](https://crates.io/crates/term) crate.
+Parser is definitely über basic and far from finished nor in its definitive shape. It does *not* allow for now a complete implementation of POSIX shell syntax. We plan to use « [nom](https://github.com/Geal/nom) » at some time to have a fully functionnal lexer/parser. Localization is TBD. Color management is to be implemented using « [term](https://crates.io/crates/term) » crate.
 
 The TODO list is so huge I don’t even dare to begin to write it. unimplemented!() macro will (partly) show you where work is needed. Just keep in mind function prototypes are not in definitive shape. Don’t forget too that parser needs a complete overhaul, that will (may ?) imply to change quite a bit of…everything. But work done before parser change will help to sort out bugs, so most work already done won’t be lost.
 
