@@ -23,6 +23,7 @@ The TODO list is so huge I don’t even dare to begin to write it. unimplemented
 ## Building
 
 It’s as simple as:
+
     cargo build
 
 ## Running
