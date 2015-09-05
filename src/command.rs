@@ -100,14 +100,13 @@ pub fn execute_command(command_path: PathBuf, arguments: &[&str]) {
         let mut pid = fork();
 
         if pid == -1 {
-            println!("An error occured...");
+            println!("An error occured while forking !");
         } else if pid != 0 {
             // parent process
             wait(&mut pid);
         } else {
             // child process
             let c = CString::new(command_path.as_path().to_str().unwrap()).unwrap();
-
             execve(c.as_ptr() as *const i8, c_a.as_mut_ptr() as *mut *const i8, c_v.as_mut_ptr() as *mut *const i8);
         }
     }

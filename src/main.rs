@@ -40,24 +40,29 @@ trait ShellCommand {
 fn handle_command(user_expr: &str) -> bool {
     // Clean up the string by removing the newline at the end
     let expr = user_expr.trim_matches('\n');
+    // Bash (kind of) compatibility. BASH_COMMAND contains command to be executed, RUSH_COMMAND in our case.
+    env::set_var("RUSH_COMMAND", expr);
     let components: Vec<&str> = expr.split(' ').collect();
     builtins(&components)
 }
 
 fn builtins(command: &Vec<&str>) -> bool {
-    match command[0] {
-		"" => { return false; },
-		"[[" => { builtins::etest(&command[1..]); },
-		"<" => { builtins::ltsign(&command[1..]); },
-		"<<" => { builtins::dltsign(&command[1..]); },
-		">" => { builtins::gtsign(&command[1..]); },
-		">>" => { builtins::dgtsign(&command[1..]); },
-		"|" => { builtins::pipe(&command[1..]); },
-		"||" => { builtins::dpipe(&command[1..]); },
-		"&" => { builtins::and(&command[1..]); },
-		"&&" => { builtins::dand(&command[1..]); },
-		"`" => { builtins::backtick(&command[1..]); },
-		"alias" => { builtins::alias(&command[1..]); },
+	// TODO to be replaced by some nom magic.
+	match command[0] {
+        "" => { return false; },
+        "[[" => { builtins::etest(&command[1..]); },
+        "<" => { builtins::ltsign(&command[1..]); },
+        "<<" => { builtins::dltsign(&command[1..]); },
+        ">" => { builtins::gtsign(&command[1..]); },
+        ">>" => { builtins::dgtsign(&command[1..]); },
+        "|" => { builtins::pipe(&command[1..]); },
+        "||" => { builtins::dpipe(&command[1..]); },
+        "&" => { builtins::and(&command[1..]); },
+        "&&" => { builtins::dand(&command[1..]); },
+        "`" => { builtins::backtick(&command[1..]); },
+        "'" => { builtins::squote(&command[1..]); },
+        "\"" => { builtins::dquote(&command[1..]); },
+        "alias" => { builtins::alias(&command[1..]); },
         "autoload" => { builtins::autoload(&command[1..]); },
         "bg" => { builtins::bg(&command[1..]); },
         "bind" => { builtins::bind(&command[1..]); },
@@ -126,30 +131,36 @@ fn builtins(command: &Vec<&str>) -> bool {
 
 fn main() {
     let mut stdin = io::stdin();
-    let mut line_case: u8 = 1; // use PS1
+    let mut line_case: u8 = 1; // use PS1 by default at launch
+    let mut cmd_nb: u64 = 0; // command number, eventually used by prompt.
 
-	config::init_env();
+    config::init_env();
     loop {
         let mut line = String::new();
-        // Add "correct" prompt management
-        if line_case == 1 {
-			let prompt_command = match env::var("PROMPT_COMMAND") {
-				Ok(pc) => pc,
-				Err(e) => String::from("")
-			};
-			if handle_command(&prompt_command) {
-				return;
-			}
-		}
-        print!("{}", config::prompt(line_case));
+        // FIXME Add "correct" prompt management
+        let p = match line_case {
+            1 => { let prompt_command = match env::var("PROMPT_COMMAND") {
+						Ok(pc) => pc,
+						Err(e) => String::from("")
+				   };
+				   if handle_command(&prompt_command) {
+					   return;
+				   }
+				   "PS1" },
+            2 => { "PS2" },
+            3 => { "PS3" },
+            4 => { "PS4" },
+            _ => { panic!("impossible line_case value !"); }
+        };
+        print!("{}", config::prompt(&p));
         stdout().flush();
-        //let line = stdin.read_line();
         let err = stdin.read_line(&mut line);
         line.pop();
         match err {
             Ok(_) => {
                 if handle_command(&line) {
                     return;
+                cmd_nb += 1;
                 }
             },
             Err(_) => { break; },
