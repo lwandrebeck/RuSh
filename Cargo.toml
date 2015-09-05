@@ -14,7 +14,8 @@ test = false
 bench = false
 
 [dependencies]
+chrono="*"
+libc="*"
+rand="*"
 readline="*"
 term="*"
-libc="*"
-chrono="*"
