@@ -120,7 +120,7 @@ pub fn cd(command: &[&str]) {
             }
         },
         1 if command[0] == "-" => {
-            PathBuf::from(env::var("OLD_PWD").unwrap_or(".".to_owned()))
+            PathBuf::from(env::var("OLDPWD").unwrap_or(".".to_owned()))
         },
         1 => {
             let attr = match fs::metadata(command[0]) {
@@ -138,7 +138,7 @@ pub fn cd(command: &[&str]) {
             return;
         },
     };
-    env::set_var("OLD_PWD", env::current_dir().unwrap());
+    env::set_var("OLDPWD", env::current_dir().unwrap());
     env::set_current_dir(&dir);
     env::set_var("PWD", dir.into_os_string());
 }
@@ -171,6 +171,10 @@ pub fn declare(command: &[&str]) {
     unimplemented!();
 }
 
+pub fn dquote(command: &[&str]) {
+	unimplemented!();
+}
+
 pub fn eval(command: &[&str]) {
     unimplemented!();
 }
@@ -201,6 +205,10 @@ pub fn shopt(command: &[&str]) {
 
 pub fn source(command: &[&str]) {
     unimplemented!();
+}
+
+pub fn squote(command: &[&str]) {
+	unimplemented!();
 }
 
 pub fn typeset(command: &[&str]) {
