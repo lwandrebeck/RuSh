@@ -78,7 +78,23 @@ pub fn dltsign(command: &[&str]) {
 }
 
 pub fn echo(command: &[&str]) {
-    unimplemented!();
+	// FIXME echo must be able to parse several args. use iter ?
+    match command.len() {
+		0 => println!(""),
+		1 => println!("{}", command[0]),
+		2 => match command[0] {
+				"-n" => if command[1].starts_with("$") {
+							let var = env::var(command[1]).unwrap();
+							print!("{}", var);
+						} else {
+							print!("{}", command[1]);
+						},
+				"-e" => panic!(),
+				"-E" => panic!(),
+				_    => panic!(),
+			 },
+		_ => panic!(),
+	}
 }
 
 pub fn gtsign(command: &[&str]) {
