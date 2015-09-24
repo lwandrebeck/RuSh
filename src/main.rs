@@ -27,7 +27,7 @@ extern crate libc;
 
 use std::io;
 use std::io::{stdin, stdout, Write};
-use std::env;
+use std::{env, thread};
 
 mod command;
 mod builtins;
@@ -135,6 +135,14 @@ fn main() {
     let mut cmd_nb: u64 = 0; // command number, eventually used by prompt.
 
     config::init_env();
+    // take care of SECOND env var
+    thread::spawn(move ||  {
+		loop {
+			thread::sleep_ms(1000);
+			match env::var("SECONDS") {
+				Ok(val) =>  { let mut s:u64 = val.parse().unwrap(); s += 1; env::set_var("SECONDS", s.to_string()); }
+				Err(e) => return
+		}; } } );
     loop {
         let mut line = String::new();
         // FIXME Add "correct" prompt management

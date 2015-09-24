@@ -102,8 +102,13 @@ pub fn init_env() {
 	// TODO READLINE_POINT
 	// TODO REPLY
 	// TODO SECONDS
+	env::set_var("SECONDS", "0");
 	// TODO SHELLOPTS
 	// TODO SHLVL
+	match env::var("SHLVL") {
+		Ok(lvl) => { let mut level:u32 = lvl.parse().unwrap(); level +=1; env::set_var("SHLVL", level.to_string()); },
+		Err(e) => env::set_var("SHLVL", "1"),
+	}
     unsafe {
         let id = funcs::posix88::unistd::getuid();
         env::set_var("UID", id.to_string());
