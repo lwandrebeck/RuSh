@@ -38,31 +38,31 @@ use std::path::{Path, PathBuf};
 
 // tests, conditionnal builtins
 pub fn and(command: &[&str]) {
-	unimplemented!();
+    unimplemented!();
 }
 
 pub fn bi_if(command: &[&str]) {
-	unimplemented!();
+    unimplemented!();
 }
 
 pub fn dand(command: &[&str]) {
-	unimplemented!();
+    unimplemented!();
 }
 
 pub fn dpipe(command: &[&str]) {
-	unimplemented!();
+    unimplemented!();
 }
 
 pub fn etest(command: &[&str]) {
-	unimplemented!();
+    unimplemented!();
 }
 
 pub fn pipe(command: &[&str]) {
-	unimplemented!();
+    unimplemented!();
 }
 
 pub fn test(command: &[&str]) {
-	unimplemented!();
+    unimplemented!();
 }
 
 // ==================
@@ -78,23 +78,28 @@ pub fn dltsign(command: &[&str]) {
 }
 
 pub fn echo(command: &[&str]) {
-	// FIXME echo must be able to parse several args. use iter ?
+    // FIXME echo must be able to parse several args. use iter ?
     match command.len() {
-		0 => println!(""),
-		1 => println!("{}", command[0]),
-		2 => match command[0] {
-				"-n" => if command[1].starts_with("$") {
-							let var = env::var(command[1]).unwrap();
-							print!("{}", var);
-						} else {
-							print!("{}", command[1]);
-						},
-				"-e" => panic!(),
-				"-E" => panic!(),
-				_    => panic!(),
-			 },
-		_ => panic!(),
-	}
+        0 => println!(""),
+        1 => if command[0].starts_with("$") {
+                let var = env::var(&command[0][1..]).unwrap_or("".to_owned());
+                println!("{}", var);
+            } else {
+                println!("{}", command[0]);
+            },
+        2 => match command[0] {
+                "-n" => if command[1].starts_with("$") {
+                            let var = env::var(&command[1][1..]).unwrap_or("".to_owned());
+                            print!("{}", var);
+                        } else {
+                            print!("{}", command[1]);
+                        },
+                "-e" => panic!(),
+                "-E" => panic!(),
+                _    => panic!(),
+             },
+        _ => panic!(),
+    }
 }
 
 pub fn gtsign(command: &[&str]) {
@@ -188,7 +193,7 @@ pub fn declare(command: &[&str]) {
 }
 
 pub fn dquote(command: &[&str]) {
-	unimplemented!();
+    unimplemented!();
 }
 
 pub fn eval(command: &[&str]) {
@@ -224,7 +229,7 @@ pub fn source(command: &[&str]) {
 }
 
 pub fn squote(command: &[&str]) {
-	unimplemented!();
+    unimplemented!();
 }
 
 pub fn typeset(command: &[&str]) {
@@ -244,15 +249,15 @@ pub fn alias(command: &[&str]) {
 }
 
 pub fn backtick(command: &[&str]) {
-	unimplemented!();
+    unimplemented!();
 }
 
 pub fn bi_break(command: &[&str]) {
-	unimplemented!();
+    unimplemented!();
 }
 
 pub fn bi_continue(command: &[&str]) {
-	unimplemented!();
+    unimplemented!();
 }
 
 pub fn bi_false(command: &[&str]) {
@@ -280,11 +285,11 @@ pub fn bind(command: &[&str]) {
 }
 
 pub fn case(command: &[&str]) {
-	unimplemented!();
+    unimplemented!();
 }
 
 pub fn expr(command: &[&str]) {
-	unimplemented!();
+    unimplemented!();
 }
 
 pub fn hash(command: &[&str]) {
@@ -296,11 +301,11 @@ pub fn help(command: &[&str]) {
 }
 
 pub fn select(command: &[&str]) {
-	unimplemented!();
+    unimplemented!();
 }
 
 pub fn until(command: &[&str]) {
-	unimplemented!();
+    unimplemented!();
 }
 
 // ==========================
