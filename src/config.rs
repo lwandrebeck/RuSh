@@ -103,6 +103,10 @@ pub fn init_env() {
 	// TODO REPLY
 	// TODO SECONDS
 	env::set_var("SECONDS", "0");
+	match env::current_exe() {
+		Ok(ce) => env::set_var("SHELL", ce),
+		Err(e) => panic!("Unable to get current_exe !"),
+	}
 	// TODO SHELLOPTS
 	// TODO SHLVL
 	match env::var("SHLVL") {

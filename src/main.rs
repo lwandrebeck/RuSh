@@ -21,7 +21,7 @@
  *
  */
 
-extern crate readline;
+extern crate linenoise;
 extern crate term;
 extern crate libc;
 
@@ -73,6 +73,7 @@ fn builtins(command: &Vec<&str>) -> bool {
         "cd" => { builtins::cd(&command[1..]); },
         //"chmod" => { builtins::chmod(&command[1..]); },
         //"chown" => { builtins::chown(&command[1..]); },
+        "clear" => { builtins::clear(&command[1..]); },
         "command" => { builtins::command(&command[1..]); },
         "continue" => { builtins::bi_continue(&command[1..]); },
         "declare" => { builtins::declare(&command[1..]); },
@@ -144,7 +145,6 @@ fn main() {
 				Err(e) => return
 		}; } } );
     loop {
-        let mut line = String::new();
         // FIXME Add "correct" prompt management
         let p = match line_case {
             1 => { let prompt_command = match env::var("PROMPT_COMMAND") {
@@ -160,18 +160,16 @@ fn main() {
             4 => { "PS4" },
             _ => { panic!("impossible line_case value !"); }
         };
-        print!("{}", config::prompt(&p));
-        stdout().flush();
-        let err = stdin.read_line(&mut line);
-        line.pop();
-        match err {
-            Ok(_) => {
-                if handle_command(&line) {
+        let line = linenoise::input(&config::prompt(&p));
+        match line {
+            None => { break }
+            Some(input) => {
+                linenoise::history_add(&input);
+                if handle_command(&input) {
                     return;
-                cmd_nb += 1;
                 }
-            },
-            Err(_) => { break; },
+                cmd_nb +=1;
+            }
         }
-    }
+     }
 }

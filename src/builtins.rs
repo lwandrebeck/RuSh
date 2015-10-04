@@ -21,6 +21,8 @@
  *
  */
 
+extern crate linenoise;
+
 use std::env;
 use std::convert::From;
 use std::fs;
@@ -68,6 +70,10 @@ pub fn test(command: &[&str]) {
 // ==================
 // == I/O builtins ==
 // ==================
+
+pub fn clear(command: &[&str]) {
+    linenoise::clear_screen();
+}
 
 pub fn dgtsign(command: &[&str]) {
     unimplemented!();

@@ -4,7 +4,7 @@ description = "rush aims to be a bash compatible (with more candies) written in 
 license = "GPL3"
 version = "0.0.1"
 authors = [ "Laurent Wandrebeck <l.wandrebeck@quelquesmots.fr>",
-			"Guillaume Gomez <guillaume1.gomez@gmail.com>" ]
+	        "Guillaume Gomez <guillaume1.gomez@gmail.com>" ]
 
 [[bin]]
 name = "rush"
@@ -17,5 +17,5 @@ bench = false
 chrono="*"
 libc="*"
 rand="*"
-readline="*"
+linenoise-rust="*"
 term="*"
