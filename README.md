@@ -2,6 +2,8 @@
 
 # RuSh: A shell written in Rust
 
+(20151123: No, RuSh is not dead. I’m just fairly busy IRL)
+
 ## Quick introduction
 
 RuSh aims to be (maybe one day) a POSIX Shell, Bash compatible with candies. RuSh is GPL3.
