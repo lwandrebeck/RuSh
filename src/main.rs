@@ -21,17 +21,20 @@
  *
  */
 
-extern crate linenoise;
-extern crate term;
 extern crate libc;
+extern crate linenoise;
+#[macro_use]
+extern crate nom;
+extern crate term;
 
 use std::io;
 use std::io::{stdin, stdout, Write};
 use std::{env, thread};
 
-mod command;
 mod builtins;
+mod command;
 mod config;
+mod nom;
 
 trait ShellCommand {
     fn run(&self);

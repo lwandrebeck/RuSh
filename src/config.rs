@@ -23,6 +23,7 @@
 
 extern crate chrono;
 extern crate libc;
+extern crate linenoise;
 extern crate rand;
 
 use self::chrono::*;
@@ -128,6 +129,7 @@ pub fn init_env() {
             String::from_utf8(CStr::from_ptr(log).to_bytes().to_owned()).unwrap_or("no login".to_owned()));
     }
     env::set_var("HISTSIZE", "1000");
+    linenoise::history_set_max_len(1000);
 }
 
 pub fn load_config() {
