@@ -1,7 +1,7 @@
 /*
  * builtins.rs
  *
- * Copyright 2015 Laurent Wandrebeck <l.wandrebeck@quelquesmots.fr>
+ * Copyright 2015-2016 Laurent Wandrebeck <l.wandrebeck@quelquesmots.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,7 +38,31 @@ use std::path::{Path, PathBuf};
 //    )
 //);
 
-// tests, conditionnal builtins
+// =========================================
+// == nothing builtin. Yes, it does exist ==
+// =========================================
+
+pub fn colon(command: &[&str]) -> bool {
+    // yes, it really does nothing, but always return true.
+    true
+}
+
+// =======================================================
+// == history builtins - works only in interactive mode ==
+// =======================================================
+
+pub fn fc(command: &[&str]) {
+    unimplemented!();
+}
+
+pub fn history(command: &[&str]) {
+    unimplemented!();
+}
+
+// ==================================
+// == tests, conditionnal builtins ==
+// ==================================
+
 pub fn and(command: &[&str]) {
     unimplemented!();
 }
@@ -51,6 +75,11 @@ pub fn dand(command: &[&str]) {
     unimplemented!();
 }
 
+pub fn dbracket(command: &[&str]) {
+    // equivalent to etest
+    unimplemented!();
+}
+
 pub fn dpipe(command: &[&str]) {
     unimplemented!();
 }
@@ -59,11 +88,21 @@ pub fn etest(command: &[&str]) {
     unimplemented!();
 }
 
+pub fn obrace(command: &[&str]) {
+    unimplemented!();
+}
+
+pub fn obracket(command: &[&str]) {
+    // equivalent to test
+    unimplemented!();
+}
+
 pub fn pipe(command: &[&str]) {
     unimplemented!();
 }
 
 pub fn test(command: &[&str]) {
+    //equivalent to [ ]
     unimplemented!();
 }
 
@@ -116,11 +155,25 @@ pub fn ltsign(command: &[&str]) {
     unimplemented!();
 }
 
+pub fn mapfile(command: &[&str]) {
+    // equivalent to readarray
+    unimplemented!();
+}
+
 pub fn printf(command: &[&str]) {
     unimplemented!();
 }
 
 pub fn read(command: &[&str]) {
+    unimplemented!();
+}
+
+pub fn readarray(command: &[&str]) {
+    // equivalent to mapfile
+    unimplemented!();
+}
+
+pub fn umask(command: &[&str]) {
     unimplemented!();
 }
 
@@ -187,6 +240,7 @@ pub fn pushd(command: &[&str]) {
 // ========================
 
 pub fn bi_let(command: &[&str]) {
+    // equivalent to (( ))
     unimplemented!();
 }
 
@@ -195,6 +249,11 @@ pub fn caller(command: &[&str]) {
 }
 
 pub fn declare(command: &[&str]) {
+    unimplemented!();
+}
+
+pub fn dparenthesis(command: &[&str]) {
+    // equivalent to let
     unimplemented!();
 }
 
@@ -218,6 +277,11 @@ pub fn getopts(command: &[&str]) {
     unimplemented!();
 }
 
+pub fn local(command: &[&str]) {
+    // for use only in functions
+    unimplemented!();
+}
+
 pub fn readonly(command: &[&str]) {
     unimplemented!();
 }
@@ -226,11 +290,16 @@ pub fn set(command: &[&str]) {
     unimplemented!();
 }
 
+pub fn shift(command: &[&str]) {
+    unimplemented!();
+}
+
 pub fn shopt(command: &[&str]) {
     unimplemented!();
 }
 
 pub fn source(command: &[&str]) {
+    // equivalent to .
     unimplemented!();
 }
 
@@ -243,6 +312,7 @@ pub fn typeset(command: &[&str]) {
 }
 
 pub fn unset(command: &[&str]) {
+    // unset var first if it exists, unset function if no such var exists.
     unimplemented!();
 }
 
@@ -274,6 +344,10 @@ pub fn bi_for(command: &[&str]) {
     unimplemented!();
 }
 
+pub fn bi_return(command: &[&str]) {
+    unimplemented!();
+}
+
 pub fn bi_true(command: &[&str]) {
     unimplemented!();
 }
@@ -294,7 +368,15 @@ pub fn case(command: &[&str]) {
     unimplemented!();
 }
 
+pub fn coproc(command: &[&str]) {
+    unimplemented!();
+}
+
 pub fn expr(command: &[&str]) {
+    unimplemented!();
+}
+
+pub fn function(command: &[&str]) {
     unimplemented!();
 }
 
@@ -307,6 +389,10 @@ pub fn help(command: &[&str]) {
 }
 
 pub fn select(command: &[&str]) {
+    unimplemented!();
+}
+
+pub fn unalias(command: &[&str]) {
     unimplemented!();
 }
 
@@ -342,6 +428,10 @@ pub fn enable(command: &[&str]) {
     unimplemented!();
 }
 
+pub fn exit(command: &[&str]) {
+    unimplemented!();
+}
+
 pub fn fg(command: &[&str]) {
     unimplemented!();
 }
@@ -350,12 +440,11 @@ pub fn jobs(command: &[&str]) {
     unimplemented!();
 }
 
-// not a builtin !
-/*pub fn kill(command: &[&str]) {
+pub fn job_spec(command: &[&str]) {
     unimplemented!();
-}*/
+}
 
-pub fn killall(command: &[&str]) {
+pub fn kill(command: &[&str]) {
     unimplemented!();
 }
 
@@ -367,11 +456,40 @@ pub fn suspend(command: &[&str]) {
     unimplemented!();
 }
 
+pub fn time(command: &[&str]) {
+    unimplemented!();
+}
+
 pub fn times(command: &[&str]) {
     unimplemented!();
 }
 
+pub fn trap(command: &[&str]) {
+    unimplemented!();
+}
+
+pub fn ulimit(command: &[&str]) {
+    unimplemented!();
+}
+
 pub fn wait(command: &[&str]) {
+    unimplemented!();
+}
+
+// =========================
+// == Completion commands ==
+// =========================
+
+pub fn compgen(command: &[&str]) {
+    // intended for use from a shell function only
+    unimplemented!();
+}
+
+pub fn complete(command: &[&str]) {
+    unimplemented!();
+}
+
+pub fn compopt(command: &[&str]) {
     unimplemented!();
 }
 
@@ -385,6 +503,10 @@ pub fn chmod(command: &[&str]) {
 }
 
 pub fn chown(command: &[&str]) {
+    unimplemented!();
+}
+
+pub fn killall(command: &[&str]) {
     unimplemented!();
 }
 
