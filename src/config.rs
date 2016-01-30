@@ -1,7 +1,7 @@
 /*
  * config.rs
  *
- * Copyright 2015 Laurent Wandrebeck <l.wandrebeck@quelquesmots.fr>
+ * Copyright 2015-2016 Laurent Wandrebeck <l.wandrebeck@quelquesmots.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
