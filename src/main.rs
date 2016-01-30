@@ -1,7 +1,7 @@
 /*
  * main.rs
  *
- * Copyright 2015 Laurent Wandrebeck <l.wandrebeck@quelquesmots.fr>
+ * Copyright 2015-2016 Laurent Wandrebeck <l.wandrebeck@quelquesmots.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,12 +29,12 @@ extern crate term;
 
 use std::io;
 use std::io::{stdin, stdout, Write};
-use std::{env, thread};
+use std::{env, thread, time};
 
 mod builtins;
 mod command;
 mod config;
-mod nom;
+mod parser;
 
 trait ShellCommand {
     fn run(&self);
@@ -97,8 +97,8 @@ fn builtins(command: &Vec<&str>) -> bool {
         "help" => { builtins::help(&command[1..]); },
         "if" => { builtins::bi_if(&command[1..]); },
         "jobs" => { builtins::jobs(&command[1..]); },
-        //"kill" => { builtins::kill(&command[1..]); },
-        "killall" => { builtins::killall(&command[1..]); },
+        "kill" => { builtins::kill(&command[1..]); },
+        //"killall" => { builtins::killall(&command[1..]); },
         "let" => { builtins::bi_let(&command[1..]); },
         //"ln" => { builtins::ln(&command[1..]); },
         "logout" => { builtins::logout(&command[1..]); },
@@ -142,7 +142,7 @@ fn main() {
     // take care of SECOND env var
     thread::spawn(move ||  {
 		loop {
-			thread::sleep_ms(1000);
+			thread::sleep(time::Duration::new(1, 0));
 			match env::var("SECONDS") {
 				Ok(val) =>  { let mut s:u64 = val.parse().unwrap(); s += 1; env::set_var("SECONDS", s.to_string()); }
 				Err(e) => return
