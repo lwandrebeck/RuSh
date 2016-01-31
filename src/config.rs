@@ -32,6 +32,60 @@ use self::rand::Rng;
 use std::ffi::CStr;
 use std::{env,  io, str};
 use std::path::PathBuf;
+use std::collections::HashSet;
+
+use Opt;
+
+pub fn init_options(options: &mut HashSet<Opt>) {
+    // initialize default options.
+    options.insert( Opt { name: "autocd", status: false } );
+    options.insert( Opt { name: "cdable_vars", status: false } );
+    options.insert( Opt { name: "cdspell", status: false } );
+    options.insert( Opt { name: "checkhash", status: false } );
+    options.insert( Opt { name: "checkjobs", status: false } );
+    options.insert( Opt { name: "checkwinsize", status: true } );
+    options.insert( Opt { name: "cmdhist", status: true } );
+    options.insert( Opt { name: "compat31", status: false } );
+    options.insert( Opt { name: "compat32", status: false } );
+    options.insert( Opt { name: "compat40", status: false } );
+    options.insert( Opt { name: "compat41", status: false } );
+    options.insert( Opt { name: "compat42", status: false } );
+    options.insert( Opt { name: "complete_fullquote", status: true } );
+    options.insert( Opt { name: "direxpand", status: false } );
+    options.insert( Opt { name: "dirspell", status: false } );
+    options.insert( Opt { name: "dotglob", status: false } );
+    options.insert( Opt { name: "execfail", status: false } );
+    options.insert( Opt { name: "expand_aliases", status: true } );
+    options.insert( Opt { name: "extdebug", status: false } );
+    options.insert( Opt { name: "extglob", status: true } );
+    options.insert( Opt { name: "extquote", status: true } );
+    options.insert( Opt { name: "failglob", status: false } );
+    options.insert( Opt { name: "force_fignore", status: true } );
+    options.insert( Opt { name: "globstar", status: false } );
+    options.insert( Opt { name: "globasciiranges", status: false } );
+    options.insert( Opt { name: "gnu_errfmt", status: false } );
+    options.insert( Opt { name: "histappend", status: true } );
+    options.insert( Opt { name: "histreedit", status: false } );
+    options.insert( Opt { name: "histverify", status: false } );
+    options.insert( Opt { name: "histappend", status: false } );
+    options.insert( Opt { name: "hostcomplete", status: false } );
+    options.insert( Opt { name: "huponexit", status: false } );
+    options.insert( Opt { name: "interactive_comments", status: true } );
+    options.insert( Opt { name: "lastpipe", status: false } );
+    options.insert( Opt { name: "lithist", status: false } );
+    options.insert( Opt { name: "login_shell", status: false } );
+    options.insert( Opt { name: "mailwarn", status: false } );
+    options.insert( Opt { name: "no_empty_cmd_completion", status: false } );
+    options.insert( Opt { name: "nocaseglob", status: false } );
+    options.insert( Opt { name: "nocasematch", status: false } );
+    options.insert( Opt { name: "nullglob", status: false } );
+    options.insert( Opt { name: "progcomp", status: true } );
+    options.insert( Opt { name: "promptvars", status: true } );
+    options.insert( Opt { name: "restricted_shell", status: false } );
+    options.insert( Opt { name: "shift_verbose", status: false } );
+    options.insert( Opt { name: "sourcepath", status: true } );
+    options.insert( Opt { name: "xpg_echo", status: false } );
+}
 
 pub fn init_env() {
 	// see man bash (Shell variables)

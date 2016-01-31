@@ -321,6 +321,7 @@ pub fn unset(command: &[&str]) {
 // =======================
 
 pub fn alias(command: &[&str]) {
+    // use aliases HashMap. insert() is enough, even if the key already exists.
     unimplemented!();
 }
 
@@ -393,6 +394,7 @@ pub fn select(command: &[&str]) {
 }
 
 pub fn unalias(command: &[&str]) {
+    // use aliases HashMap. remove() is enough even if the key does not exist.
     unimplemented!();
 }
 

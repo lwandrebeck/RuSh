@@ -30,11 +30,19 @@ extern crate term;
 use std::io;
 use std::io::{stdin, stdout, Write};
 use std::{env, thread, time};
+use std::collections::HashMap;
+use std::collections::HashSet;
 
 mod builtins;
 mod command;
 mod config;
 mod parser;
+
+#[derive(Hash, Eq, PartialEq, Debug)]
+pub struct Opt<'option> {
+    name: &'option str,
+    status: bool,
+}
 
 trait ShellCommand {
     fn run(&self);
@@ -137,7 +145,9 @@ fn main() {
     let mut stdin = io::stdin();
     let mut line_case: u8 = 1; // use PS1 by default at launch
     let mut cmd_nb: u64 = 0; // command number, eventually used by prompt.
-
+    let mut aliases = HashMap::<String, String>::with_capacity(30); // by default fedora 23 already has 14 aliases defined.
+    let mut options = HashSet::<Opt>::with_capacity(46);
+    config::init_options(&mut options);
     config::init_env();
     // take care of SECOND env var
     thread::spawn(move ||  {
