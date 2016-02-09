@@ -17,6 +17,6 @@ bench = false
 chrono="*"
 libc="*"
 linenoise-rust="*"
-nom="1.1.0"
+nom="1.2.0"
 rand="*"
 term="*"
