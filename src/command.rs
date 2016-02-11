@@ -24,8 +24,8 @@
 
 use std::path::{Path, PathBuf};
 use std::env;
-use libc::consts::os::posix88;
-use libc::funcs::posix88::unistd::{fork, wait, execve, access};
+//use libc::consts::os::posix88;
+use libc::{fork, wait, execve, access, F_OK, X_OK};
 use std::ffi::CString;
 use std::ptr::null;
 
@@ -42,7 +42,7 @@ impl Checker for Path {
             }
         };
 
-        unsafe { access(file.as_ptr(), posix88::F_OK | posix88::X_OK) == 0 }
+        unsafe { access(file.as_ptr(), F_OK | X_OK) == 0 }
     }
 }
 

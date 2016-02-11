@@ -27,12 +27,13 @@ extern crate linenoise;
 extern crate rand;
 
 use self::chrono::*;
-use self::libc::{c_char, c_int, size_t, funcs};
+use self::libc::{c_char, c_int, size_t};
 use self::rand::Rng;
 use std::ffi::CStr;
 use std::{env,  io, str};
 use std::path::PathBuf;
 use std::collections::HashSet;
+use libc::{geteuid, getpid, getppid, getuid, getgid, getlogin};
 
 use Opt;
 
@@ -95,7 +96,7 @@ pub fn init_env() {
 	}
 	// TODO RUSHOPTS
     unsafe {
-        let pid = funcs::posix88::unistd::getpid();
+        let pid = getpid();
         env::set_var("RUSHPID", pid.to_string());
     }
     // TODO RUSH_ALIASES
@@ -121,7 +122,7 @@ pub fn init_env() {
     // TODO COPROC
     // TODO DIRSTACK
     unsafe {
-        let euid = funcs::posix88::unistd::geteuid();
+        let euid = geteuid();
         env::set_var("RUSHPID", euid.to_string());
     }
     // TODO FUNCNAME
@@ -145,7 +146,7 @@ pub fn init_env() {
     // TODO OSTYPE
     // TODO PIPESTATUS
     unsafe {
-        let ppid = funcs::posix88::unistd::getppid();
+        let ppid = getppid();
         env::set_var("PPID", ppid.to_string());
     }
     env::set_var("PWD", env::current_dir().unwrap_or(PathBuf::from("/")));
@@ -169,16 +170,16 @@ pub fn init_env() {
 		Err(e) => env::set_var("SHLVL", "1"),
 	}
     unsafe {
-        let id = funcs::posix88::unistd::getuid();
+        let id = getuid();
         env::set_var("UID", id.to_string());
     }
     // TODO variables used by the shell, see man bash.
     unsafe {
-        let id = funcs::posix88::unistd::getgid();
+        let id = getgid();
         env::set_var("GID", id.to_string());
     }
     unsafe {
-        let log = funcs::posix88::unistd::getlogin();
+        let log = getlogin();
         env::set_var("USERNAME",
             String::from_utf8(CStr::from_ptr(log).to_bytes().to_owned()).unwrap_or("no login".to_owned()));
     }
