@@ -6,6 +6,9 @@ version = "0.0.1"
 authors = [ "Laurent Wandrebeck <l.wandrebeck@quelquesmots.fr>",
 	        "Guillaume Gomez <guillaume1.gomez@gmail.com>" ]
 
+[features]
+nightly = []
+
 [[bin]]
 name = "rush"
 path = "src/main.rs"
