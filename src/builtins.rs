@@ -21,6 +21,11 @@
  *
  */
 
+//! Builtins of RuSh.
+//!
+//! This is where every builtin is implemented.
+//! History, tests, conditionnals, I/O, filesystem, variables, commands, job control, completion.
+
 extern crate linenoise;
 
 use std::env;
@@ -38,90 +43,99 @@ use std::path::{Path, PathBuf};
 //    )
 //);
 
-// =========================================
-// == nothing builtin. Yes, it does exist ==
-// =========================================
+// nothing builtin
 
+/// nothing builtin. Yes, it does exist
 pub fn colon(command: &[&str]) -> bool {
     // yes, it really does nothing, but always return true.
     true
 }
 
-// =======================================================
-// == history builtins - works only in interactive mode ==
-// =======================================================
+// history builtins
 
+/// fc history builtin - works only in interactive mode
 pub fn fc(command: &[&str]) {
     unimplemented!();
 }
 
+/// history history builtin - works only in interactive mode
 pub fn history(command: &[&str]) {
     unimplemented!();
 }
 
-// ==================================
-// == tests, conditionnal builtins ==
-// ==================================
+// tests, conditionnal builtins
 
+/// & builtin
 pub fn and(command: &[&str]) {
     unimplemented!();
 }
 
+/// if builtin
 pub fn bi_if(command: &[&str]) {
     unimplemented!();
 }
 
+/// && builtin
 pub fn dand(command: &[&str]) {
     unimplemented!();
 }
 
+/// [[ builtin (equivalent to etest
 pub fn dbracket(command: &[&str]) {
     // equivalent to etest
     unimplemented!();
 }
 
+/// || builtin
 pub fn dpipe(command: &[&str]) {
     unimplemented!();
 }
 
+/// etest builtin (equivalent to [[)
 pub fn etest(command: &[&str]) {
     unimplemented!();
 }
 
+/// { builtin
 pub fn obrace(command: &[&str]) {
     unimplemented!();
 }
 
+/// [ builtin (equivalent to test)
 pub fn obracket(command: &[&str]) {
     // equivalent to test
     unimplemented!();
 }
 
+/// | builtin
 pub fn pipe(command: &[&str]) {
     unimplemented!();
 }
 
+/// test builtin (equivalent to [)
 pub fn test(command: &[&str]) {
     //equivalent to [ ]
     unimplemented!();
 }
 
-// ==================
-// == I/O builtins ==
-// ==================
+// I/O builtins
 
+/// clear builtin
 pub fn clear(command: &[&str]) {
     linenoise::clear_screen();
 }
 
+/// >> builtin
 pub fn dgtsign(command: &[&str]) {
     unimplemented!();
 }
 
+/// << builtin
 pub fn dltsign(command: &[&str]) {
     unimplemented!();
 }
 
+/// echo builtin
 pub fn echo(command: &[&str]) {
     // FIXME echo must be able to parse several args. use iter ?
     match command.len() {
@@ -147,40 +161,46 @@ pub fn echo(command: &[&str]) {
     }
 }
 
+/// > builtin
 pub fn gtsign(command: &[&str]) {
     unimplemented!();
 }
 
+/// < builtin
 pub fn ltsign(command: &[&str]) {
     unimplemented!();
 }
 
+/// mapfile builtin (equivalent to readarray)
 pub fn mapfile(command: &[&str]) {
     // equivalent to readarray
     unimplemented!();
 }
 
+/// printf builtin
 pub fn printf(command: &[&str]) {
     unimplemented!();
 }
 
+/// read builtin
 pub fn read(command: &[&str]) {
     unimplemented!();
 }
 
+/// readarray builtin (equivalent to mapfile)
 pub fn readarray(command: &[&str]) {
     // equivalent to mapfile
     unimplemented!();
 }
 
+/// umask builtin
 pub fn umask(command: &[&str]) {
     unimplemented!();
 }
 
-// =========================
-// == Filesystem builtins ==
-// =========================
+// Filesystem builtins
 
+/// cd builtin
 pub fn cd(command: &[&str]) {
     let current = match env::current_dir() {
         Ok(path) => path,
@@ -223,274 +243,328 @@ pub fn cd(command: &[&str]) {
     env::set_var("PWD", dir.into_os_string());
 }
 
+/// dirs builtin
 pub fn dirs(command: &[&str]) {
     unimplemented!();
 }
 
+/// popd builtin
 pub fn popd(command: &[&str]) {
     unimplemented!();
 }
 
+/// pushd builtin
 pub fn pushd(command: &[&str]) {
     unimplemented!();
 }
 
-// ========================
-// == Variables builtins ==
-// ========================
+// Variables builtins
 
+/// let builtin
 pub fn bi_let(command: &[&str]) {
     // equivalent to (( ))
     unimplemented!();
 }
 
+/// caller builtin
 pub fn caller(command: &[&str]) {
     unimplemented!();
 }
 
+/// declare builtin
 pub fn declare(command: &[&str]) {
     unimplemented!();
 }
 
+/// (( builtin (equivalent to let)
 pub fn dparenthesis(command: &[&str]) {
     // equivalent to let
     unimplemented!();
 }
 
+/// " builtin
 pub fn dquote(command: &[&str]) {
     unimplemented!();
 }
 
+/// eval builtin
 pub fn eval(command: &[&str]) {
     unimplemented!();
 }
 
+/// exec builtin
 pub fn exec(command: &[&str]) {
     unimplemented!();
 }
 
+/// export builtin
 pub fn export(command: &[&str]) {
     unimplemented!();
 }
 
+/// getopts builtin
 pub fn getopts(command: &[&str]) {
     unimplemented!();
 }
 
+/// local builtin
 pub fn local(command: &[&str]) {
     // for use only in functions
     unimplemented!();
 }
 
+/// readonly builtin
 pub fn readonly(command: &[&str]) {
     unimplemented!();
 }
 
+/// set builtin
 pub fn set(command: &[&str]) {
     unimplemented!();
 }
 
+/// shift builtin
 pub fn shift(command: &[&str]) {
     unimplemented!();
 }
 
+/// shopt builtin
 pub fn shopt(command: &[&str]) {
     unimplemented!();
 }
 
+/// source builtin (equivalent to .)
 pub fn source(command: &[&str]) {
     // equivalent to .
     unimplemented!();
 }
 
+/// ' builtin
 pub fn squote(command: &[&str]) {
     unimplemented!();
 }
 
+/// typeset builtin
 pub fn typeset(command: &[&str]) {
     unimplemented!();
 }
 
+/// unset builtin
 pub fn unset(command: &[&str]) {
     // unset var first if it exists, unset function if no such var exists.
     unimplemented!();
 }
 
-// =======================
-// == Commands builtins ==
-// =======================
+// Commands builtins
 
+/// alias builtin
 pub fn alias(command: &[&str]) {
     // use aliases HashMap. insert() is enough, even if the key already exists.
     unimplemented!();
 }
 
+/// ` builtin
 pub fn backtick(command: &[&str]) {
     unimplemented!();
 }
 
+/// break builtin
 pub fn bi_break(command: &[&str]) {
     unimplemented!();
 }
 
+/// continue builtin
 pub fn bi_continue(command: &[&str]) {
     unimplemented!();
 }
 
+/// false builtin
 pub fn bi_false(command: &[&str]) {
     unimplemented!();
 }
 
+/// for builtin
 pub fn bi_for(command: &[&str]) {
     unimplemented!();
 }
 
+/// return builtin
 pub fn bi_return(command: &[&str]) {
     unimplemented!();
 }
 
+/// true builtin
 pub fn bi_true(command: &[&str]) {
     unimplemented!();
 }
 
+/// type builtin
 pub fn bi_type(command: &[&str]) {
     unimplemented!();
 }
 
+/// while builtin
 pub fn bi_while(command: &[&str]) {
     unimplemented!();
 }
 
+/// bind builtin
 pub fn bind(command: &[&str]) {
     unimplemented!();
 }
 
+/// case builtin
 pub fn case(command: &[&str]) {
     unimplemented!();
 }
 
+/// coproc builtin
 pub fn coproc(command: &[&str]) {
     unimplemented!();
 }
 
+/// expr builtin
 pub fn expr(command: &[&str]) {
     unimplemented!();
 }
 
+/// function builtin
 pub fn function(command: &[&str]) {
     unimplemented!();
 }
 
+/// hash builtin
 pub fn hash(command: &[&str]) {
     unimplemented!();
 }
 
+/// help builtin
 pub fn help(command: &[&str]) {
     unimplemented!();
 }
 
+/// select builtin
 pub fn select(command: &[&str]) {
     unimplemented!();
 }
 
+/// unalias builtin
 pub fn unalias(command: &[&str]) {
     // use aliases HashMap. remove() is enough even if the key does not exist.
     unimplemented!();
 }
 
+/// until builtin
 pub fn until(command: &[&str]) {
     unimplemented!();
 }
 
-// ==========================
-// == job control commands ==
-// ==========================
+// job control commands
 
+/// autoload builtin
 pub fn autoload(command: &[&str]) {
     unimplemented!();
 }
 
+/// bg builtin
 pub fn bg(command: &[&str]) {
     unimplemented!();
 }
 
+/// builtin builtin
 pub fn builtin(command: &[&str]) {
     unimplemented!();
 }
 
+/// command builtin
 pub fn command(command: &[&str]) {
     unimplemented!();
 }
 
+/// disown builtin
 pub fn disown(command: &[&str]) {
     unimplemented!();
 }
 
+/// enable builtin
 pub fn enable(command: &[&str]) {
     unimplemented!();
 }
 
+/// exit builtin
 pub fn exit(command: &[&str]) {
     unimplemented!();
 }
 
+/// fg builtin
 pub fn fg(command: &[&str]) {
     unimplemented!();
 }
 
+/// jobs builtin
 pub fn jobs(command: &[&str]) {
     unimplemented!();
 }
 
+/// job_spec builtin
 pub fn job_spec(command: &[&str]) {
     unimplemented!();
 }
 
+/// kill builtin
 pub fn kill(command: &[&str]) {
     unimplemented!();
 }
 
+/// logout builtin
 pub fn logout(command: &[&str]) {
     unimplemented!();
 }
 
+/// suspend builtin
 pub fn suspend(command: &[&str]) {
     unimplemented!();
 }
 
+/// time builtin
 pub fn time(command: &[&str]) {
     unimplemented!();
 }
 
+/// times builtin
 pub fn times(command: &[&str]) {
     unimplemented!();
 }
 
+/// trap builtin
 pub fn trap(command: &[&str]) {
     unimplemented!();
 }
 
+/// ulimit builtin
 pub fn ulimit(command: &[&str]) {
     unimplemented!();
 }
 
+/// wait builtin
 pub fn wait(command: &[&str]) {
     unimplemented!();
 }
 
-// =========================
-// == Completion commands ==
-// =========================
+// Completion commands
 
+/// compgen builtin
 pub fn compgen(command: &[&str]) {
     // intended for use from a shell function only
     unimplemented!();
 }
 
+/// complete builtin
 pub fn complete(command: &[&str]) {
     unimplemented!();
 }
 
+/// compopt builtin
 pub fn compopt(command: &[&str]) {
     unimplemented!();
 }
@@ -520,6 +594,7 @@ pub fn mkdir(command: &[&str]) {
     unimplemented!();
 }*/
 
+/// pwd builtin
 pub fn pwd(command: &[&str]) {
     let current = match env::current_dir() {
         Ok(path) => path,
@@ -546,3 +621,4 @@ pub fn rmdir(command: &[&str]) {
 pub fn touch(command: &[&str]) {
     unimplemented!();
 }*/
+
