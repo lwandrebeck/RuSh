@@ -21,6 +21,12 @@
  *
  */
 
+//! RuSh begins here.
+//!
+//! main.rs contains the very beginning of RuSh.
+//! aliases, options structures, environment are defined/set.
+//! prompt is updated there.
+
 extern crate libc;
 extern crate linenoise;
 #[macro_use]
@@ -38,16 +44,21 @@ mod command;
 mod config;
 mod parser;
 
+/// Opt structure is defined here to store options status (setopt)
 #[derive(Hash, Eq, PartialEq, Debug)]
 pub struct Opt<'option> {
+    /// name of the option
     name: &'option str,
+    /// option status, true or false
     status: bool,
 }
 
+/// TBD
 trait ShellCommand {
     fn run(&self);
 }
 
+/// To be completely overhauled when nom parser is implemented
 fn handle_command(user_expr: &str) -> bool {
     // Clean up the string by removing the newline at the end
     let expr = user_expr.trim_matches('\n');
@@ -57,6 +68,7 @@ fn handle_command(user_expr: &str) -> bool {
     builtins(&components)
 }
 
+/// To be completely overhauled when nom parser is implemented
 fn builtins(command: &Vec<&str>) -> bool {
 	// TODO to be replaced by some nom magic.
 	match command[0] {
@@ -141,6 +153,7 @@ fn builtins(command: &Vec<&str>) -> bool {
     false
 }
 
+/// main loop. the fun begins here !
 fn main() {
     let mut stdin = io::stdin();
     let mut line_case: u8 = 1; // use PS1 by default at launch
