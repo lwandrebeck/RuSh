@@ -22,17 +22,22 @@
  *
  */
 
+//! External commands management
+//!
+//! If a word/token is not found as a builtin, RuSh tries to find an external command available in $PATH.
+
 use std::path::{Path, PathBuf};
 use std::env;
-//use libc::consts::os::posix88;
 use libc::{fork, wait, execve, access, F_OK, X_OK};
 use std::ffi::CString;
 use std::ptr::null;
 
+/// We need a file checker, create a trait.
 trait Checker {
     fn check_file(&self) -> bool;
 }
 
+/// Implement Checker trait for Path.
 impl Checker for Path {
     fn check_file(&self) -> bool {
         let file = match CString::new(self.to_str().unwrap_or("")) {
@@ -41,11 +46,12 @@ impl Checker for Path {
                 return false;
             }
         };
-
+        // FIXME use a safe method
         unsafe { access(file.as_ptr(), F_OK | X_OK) == 0 }
     }
 }
 
+/// Execute command with its arguments, logic part.
 pub fn execute_line(command: &str, arguments: &[&str]) {
     if Path::new(command).check_file() {
         execute_command(Path::new(command).to_path_buf(), arguments)
@@ -61,6 +67,7 @@ pub fn execute_line(command: &str, arguments: &[&str]) {
     }
 }
 
+/// Find an external command in $PATH
 pub fn search_command(command: &str) -> Option<PathBuf> {
     let path : String = env::var("PATH").unwrap_or("".to_owned());
     let paths : Vec<&str> = path.split(":").collect();
@@ -75,6 +82,7 @@ pub fn search_command(command: &str) -> Option<PathBuf> {
     None
 }
 
+/// Execute a command, fork part.
 pub fn execute_command(command_path: PathBuf, arguments: &[&str]) {
     let mut v : Vec<CString> = Vec::new();
     let mut a : Vec<CString> = Vec::new();
@@ -111,3 +119,4 @@ pub fn execute_command(command_path: PathBuf, arguments: &[&str]) {
         }
     }
 }
+
