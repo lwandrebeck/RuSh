@@ -32,43 +32,55 @@ use nom::*;
 // 13:24 <geal> escaped prend d'abor un parser pour les caractères "normaux", puis le caractère de contrôle, puis les caractères échappés
 // 13:25 <geal> escaped_transform prend le même genre d'argument, mais construit un nouveau résultat, en enlevant le caractère de contrôle et en ajoutant le résultat du dernier parser
 
-pub fn is_metacharacter(chr:u8) -> bool {
-    chr as char == '|' || chr as char == '&' || chr as char == ';' || chr as char == '(' || chr as char == ')' ||
-    chr as char == '<' || chr as char == '>'
+pub fn is_metacharacter(chr: char) -> bool {
+    chr == '|' || chr == '&' || chr == ';' || chr == '(' || chr == ')' || chr == '<' || chr == '>'
 }
 
-//named!(metacharacter, take_till_s!(is_metacharacter));
+named!(metacharacter<&str, &str>, take_till_s!(is_metacharacter));
 
-pub fn is_point(chr:u8) -> bool {
-    chr as char == '.'
+pub fn is_point(chr: char) -> bool {
+    chr == '.'
 }
 
-//named!(point, take_till!(is_point));
+named!(point<&str, &str>, take_till_s!(is_point));
 
-pub fn is_star(chr:u8) -> bool {
-    chr as char == '*'
+pub fn is_star(chr: char) -> bool {
+    chr == '*'
 }
 
-//named!(star, take_till!(is_star));
+named!(star<&str, &str>, take_till_s!(is_star));
 
-pub fn is_arobase(chr:u8) -> bool {
-    chr as char == '@'
+pub fn is_arobase(chr: char) -> bool {
+    chr == '@'
 }
 
-//named!(arobase, take_till!(is_arobase));
+named!(arobase<&str, &str>, take_till_s!(is_arobase));
 
-pub fn is_oparenthesis(chr:u8) -> bool {
-    chr as char == '('
+pub fn is_cparenthesis(chr: char) -> bool {
+    chr == ')'
 }
 
-//named!(oparenthesis, take_till!(is_oparenthesis));
+named!(cparenthesis<&str, &str>, take_till_s!(is_cparenthesis));
 
-pub fn is_obracket(chr:u8) -> bool {
-    chr as char == '{'
+pub fn is_oparenthesis(chr: char) -> bool {
+    chr == '('
 }
 
-//named!(obracket, take_till!(is_obracket));
+named!(oparenthesis<&str, &str>, take_till_s!(is_oparenthesis));
 
+pub fn is_cbracket(chr: char) -> bool {
+    chr == '}'
+}
+
+named!(cbracket<&str, &str>, take_till_s!(is_cbracket));
+
+pub fn is_obracket(chr: char) -> bool {
+    chr == '{'
+}
+
+named!(obracket<&str, &str>, take_till_s!(is_obracket));
+
+//named!(script_to_parse<&str, &str>, alt_complete!(take_until_s(eof) | take_until_s(line_ending)));
 // Take care of variable definition
 /* chain!(key_value, <&[u8], (&str, &str)>,
     key:    parameter_parser    ~
@@ -79,19 +91,27 @@ pub fn is_obracket(chr:u8) -> bool {
             line_ending?        ~
             backslash?); */
 
-//named!(double_quote, delimited!(char!('"'), escaped!(call!(alphanumeric()), '\\', alt!(char!('$') | char!('`') | char!('"') | char!('\\'))),char!('"')));
-//named!(single_quote, delimited!(char!('\''), none_of!("'"), char!('\'')));
-
 //named!(variable, delimited!(char!('$', alt!(call!(alphanumeric) | call!(
 
 //named!(blank, call!(nom::space()));
 //named!(line_to_parse, take_till!(line_ending));
-named!(shebang_or_comment, alt!(tag!("#!") | tag!("#")));
-named!(escape_character, tag!("\\"));
-//named!(double_quote, delimited!(char!('"'), char!('"')));
-//named!(ansi_c_quote, delimited!(tag!("$'"), char!('\'')));
-//named!(locale_specific_translation, delimited!(tag!("$\""), char!('"')));
+named!(shebang_or_comment<&str, &str>, alt!(tag_s!("#!") | tag_s!("#")));
+named!(escape_character<&str, &str>, tag_s!("\\"));
+named!(double_quote, delimited!(char!('\"'), is_not!("\""), char!('\"')));
+named!(single_quote, delimited!(char!('\''), is_not!("\'"), char!('\'')));
+named!(ansi_c_quote, delimited!(tag!("$'"), is_not!("\'"), char!('\'')));
+named!(locale_specific_translation, delimited!(tag!("$\""), is_not!("\""), char!('\"')));
 
+//pub fn is_eof(chr: u8) -> bool {
+//    eof(chr)
+//}
+
+//pub fn is_line_ending(chr: u8) -> bool {
+//    line_ending(chr)
+//}
+
+//named!(script_to_parse, alt_complete!(take_till_s!(is_eof) | take_till_s!(is_line_ending)));
+//named!(line_to_parse, take_until!("\n"));
 
 /* fn escape_transform() {
     use std::string;
@@ -140,4 +160,4 @@ named!(escape_character, tag!("\\"));
     // 4.7) pathname expansion. unquoted * ? [ ]. if no file/path matches, token is left as is. See noglob, nullglob, dotglob, nocaseglob
     // 4.8) process substitution. <(command)
 // 5) quote removal (', ", \ being not the result of expansion)
- 
+
