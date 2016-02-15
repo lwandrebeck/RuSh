@@ -21,6 +21,11 @@
  *
  */
 
+ //! RuSh parser
+ //!
+ //! Every functions related to parsing of shell input and files are located in that file
+ //! nom 1.2 is used.
+
 use nom::*;
 
 // Control operators
@@ -32,48 +37,56 @@ use nom::*;
 // 13:24 <geal> escaped prend d'abor un parser pour les caractères "normaux", puis le caractère de contrôle, puis les caractères échappés
 // 13:25 <geal> escaped_transform prend le même genre d'argument, mais construit un nouveau résultat, en enlevant le caractère de contrôle et en ajoutant le résultat du dernier parser
 
+/// As defined in some bash doc, returns true is current character is |, &, ;, (, ), < or >
 pub fn is_metacharacter(chr: char) -> bool {
     chr == '|' || chr == '&' || chr == ';' || chr == '(' || chr == ')' || chr == '<' || chr == '>'
 }
 
 named!(metacharacter<&str, &str>, take_till_s!(is_metacharacter));
 
-pub fn is_point(chr: char) -> bool {
+/// Returns true if current character is a dot.
+pub fn is_dot(chr: char) -> bool {
     chr == '.'
 }
 
-named!(point<&str, &str>, take_till_s!(is_point));
+named!(dot<&str, &str>, take_till_s!(is_dot));
 
+/// Returns true if current character is a star.
 pub fn is_star(chr: char) -> bool {
     chr == '*'
 }
 
 named!(star<&str, &str>, take_till_s!(is_star));
 
-pub fn is_arobase(chr: char) -> bool {
+/// Returns true if current character is an at.
+pub fn is_at(chr: char) -> bool {
     chr == '@'
 }
 
-named!(arobase<&str, &str>, take_till_s!(is_arobase));
+named!(at<&str, &str>, take_till_s!(is_at));
 
+/// Returns true if current character is a closing parenthesis.
 pub fn is_cparenthesis(chr: char) -> bool {
     chr == ')'
 }
 
 named!(cparenthesis<&str, &str>, take_till_s!(is_cparenthesis));
 
+/// Returns true if current character is an opening parenthesis.
 pub fn is_oparenthesis(chr: char) -> bool {
     chr == '('
 }
 
 named!(oparenthesis<&str, &str>, take_till_s!(is_oparenthesis));
 
+/// Returns true if current character is a closing bracket.
 pub fn is_cbracket(chr: char) -> bool {
     chr == '}'
 }
 
 named!(cbracket<&str, &str>, take_till_s!(is_cbracket));
 
+/// Returns true if current character is an opening bracket.
 pub fn is_obracket(chr: char) -> bool {
     chr == '{'
 }
@@ -95,6 +108,7 @@ named!(obracket<&str, &str>, take_till_s!(is_obracket));
 
 //named!(blank, call!(nom::space()));
 //named!(line_to_parse, take_till!(line_ending));
+
 named!(shebang_or_comment<&str, &str>, alt!(tag_s!("#!") | tag_s!("#")));
 named!(escape_character<&str, &str>, tag_s!("\\"));
 named!(double_quote, delimited!(char!('\"'), is_not!("\""), char!('\"')));
