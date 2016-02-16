@@ -4,6 +4,9 @@
 *.rlib
 *.dll
 
+# Nfs glitches
+.nfs*
+
 # Executables
 *.exe
 
