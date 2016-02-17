@@ -4,7 +4,7 @@ description = "rush aims to be a bash compatible shell (with more candies) writt
 license = "GPL3"
 version = "0.0.1"
 authors = [ "Laurent Wandrebeck <l.wandrebeck@quelquesmots.fr>",
-	        "Guillaume Gomez <guillaume1.gomez@gmail.com>" ]
+            "Guillaume Gomez <guillaume1.gomez@gmail.com>" ]
 
 [features]
 nightly = []

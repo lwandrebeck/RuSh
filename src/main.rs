@@ -43,6 +43,7 @@ mod builtins;
 mod command;
 mod config;
 mod parser;
+mod error;
 
 /// Opt structure is defined here to store options status (setopt)
 #[derive(Hash, Eq, PartialEq, Debug)]
@@ -70,8 +71,8 @@ fn handle_command(user_expr: &str) -> bool {
 
 /// To be completely overhauled when nom parser is implemented
 fn builtins(command: &Vec<&str>) -> bool {
-	// TODO to be replaced by some nom magic.
-	match command[0] {
+    // TODO to be replaced by some nom magic.
+    match command[0] {
         "" => { return false; },
         "[[" => { builtins::etest(&command[1..]); },
         "<" => { builtins::ltsign(&command[1..]); },
@@ -164,23 +165,23 @@ fn main() {
     config::init_env();
     // take care of SECOND env var
     thread::spawn(move ||  {
-		loop {
-			thread::sleep(time::Duration::new(1, 0));
-			match env::var("SECONDS") {
-				Ok(val) =>  { let mut s:u64 = val.parse().unwrap(); s += 1; env::set_var("SECONDS", s.to_string()); }
-				Err(e) => return
-		}; } } );
+        loop {
+            thread::sleep(time::Duration::new(1, 0));
+            match env::var("SECONDS") {
+                Ok(val) =>  { let mut s:u64 = val.parse().unwrap(); s += 1; env::set_var("SECONDS", s.to_string()); }
+                Err(e) => return
+        }; } } );
     loop {
         // FIXME Add "correct" prompt management
         let p = match line_case {
             1 => { let prompt_command = match env::var("PROMPT_COMMAND") {
-						Ok(pc) => pc,
-						Err(e) => String::from("")
-				   };
-				   if handle_command(&prompt_command) {
-					   return;
-				   }
-				   "PS1" },
+                        Ok(pc) => pc,
+                        Err(e) => String::from("")
+                   };
+                   if handle_command(&prompt_command) {
+                       return;
+                   }
+                   "PS1" },
             2 => { "PS2" },
             3 => { "PS3" },
             4 => { "PS4" },
@@ -191,11 +192,16 @@ fn main() {
             None => { break }
             Some(input) => {
                 linenoise::history_add(&input);
-                if handle_command(&input) {
-                    return;
+                if let Ok(parsed_line) = parser::parse_shell(&input) {
+                    print!("it worked !");
                 }
+                // old über basic parser
+                /* if handle_command(&input) {
+                    return;
+                } */
                 cmd_nb +=1;
             }
         }
      }
 }
+
