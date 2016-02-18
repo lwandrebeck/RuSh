@@ -76,13 +76,14 @@ use builtins;
 // 13:25 <geal> escaped_transform prend le même genre d'argument, mais construit un nouveau résultat, en enlevant le caractère de contrôle et en ajoutant le résultat du dernier parser
 
 /// Function to check if first variable name character is valid (alphabetic or _ only)
-
 #[inline]
 pub fn alphabetic_or_underscore(chr: char) -> bool {
     is_alphabetic(chr as u8) || chr == '_'
 }
 
-named!(is_alphabetic_or_underscore<&str, &str>, take_till_s!(alphabetic_or_underscore));
+pub fn is_alphabetic_or_underscore(input: &str) -> IResult<&str, &str> {
+    take_while_s!(input, alphabetic_or_underscore)
+}
 
 
 /// Function to check if non first variable name character is valid (alphanumeric or _ only)
@@ -91,63 +92,89 @@ pub fn alphanumeric_or_underscore(chr: char) -> bool {
     is_alphanumeric(chr as u8) || chr == '_'
 }
 
-named!(is_alphanumeric_or_underscore<&str, &str>, take_till_s!(alphanumeric_or_underscore));
+pub fn is_alphanumeric_or_underscore(input: &str) -> IResult<&str, &str> {
+    take_while_s!(input, alphanumeric_or_underscore)
+}
 
 /// As defined in some bash doc, returns true if current character is |, &, ;, (, ), < or >
-pub fn is_metacharacter(chr: char) -> bool {
+#[inline]
+pub fn metacharacter(chr: char) -> bool {
     chr == '|' || chr == '&' || chr == ';' || chr == '(' || chr == ')' || chr == '<' || chr == '>'
 }
 
-named!(metacharacter<&str, &str>, take_till_s!(is_metacharacter));
+pub fn is_metacharacter(input: &str) -> IResult<&str, &str> {
+    take_while_s!(input, metacharacter)
+}
 
 /// Returns true if current character is a dot.
-pub fn is_dot(chr: char) -> bool {
+#[inline]
+pub fn dot(chr: char) -> bool {
     chr == '.'
 }
 
-named!(dot<&str, &str>, take_till_s!(is_dot));
+pub fn is_dot(input: &str) -> IResult<&str, &str> {
+    take_while_s!(input, dot)
+}
 
 /// Returns true if current character is a star.
-pub fn is_star(chr: char) -> bool {
+#[inline]
+pub fn star(chr: char) -> bool {
     chr == '*'
 }
 
-named!(star<&str, &str>, take_till_s!(is_star));
+pub fn is_star(input: &str) -> IResult<&str, &str> {
+    take_while_s!(input, star)
+}
 
 /// Returns true if current character is an at.
-pub fn is_at(chr: char) -> bool {
+#[inline]
+pub fn at(chr: char) -> bool {
     chr == '@'
 }
 
-named!(at<&str, &str>, take_till_s!(is_at));
+pub fn is_at(input: &str) -> IResult<&str, &str> {
+    take_while_s!(input, at)
+}
 
 /// Returns true if current character is a closing parenthesis.
-pub fn is_cparenthesis(chr: char) -> bool {
+#[inline]
+pub fn cparenthesis(chr: char) -> bool {
     chr == ')'
 }
 
-named!(cparenthesis<&str, &str>, take_till_s!(is_cparenthesis));
+pub fn is_cparenthesis(input: &str) -> IResult<&str, &str> {
+    take_while_s!(input, cparenthesis)
+}
 
 /// Returns true if current character is an opening parenthesis.
-pub fn is_oparenthesis(chr: char) -> bool {
+#[inline]
+pub fn oparenthesis(chr: char) -> bool {
     chr == '('
 }
 
-named!(oparenthesis<&str, &str>, take_till_s!(is_oparenthesis));
+pub fn is_oparenthesis(input: &str) -> IResult<&str, &str> {
+    take_while_s!(input, oparenthesis)
+}
 
 /// Returns true if current character is a closing bracket.
-pub fn is_cbracket(chr: char) -> bool {
+#[inline]
+pub fn cbracket(chr: char) -> bool {
     chr == '}'
 }
 
-named!(cbracket<&str, &str>, take_till_s!(is_cbracket));
+pub fn is_cbracket(input: &str) -> IResult<&str, &str> {
+    take_while_s!(input, cbracket)
+}
 
 /// Returns true if current character is an opening bracket.
-pub fn is_obracket(chr: char) -> bool {
+#[inline]
+pub fn obracket(chr: char) -> bool {
     chr == '{'
 }
 
-named!(obracket<&str, &str>, take_till_s!(is_obracket));
+pub fn is_obracket(input: &str) -> IResult<&str, &str> {
+    take_while_s!(input, obracket)
+}
 
 // TODO: only two macros for now for testing
 /* #[derive(Debug,PartialEq,Eq)]
@@ -201,12 +228,12 @@ pub fn parse_shell(line: &str) -> Result<String, ShellError> {
 //named!(blank, call!(nom::space()));
 //named!(line_to_parse, take_till!(line_ending));
 
-named!(shebang_or_comment<&str, &str>, alt!(tag_s!("#!") | tag_s!("#")));
-named!(escape_character<&str, &str>, tag_s!("\\"));
-named!(double_quote, delimited!(char!('\"'), is_not!("\""), char!('\"')));
-named!(single_quote, delimited!(char!('\''), is_not!("\'"), char!('\'')));
-named!(ansi_c_quote, delimited!(tag!("$'"), is_not!("\'"), char!('\'')));
-named!(locale_specific_translation, delimited!(tag!("$\""), is_not!("\""), char!('\"')));
+named!(is_shebang_or_comment<&str, &str>, alt!(tag_s!("#!") | tag_s!("#")));
+named!(is_escape_character<&str, &str>, tag_s!("\\"));
+named!(is_double_quote, delimited!(char!('\"'), is_not!("\""), char!('\"')));
+named!(is_single_quote, delimited!(char!('\''), is_not!("\'"), char!('\'')));
+named!(is_ansi_c_quote, delimited!(tag!("$'"), is_not!("\'"), char!('\'')));
+named!(is_locale_specific_translation, delimited!(tag!("$\""), is_not!("\""), char!('\"')));
 
 //pub fn is_eof(chr: u8) -> bool {
 //    eof(chr)
@@ -232,8 +259,9 @@ named!(locale_specific_translation, delimited!(tag!("$\""), is_not!("\""), char!
     );
 } */
 
+/*
 /// manage variables format
-/* pub fn variable(var: &str) -> Result<String, ShellError> {
+pub fn variable(var: &str) -> Result<String, ShellError> {
     switch!(
         delimited!(
             tag_s!("${"),
@@ -242,24 +270,146 @@ named!(locale_specific_translation, delimited!(tag!("$\""), is_not!("\""), char!
 #[cfg(test)]
 
 mod tests {
+    use parser;
+    use nom;
 
     #[test]
     fn is_ab_or_us() {
-        let a: &str = "_aZ";
-        let b: &str = "aZ09_";
-        let c: &str = "09aZ_";
-        assert_eq!(is_alphabetic_or_underscore!(a), Done(empty, a));
-        assert_eq!(is_alphabetic_or_underscore!(b), Done(&"aZ", &"09_"));
-        assert_eq!(is_alphabetic_or_underscore!(c), Done(&"", &"09aZ_"));
+        let none: &str = "0'@-";
+        let all: &str = "_aZ";
+        let beg: &str = "aZ09";
+        let mid: &str = "09a90";
+        let end: &str = "0990a";
+        assert_eq!(parser::is_alphabetic_or_underscore(none), nom::IResult::Done("0'@-", ""));
+        assert_eq!(parser::is_alphabetic_or_underscore(all), nom::IResult::Done("", "_aZ"));
+        assert_eq!(parser::is_alphabetic_or_underscore(beg), nom::IResult::Done("09", "aZ"));
+        assert_eq!(parser::is_alphabetic_or_underscore(mid), nom::IResult::Done("09a90", ""));
+        assert_eq!(parser::is_alphabetic_or_underscore(end), nom::IResult::Done("0990a", ""));
     }
 
     #[test]
-    fn is_an_or_uns() {
-        let a: &str = "_aZ09";
-        let b: &str = "_09aZ+/@";
-        let c: &str = "+/@_09aZ";
-        assert_eq!(is_alphanumeric_or_underscore!(a), Done(empty, a));
-        assert_eq!(is_alphanumeric_or_underscore!(b), Done(&"_09aZ", "+/@"));
-        assert_eq!(is_alphanumeric_or_underscore!(c), Done(&"", &"+/@_09aZ"));
+    fn is_an_or_us() {
+        let none: &str = "'@-<";
+        let all: &str = "_aZ09";
+        let beg: &str = "_09aZ+/@";
+        let mid: &str = "+/@_0Z++";
+        let end: &str = "()[];0";
+        assert_eq!(parser::is_alphanumeric_or_underscore(none), nom::IResult::Done("'@-<", ""));
+        assert_eq!(parser::is_alphanumeric_or_underscore(all), nom::IResult::Done("", "_aZ09"));
+        assert_eq!(parser::is_alphanumeric_or_underscore(beg), nom::IResult::Done("+/@", "_09aZ"));
+        assert_eq!(parser::is_alphanumeric_or_underscore(mid), nom::IResult::Done("+/@_0Z++", ""));
+        assert_eq!(parser::is_alphanumeric_or_underscore(end), nom::IResult::Done("()[];0", ""));
+    }
+
+    #[test]
+    fn is_mc() {
+        let none: &str = "09aZ-+";
+        let all: &str = "|&;()<>";
+        let beg: &str = "|&;()<>aZ";
+        let mid: &str = "09|&;()<>aZ_";
+        let end: &str = "09aZ_|&;()<>";
+        assert_eq!(parser::is_metacharacter(none), nom::IResult::Done("09aZ-+", ""));
+        assert_eq!(parser::is_metacharacter(all), nom::IResult::Done("", "|&;()<>"));
+        assert_eq!(parser::is_metacharacter(beg), nom::IResult::Done("aZ", "|&;()<>"));
+        assert_eq!(parser::is_metacharacter(mid), nom::IResult::Done("09|&;()<>aZ_", ""));
+        assert_eq!(parser::is_metacharacter(end), nom::IResult::Done("09aZ_|&;()<>", ""));
+    }
+
+    #[test]
+    fn is_do() {
+        let none: &str = "aZ09@+";
+        let all: &str = "...";
+        let beg: &str = "../";
+        let mid: &str = "/../";
+        let end: &str = "/..";
+        assert_eq!(parser::is_dot(none), nom::IResult::Done("aZ09@+", ""));
+        assert_eq!(parser::is_dot(all), nom::IResult::Done("", "..."));
+        assert_eq!(parser::is_dot(beg), nom::IResult::Done("/", ".."));
+        assert_eq!(parser::is_dot(mid), nom::IResult::Done("/../", ""));
+        assert_eq!(parser::is_dot(end), nom::IResult::Done("/..", ""));
+    }
+
+    #[test]
+    fn is_sta() {
+        let none: &str = "..";
+        let all: &str = "**";
+        let beg: &str = "**/";
+        let mid: &str = "/*/";
+        let end: &str = "/**";
+        assert_eq!(parser::is_star(none), nom::IResult::Done("..", ""));
+        assert_eq!(parser::is_star(all), nom::IResult::Done("", "**"));
+        assert_eq!(parser::is_star(beg), nom::IResult::Done("/", "**"));
+        assert_eq!(parser::is_star(mid), nom::IResult::Done("/*/", ""));
+        assert_eq!(parser::is_star(end), nom::IResult::Done("/**", ""));
+    }
+
+    #[test]
+    fn is_at_test() {
+        let none: &str = "..";
+        let all: &str = "@@";
+        let beg: &str = "@@/";
+        let mid: &str = "/@/";
+        let end: &str = "/@@";
+        assert_eq!(parser::is_at(none), nom::IResult::Done("..", ""));
+        assert_eq!(parser::is_at(all), nom::IResult::Done("", "@@"));
+        assert_eq!(parser::is_at(beg), nom::IResult::Done("/", "@@"));
+        assert_eq!(parser::is_at(mid), nom::IResult::Done("/@/", ""));
+        assert_eq!(parser::is_at(end), nom::IResult::Done("/@@", ""));
+    }
+
+    #[test]
+    fn is_cpar() {
+        let none: &str = "..";
+        let all: &str = "))";
+        let beg: &str = "))/";
+        let mid: &str = "/)/";
+        let end: &str = "/))";
+        assert_eq!(parser::is_cparenthesis(none), nom::IResult::Done("..", ""));
+        assert_eq!(parser::is_cparenthesis(all), nom::IResult::Done("", "))"));
+        assert_eq!(parser::is_cparenthesis(beg), nom::IResult::Done("/", "))"));
+        assert_eq!(parser::is_cparenthesis(mid), nom::IResult::Done("/)/", ""));
+        assert_eq!(parser::is_cparenthesis(end), nom::IResult::Done("/))", ""));
+    }
+
+    #[test]
+    fn is_opar() {
+        let none: &str = "..";
+        let all: &str = "((";
+        let beg: &str = "((/";
+        let mid: &str = "/(/";
+        let end: &str = "/((";
+        assert_eq!(parser::is_oparenthesis(none), nom::IResult::Done("..", ""));
+        assert_eq!(parser::is_oparenthesis(all), nom::IResult::Done("", "(("));
+        assert_eq!(parser::is_oparenthesis(beg), nom::IResult::Done("/", "(("));
+        assert_eq!(parser::is_oparenthesis(mid), nom::IResult::Done("/(/", ""));
+        assert_eq!(parser::is_oparenthesis(end), nom::IResult::Done("/((", ""));
+    }
+
+    #[test]
+    fn is_cbra() {
+        let none: &str = "..";
+        let all: &str = "}}";
+        let beg: &str = "}}/";
+        let mid: &str = "/}/";
+        let end: &str = "/}}";
+        assert_eq!(parser::is_cbracket(none), nom::IResult::Done("..", ""));
+        assert_eq!(parser::is_cbracket(all), nom::IResult::Done("", "}}"));
+        assert_eq!(parser::is_cbracket(beg), nom::IResult::Done("/", "}}"));
+        assert_eq!(parser::is_cbracket(mid), nom::IResult::Done("/}/", ""));
+        assert_eq!(parser::is_cbracket(end), nom::IResult::Done("/}}", ""));
+    }
+
+    #[test]
+    fn is_obra() {
+        let none: &str = "..";
+        let all: &str = "{{";
+        let beg: &str = "{{/";
+        let mid: &str = "/{/";
+        let end: &str = "/{{";
+        assert_eq!(parser::is_obracket(none), nom::IResult::Done("..", ""));
+        assert_eq!(parser::is_obracket(all), nom::IResult::Done("", "{{"));
+        assert_eq!(parser::is_obracket(beg), nom::IResult::Done("/", "{{"));
+        assert_eq!(parser::is_obracket(mid), nom::IResult::Done("/{/", ""));
+        assert_eq!(parser::is_obracket(end), nom::IResult::Done("/{{", ""));
     }
 }
