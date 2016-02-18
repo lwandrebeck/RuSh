@@ -75,12 +75,14 @@ use builtins;
 // 13:24 <geal> escaped prend d'abor un parser pour les caractères "normaux", puis le caractère de contrôle, puis les caractères échappés
 // 13:25 <geal> escaped_transform prend le même genre d'argument, mais construit un nouveau résultat, en enlevant le caractère de contrôle et en ajoutant le résultat du dernier parser
 
-/// Function to check if first variable name character is valid (alphabetic or _ only)
+/// Function to check if character is a valid first variable name (alphabetic or _ only)
 #[inline]
 pub fn alphabetic_or_underscore(chr: char) -> bool {
     is_alphabetic(chr as u8) || chr == '_'
 }
 
+/// Function helper that returns IResult<&str (consumed), &str (leftover)> of a &str matching on alphabetic and underscores.
+#[inline]
 pub fn is_alphabetic_or_underscore(input: &str) -> IResult<&str, &str> {
     take_while_s!(input, alphabetic_or_underscore)
 }
@@ -92,6 +94,8 @@ pub fn alphanumeric_or_underscore(chr: char) -> bool {
     is_alphanumeric(chr as u8) || chr == '_'
 }
 
+/// Function helper that returns IResult<&str (consumed), &str (leftover)> of a &str matching on alphanumeric and underscores.
+#[inline]
 pub fn is_alphanumeric_or_underscore(input: &str) -> IResult<&str, &str> {
     take_while_s!(input, alphanumeric_or_underscore)
 }
@@ -102,6 +106,8 @@ pub fn metacharacter(chr: char) -> bool {
     chr == '|' || chr == '&' || chr == ';' || chr == '(' || chr == ')' || chr == '<' || chr == '>'
 }
 
+/// Function helper that returns IResult<&str (consumed), &str (leftover)> of a &str matching on metacharacters |&;()<> .
+#[inline]
 pub fn is_metacharacter(input: &str) -> IResult<&str, &str> {
     take_while_s!(input, metacharacter)
 }
@@ -112,6 +118,8 @@ pub fn dot(chr: char) -> bool {
     chr == '.'
 }
 
+/// Function helper that returns IResult<&str (consumed), &str (leftover)> of a &str matching on . (dot).
+#[inline]
 pub fn is_dot(input: &str) -> IResult<&str, &str> {
     take_while_s!(input, dot)
 }
@@ -122,6 +130,8 @@ pub fn star(chr: char) -> bool {
     chr == '*'
 }
 
+/// Function helper that returns IResult<&str (consumed), &str (leftover)> of a &str matching on * (star).
+#[inline]
 pub fn is_star(input: &str) -> IResult<&str, &str> {
     take_while_s!(input, star)
 }
@@ -132,6 +142,8 @@ pub fn at(chr: char) -> bool {
     chr == '@'
 }
 
+/// Function helper that returns IResult<&str (consumed), &str (leftover)> of a &str matching on @ (at).
+#[inline]
 pub fn is_at(input: &str) -> IResult<&str, &str> {
     take_while_s!(input, at)
 }
@@ -142,6 +154,8 @@ pub fn cparenthesis(chr: char) -> bool {
     chr == ')'
 }
 
+/// Function helper that returns IResult<&str (consumed), &str (leftover)> of a &str matching on ).
+#[inline]
 pub fn is_cparenthesis(input: &str) -> IResult<&str, &str> {
     take_while_s!(input, cparenthesis)
 }
@@ -152,28 +166,82 @@ pub fn oparenthesis(chr: char) -> bool {
     chr == '('
 }
 
+/// Function helper that returns IResult<&str (consumed), &str (leftover)> of a &str matching on (.
+#[inline]
 pub fn is_oparenthesis(input: &str) -> IResult<&str, &str> {
     take_while_s!(input, oparenthesis)
+}
+
+/// Returns true if current character is a closing brace.
+#[inline]
+pub fn cbrace(chr: char) -> bool {
+    chr == '}'
+}
+
+/// Function helper that returns IResult<&str (consumed), &str (leftover)> of a &str matching on }.
+#[inline]
+pub fn is_cbrace(input: &str) -> IResult<&str, &str> {
+    take_while_s!(input, cbrace)
+}
+
+/// Returns true if current character is an opening brace.
+#[inline]
+pub fn obrace(chr: char) -> bool {
+    chr == '{'
+}
+
+/// Function helper that returns IResult<&str (consumed), &str (leftover)> of a &str matching on {.
+#[inline]
+pub fn is_obrace(input: &str) -> IResult<&str, &str> {
+    take_while_s!(input, obrace)
 }
 
 /// Returns true if current character is a closing bracket.
 #[inline]
 pub fn cbracket(chr: char) -> bool {
-    chr == '}'
+    chr == ']'
 }
 
+/// Function helper that returns IResult<&str (consumed), &str (leftover)> of a &str matching on ].
+#[inline]
 pub fn is_cbracket(input: &str) -> IResult<&str, &str> {
     take_while_s!(input, cbracket)
 }
 
-/// Returns true if current character is an opening bracket.
+/// Returns true if current character is an opening bracket ([).
 #[inline]
 pub fn obracket(chr: char) -> bool {
-    chr == '{'
+    chr == '['
 }
 
+/// Function helper that returns IResult<&str (consumed), &str (leftover)> of a &str matching on [.
+#[inline]
 pub fn is_obracket(input: &str) -> IResult<&str, &str> {
     take_while_s!(input, obracket)
+}
+
+/// Returns true if current character is a closing chevron.
+#[inline]
+pub fn cchevron(chr: char) -> bool {
+    chr == '>'
+}
+
+/// Function helper that returns IResult<&str (consumed), &str (leftover)> of a &str matching on >.
+#[inline]
+pub fn is_cchevron(input: &str) -> IResult<&str, &str> {
+    take_while_s!(input, cchevron)
+}
+
+/// Returns true if current character is an opening chevron (<).
+#[inline]
+pub fn ochevron(chr: char) -> bool {
+    chr == '<'
+}
+
+/// Function helper that returns IResult<&str (consumed), &str (leftover)> of a &str matching on <.
+#[inline]
+pub fn is_ochevron(input: &str) -> IResult<&str, &str> {
+    take_while_s!(input, ochevron)
 }
 
 // TODO: only two macros for now for testing
@@ -392,11 +460,11 @@ mod tests {
         let beg: &str = "}}/";
         let mid: &str = "/}/";
         let end: &str = "/}}";
-        assert_eq!(parser::is_cbracket(none), nom::IResult::Done("..", ""));
-        assert_eq!(parser::is_cbracket(all), nom::IResult::Done("", "}}"));
-        assert_eq!(parser::is_cbracket(beg), nom::IResult::Done("/", "}}"));
-        assert_eq!(parser::is_cbracket(mid), nom::IResult::Done("/}/", ""));
-        assert_eq!(parser::is_cbracket(end), nom::IResult::Done("/}}", ""));
+        assert_eq!(parser::is_cbrace(none), nom::IResult::Done("..", ""));
+        assert_eq!(parser::is_cbrace(all), nom::IResult::Done("", "}}"));
+        assert_eq!(parser::is_cbrace(beg), nom::IResult::Done("/", "}}"));
+        assert_eq!(parser::is_cbrace(mid), nom::IResult::Done("/}/", ""));
+        assert_eq!(parser::is_cbrace(end), nom::IResult::Done("/}}", ""));
     }
 
     #[test]
@@ -406,10 +474,66 @@ mod tests {
         let beg: &str = "{{/";
         let mid: &str = "/{/";
         let end: &str = "/{{";
+        assert_eq!(parser::is_obrace(none), nom::IResult::Done("..", ""));
+        assert_eq!(parser::is_obrace(all), nom::IResult::Done("", "{{"));
+        assert_eq!(parser::is_obrace(beg), nom::IResult::Done("/", "{{"));
+        assert_eq!(parser::is_obrace(mid), nom::IResult::Done("/{/", ""));
+        assert_eq!(parser::is_obrace(end), nom::IResult::Done("/{{", ""));
+    }
+
+    #[test]
+    fn is_cbrak() {
+        let none: &str = "..";
+        let all: &str = "]]";
+        let beg: &str = "]]/";
+        let mid: &str = "/]/";
+        let end: &str = "/]]";
+        assert_eq!(parser::is_cbracket(none), nom::IResult::Done("..", ""));
+        assert_eq!(parser::is_cbracket(all), nom::IResult::Done("", "]]"));
+        assert_eq!(parser::is_cbracket(beg), nom::IResult::Done("/", "]]"));
+        assert_eq!(parser::is_cbracket(mid), nom::IResult::Done("/]/", ""));
+        assert_eq!(parser::is_cbracket(end), nom::IResult::Done("/]]", ""));
+    }
+
+    #[test]
+    fn is_obrak() {
+        let none: &str = "..";
+        let all: &str = "[[";
+        let beg: &str = "[[/";
+        let mid: &str = "/[/";
+        let end: &str = "/[[";
         assert_eq!(parser::is_obracket(none), nom::IResult::Done("..", ""));
-        assert_eq!(parser::is_obracket(all), nom::IResult::Done("", "{{"));
-        assert_eq!(parser::is_obracket(beg), nom::IResult::Done("/", "{{"));
-        assert_eq!(parser::is_obracket(mid), nom::IResult::Done("/{/", ""));
-        assert_eq!(parser::is_obracket(end), nom::IResult::Done("/{{", ""));
+        assert_eq!(parser::is_obracket(all), nom::IResult::Done("", "[["));
+        assert_eq!(parser::is_obracket(beg), nom::IResult::Done("/", "[["));
+        assert_eq!(parser::is_obracket(mid), nom::IResult::Done("/[/", ""));
+        assert_eq!(parser::is_obracket(end), nom::IResult::Done("/[[", ""));
+    }
+
+    #[test]
+    fn is_cchev() {
+        let none: &str = "..";
+        let all: &str = ">>";
+        let beg: &str = ">>/";
+        let mid: &str = "/>/";
+        let end: &str = "/>>";
+        assert_eq!(parser::is_cchevron(none), nom::IResult::Done("..", ""));
+        assert_eq!(parser::is_cchevron(all), nom::IResult::Done("", ">>"));
+        assert_eq!(parser::is_cchevron(beg), nom::IResult::Done("/", ">>"));
+        assert_eq!(parser::is_cchevron(mid), nom::IResult::Done("/>/", ""));
+        assert_eq!(parser::is_cchevron(end), nom::IResult::Done("/>>", ""));
+    }
+
+    #[test]
+    fn is_ochev() {
+        let none: &str = "..";
+        let all: &str = "<<";
+        let beg: &str = "<</";
+        let mid: &str = "/</";
+        let end: &str = "/<<";
+        assert_eq!(parser::is_ochevron(none), nom::IResult::Done("..", ""));
+        assert_eq!(parser::is_ochevron(all), nom::IResult::Done("", "<<"));
+        assert_eq!(parser::is_ochevron(beg), nom::IResult::Done("/", "<<"));
+        assert_eq!(parser::is_ochevron(mid), nom::IResult::Done("/</", ""));
+        assert_eq!(parser::is_ochevron(end), nom::IResult::Done("/<<", ""));
     }
 }
