@@ -1,3 +1,8 @@
+//! Add a ShellError enum
+//!
+//! To be rewritten, for now based on csv-parser by Guillaume Gomez which is MIT licence.
+//! See https://github.com/GuillaumeGomez/csv-parser
+
 use std::cmp::PartialEq;
 use std::error::Error;
 use std::fmt;
