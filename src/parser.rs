@@ -60,8 +60,10 @@
     // 4.7) pathname expansion. unquoted * ? [ ]. if no file/path matches, token is left as is. See noglob, nullglob, dotglob, nocaseglob
     // 4.8) process substitution. <(command)
 // 5) quote removal (', ", \ being not the result of expansion)
-
+use std::str;
 use nom::*;
+use nom::IResult::*;
+use nom::Err::*;
 use error::*;
 use std::fs::File;
 use builtins;
@@ -77,172 +79,110 @@ use builtins;
 
 /// Function to check if character is a valid first variable name (alphabetic or _ only)
 #[inline]
-pub fn alphabetic_or_underscore(chr: char) -> bool {
+pub fn is_alphabetic_or_underscore(chr: char) -> bool {
     is_alphabetic(chr as u8) || chr == '_'
 }
 
-/// Function helper that returns IResult<&str (consumed), &str (leftover)> of a &str matching on alphabetic and underscores.
-#[inline]
-pub fn is_alphabetic_or_underscore(input: &str) -> IResult<&str, &str> {
-    take_while_s!(input, alphabetic_or_underscore)
-}
-
-
 /// Function to check if non first variable name character is valid (alphanumeric or _ only)
 #[inline]
-pub fn alphanumeric_or_underscore(chr: char) -> bool {
+pub fn is_alphanumeric_or_underscore(chr: char) -> bool {
     is_alphanumeric(chr as u8) || chr == '_'
-}
-
-/// Function helper that returns IResult<&str (consumed), &str (leftover)> of a &str matching on alphanumeric and underscores.
-#[inline]
-pub fn is_alphanumeric_or_underscore(input: &str) -> IResult<&str, &str> {
-    take_while_s!(input, alphanumeric_or_underscore)
 }
 
 /// As defined in some bash doc, returns true if current character is |, &, ;, (, ), < or >
 #[inline]
-pub fn metacharacter(chr: char) -> bool {
+pub fn is_metacharacter(chr: char) -> bool {
     chr == '|' || chr == '&' || chr == ';' || chr == '(' || chr == ')' || chr == '<' || chr == '>'
-}
-
-/// Function helper that returns IResult<&str (consumed), &str (leftover)> of a &str matching on metacharacters |&;()<> .
-#[inline]
-pub fn is_metacharacter(input: &str) -> IResult<&str, &str> {
-    take_while_s!(input, metacharacter)
 }
 
 /// Returns true if current character is a dot.
 #[inline]
-pub fn dot(chr: char) -> bool {
+pub fn is_dot(chr: char) -> bool {
     chr == '.'
-}
-
-/// Function helper that returns IResult<&str (consumed), &str (leftover)> of a &str matching on . (dot).
-#[inline]
-pub fn is_dot(input: &str) -> IResult<&str, &str> {
-    take_while_s!(input, dot)
 }
 
 /// Returns true if current character is a star.
 #[inline]
-pub fn star(chr: char) -> bool {
+pub fn is_star(chr: char) -> bool {
     chr == '*'
-}
-
-/// Function helper that returns IResult<&str (consumed), &str (leftover)> of a &str matching on * (star).
-#[inline]
-pub fn is_star(input: &str) -> IResult<&str, &str> {
-    take_while_s!(input, star)
 }
 
 /// Returns true if current character is an at.
 #[inline]
-pub fn at(chr: char) -> bool {
+pub fn is_at(chr: char) -> bool {
     chr == '@'
-}
-
-/// Function helper that returns IResult<&str (consumed), &str (leftover)> of a &str matching on @ (at).
-#[inline]
-pub fn is_at(input: &str) -> IResult<&str, &str> {
-    take_while_s!(input, at)
 }
 
 /// Returns true if current character is a closing parenthesis.
 #[inline]
-pub fn cparenthesis(chr: char) -> bool {
+pub fn is_cparenthesis(chr: char) -> bool {
     chr == ')'
-}
-
-/// Function helper that returns IResult<&str (consumed), &str (leftover)> of a &str matching on ).
-#[inline]
-pub fn is_cparenthesis(input: &str) -> IResult<&str, &str> {
-    take_while_s!(input, cparenthesis)
 }
 
 /// Returns true if current character is an opening parenthesis.
 #[inline]
-pub fn oparenthesis(chr: char) -> bool {
+pub fn is_oparenthesis(chr: char) -> bool {
     chr == '('
-}
-
-/// Function helper that returns IResult<&str (consumed), &str (leftover)> of a &str matching on (.
-#[inline]
-pub fn is_oparenthesis(input: &str) -> IResult<&str, &str> {
-    take_while_s!(input, oparenthesis)
 }
 
 /// Returns true if current character is a closing brace.
 #[inline]
-pub fn cbrace(chr: char) -> bool {
+pub fn is_cbrace(chr: char) -> bool {
     chr == '}'
-}
-
-/// Function helper that returns IResult<&str (consumed), &str (leftover)> of a &str matching on }.
-#[inline]
-pub fn is_cbrace(input: &str) -> IResult<&str, &str> {
-    take_while_s!(input, cbrace)
 }
 
 /// Returns true if current character is an opening brace.
 #[inline]
-pub fn obrace(chr: char) -> bool {
+pub fn is_obrace(chr: char) -> bool {
     chr == '{'
-}
-
-/// Function helper that returns IResult<&str (consumed), &str (leftover)> of a &str matching on {.
-#[inline]
-pub fn is_obrace(input: &str) -> IResult<&str, &str> {
-    take_while_s!(input, obrace)
 }
 
 /// Returns true if current character is a closing bracket.
 #[inline]
-pub fn cbracket(chr: char) -> bool {
+pub fn is_cbracket(chr: char) -> bool {
     chr == ']'
-}
-
-/// Function helper that returns IResult<&str (consumed), &str (leftover)> of a &str matching on ].
-#[inline]
-pub fn is_cbracket(input: &str) -> IResult<&str, &str> {
-    take_while_s!(input, cbracket)
 }
 
 /// Returns true if current character is an opening bracket ([).
 #[inline]
-pub fn obracket(chr: char) -> bool {
+pub fn is_obracket(chr: char) -> bool {
     chr == '['
-}
-
-/// Function helper that returns IResult<&str (consumed), &str (leftover)> of a &str matching on [.
-#[inline]
-pub fn is_obracket(input: &str) -> IResult<&str, &str> {
-    take_while_s!(input, obracket)
 }
 
 /// Returns true if current character is a closing chevron.
 #[inline]
-pub fn cchevron(chr: char) -> bool {
+pub fn is_cchevron(chr: char) -> bool {
     chr == '>'
-}
-
-/// Function helper that returns IResult<&str (consumed), &str (leftover)> of a &str matching on >.
-#[inline]
-pub fn is_cchevron(input: &str) -> IResult<&str, &str> {
-    take_while_s!(input, cchevron)
 }
 
 /// Returns true if current character is an opening chevron (<).
 #[inline]
-pub fn ochevron(chr: char) -> bool {
+pub fn is_ochevron(chr: char) -> bool {
     chr == '<'
 }
 
-/// Function helper that returns IResult<&str (consumed), &str (leftover)> of a &str matching on <.
+/// variable prefix
+named!(variable_prefix, tag!("$"));
+
+/// valid first character for a variable
+named!(variable_first_char, tag!("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_"));
+
+/*
+/// valid non first characters for a variable
+named!(variable_car, many0!(tag!("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ01234567890_"))); */
+
+/*
+/// Returns true if current character is the one we’re searching for.
 #[inline]
-pub fn is_ochevron(input: &str) -> IResult<&str, &str> {
-    take_while_s!(input, ochevron)
+pub fn is_in(chr: char, searched: char) -> bool {
+    chr == searched
 }
+
+///Function helper take_while_s a given character is in a given &str
+#[inline]
+pub fn is_a_in(chr: char, input: &str) -> IResult<&str, &str> {
+    take_while_s!(input, is_a!(chr as u8) )
+} */
 
 // TODO: only two macros for now for testing
 /* #[derive(Debug,PartialEq,Eq)]
@@ -258,6 +198,7 @@ pub fn is_ochevron(input: &str) -> IResult<&str, &str> {
       tag!("echo ") => { |_| Builtins::echo }
     | tag!("pwd") => { |_| Builtins::pwd }
     )); */
+
 /// Very beginning of parser.
 /*pub fn parse_shell_line(line: &str) -> Result<Vec<Vec<String>>, ShellError> {
     let components: Vec<&str> = line.split(' ').collect();
@@ -328,11 +269,90 @@ named!(is_locale_specific_translation, delimited!(tag!("$\""), is_not!("\""), ch
 } */
 
 /*
+/// recognize a basic variable name
+named!(basicvar <&str, &str>,
+    recognize!(
+            tuple!(
+                one_of!("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_"),
+                take_while!(is_alphanumeric_or_underscore)
+                  )
+              )
+); */
+
+/*named!(basicvar <&str, &str>,
+    recognize!(
+        tuple!(
+            one_of!(is_alphabetic || '_'),
+                take_while_s!(is_alphanumeric || '_')
+        )
+    )
+);*/
+
+/*
 /// manage variables format
+/// -> switch
+/// 01 none or one
+/// 0+ 0 or more
+/// 1+ 1 or more
+/// | or
+/// ab_or_us: alphabetic or underscore
+/// an_or_us: alphanumeric or underscore
+/// basicvar 1+ ab_or_us 0+ an_or_us
+/// extendedvar  basicvar 01 [ -> 1+ Digit ]
+///                            -> another var (recursive call) ]
+/// $ -> Digit
+      -> basicvar
+      -> # Digit
+      -> # basicvar
+      -> $
+      -> *
+      -> @
+      -> !
+      -> ' -> \ -> 1+ OctDigit '
+                -> x 1+ HexDigit '
+           -> string (globs are not interpreted) '
+      -> { -> $        |
+              *        |
+              @        |
+              !        |
+              #        |
+              # extendedvar |
+              extendedvar
+                     -> }
+                     -> : -> 1+ Digit -> }
+                                    -> : -> 1+ Digit }
+                                         -> another var (recursive call) }
+                          -> another var (recursive call) -> }
+                                                          -> : -> 1+ Digit }
+                                                               -> another var (recursive call) }
+                     -> # -> string (possible globs * etc) }
+                          -> another var (recursive call) }
+                     -> ## -> string (possible globs * etc) }
+                           -> another var (recursive call) }
+                     -> % -> string (possible globs * etc) }
+                          -> another var (recursive call) }
+                     -> %% -> string (possible globs * etc) }
+                           -> another var (recursive call) }
+                     -> / -> string (possible globs) 01 / -> string (globs are not interpreted) }
+                                                          -> another var (recursive call) }
+                          -> another var (recursive call) 01 / -> string (globs are not interpreted) }
+                                                               -> another var (recursive call) }
+                     -> // -> string (possible globs) 01 / -> string (globs are not interpreted) }
+                                                           -> another var (recursive call) }
+                           -> another var (recursive call) 01 / -> string (globs are not interpreted) }
+                                                                -> another var (recursive call) }
+                     -> /# -> string (possible globs) 01 / -> string (globs are not interpreted) }
+                                                           -> another var (recursive call) }
+                           -> another var (recursive call) 01 / -> string (globs are not interpreted) }
+                                                                -> another var (recursive call) }
+                     -> /% -> string (possible globs) 01 / -> string (globs are not interpreted) }
+                                                           -> another var (recursive call) }
+                           -> another var (recursive call) 01 / -> string (globs are not interpreted) }
+                                                                -> another var (recursive call) }
+
 pub fn variable(var: &str) -> Result<String, ShellError> {
-    switch!(
-        delimited!(
-            tag_s!("${"),
+    delimited!(
+        tag_s!("${"),
 } */
 
 #[cfg(test)]
