@@ -63,7 +63,6 @@
 use std::str;
 use nom::*;
 use nom::IResult::*;
-use nom::Err::*;
 use error::*;
 use std::fs::File;
 use builtins;
@@ -83,11 +82,17 @@ pub fn is_alphabetic_or_underscore(chr: char) -> bool {
     is_alphabetic(chr as u8) || chr == '_'
 }
 
+/// Helper for is_alphabetic_or_underscore
+named!(alphabetic_or_underscore<&str, &str>, take_while_s!(is_alphabetic_or_underscore));
+
 /// Function to check if non first variable name character is valid (alphanumeric or _ only)
 #[inline]
 pub fn is_alphanumeric_or_underscore(chr: char) -> bool {
     is_alphanumeric(chr as u8) || chr == '_'
 }
+
+/// Helper for is_alphanumeric_or_underscore
+named!(alphanumeric_or_underscore<&str, &str>, take_while_s!(is_alphanumeric_or_underscore));
 
 /// As defined in some bash doc, returns true if current character is |, &, ;, (, ), < or >
 #[inline]
@@ -95,11 +100,17 @@ pub fn is_metacharacter(chr: char) -> bool {
     chr == '|' || chr == '&' || chr == ';' || chr == '(' || chr == ')' || chr == '<' || chr == '>'
 }
 
+/// Helper for is_metacharacter
+named!(metacharacter<&str, &str>, take_while_s!(is_metacharacter));
+
 /// Returns true if current character is a dot.
 #[inline]
 pub fn is_dot(chr: char) -> bool {
     chr == '.'
 }
+
+/// Helper for is_dot
+named!(dot<&str, &str>, take_while_s!(is_dot));
 
 /// Returns true if current character is a star.
 #[inline]
@@ -107,11 +118,17 @@ pub fn is_star(chr: char) -> bool {
     chr == '*'
 }
 
+/// Helper for is_star
+named!(star<&str, &str>, take_while_s!(is_star));
+
 /// Returns true if current character is an at.
 #[inline]
 pub fn is_at(chr: char) -> bool {
     chr == '@'
 }
+
+/// Helper for is_at
+named!(at<&str, &str>, take_while_s!(is_at));
 
 /// Returns true if current character is a closing parenthesis.
 #[inline]
@@ -119,11 +136,17 @@ pub fn is_cparenthesis(chr: char) -> bool {
     chr == ')'
 }
 
+/// Helper for is_cparenthesis
+named!(cparenthesis<&str, &str>, take_while_s!(is_cparenthesis));
+
 /// Returns true if current character is an opening parenthesis.
 #[inline]
 pub fn is_oparenthesis(chr: char) -> bool {
     chr == '('
 }
+
+/// Helper for is_oparenthesis
+named!(oparenthesis<&str, &str>, take_while_s!(is_oparenthesis));
 
 /// Returns true if current character is a closing brace.
 #[inline]
@@ -131,11 +154,17 @@ pub fn is_cbrace(chr: char) -> bool {
     chr == '}'
 }
 
+/// Helper for is_cbrace
+named!(cbrace<&str, &str>, take_while_s!(is_cbrace));
+
 /// Returns true if current character is an opening brace.
 #[inline]
 pub fn is_obrace(chr: char) -> bool {
     chr == '{'
 }
+
+/// Helper for is_obrace
+named!(obrace<&str, &str>, take_while_s!(is_obrace));
 
 /// Returns true if current character is a closing bracket.
 #[inline]
@@ -143,11 +172,17 @@ pub fn is_cbracket(chr: char) -> bool {
     chr == ']'
 }
 
+/// Helper for is_cbracket
+named!(cbracket<&str, &str>, take_while_s!(is_cbracket));
+
 /// Returns true if current character is an opening bracket ([).
 #[inline]
 pub fn is_obracket(chr: char) -> bool {
     chr == '['
 }
+
+/// Helper for is_obracket
+named!(obracket<&str, &str>, take_while_s!(is_obracket));
 
 /// Returns true if current character is a closing chevron.
 #[inline]
@@ -155,11 +190,17 @@ pub fn is_cchevron(chr: char) -> bool {
     chr == '>'
 }
 
+/// Helper for is_cchevron
+named!(cchevron<&str, &str>, take_while_s!(is_cchevron));
+
 /// Returns true if current character is an opening chevron (<).
 #[inline]
 pub fn is_ochevron(chr: char) -> bool {
     chr == '<'
 }
+
+/// Helper for is_ochevron
+named!(ochevron<&str, &str>, take_while_s!(is_ochevron));
 
 /// variable prefix
 named!(variable_prefix, tag!("$"));
@@ -368,11 +409,11 @@ mod tests {
         let beg: &str = "aZ09";
         let mid: &str = "09a90";
         let end: &str = "0990a";
-        assert_eq!(parser::is_alphabetic_or_underscore(none), nom::IResult::Done("0'@-", ""));
-        assert_eq!(parser::is_alphabetic_or_underscore(all), nom::IResult::Done("", "_aZ"));
-        assert_eq!(parser::is_alphabetic_or_underscore(beg), nom::IResult::Done("09", "aZ"));
-        assert_eq!(parser::is_alphabetic_or_underscore(mid), nom::IResult::Done("09a90", ""));
-        assert_eq!(parser::is_alphabetic_or_underscore(end), nom::IResult::Done("0990a", ""));
+        assert_eq!(parser::alphabetic_or_underscore(none), nom::IResult::Done("0'@-", ""));
+        assert_eq!(parser::alphabetic_or_underscore(all), nom::IResult::Done("", "_aZ"));
+        assert_eq!(parser::alphabetic_or_underscore(beg), nom::IResult::Done("09", "aZ"));
+        assert_eq!(parser::alphabetic_or_underscore(mid), nom::IResult::Done("09a90", ""));
+        assert_eq!(parser::alphabetic_or_underscore(end), nom::IResult::Done("0990a", ""));
     }
 
     #[test]
@@ -382,11 +423,11 @@ mod tests {
         let beg: &str = "_09aZ+/@";
         let mid: &str = "+/@_0Z++";
         let end: &str = "()[];0";
-        assert_eq!(parser::is_alphanumeric_or_underscore(none), nom::IResult::Done("'@-<", ""));
-        assert_eq!(parser::is_alphanumeric_or_underscore(all), nom::IResult::Done("", "_aZ09"));
-        assert_eq!(parser::is_alphanumeric_or_underscore(beg), nom::IResult::Done("+/@", "_09aZ"));
-        assert_eq!(parser::is_alphanumeric_or_underscore(mid), nom::IResult::Done("+/@_0Z++", ""));
-        assert_eq!(parser::is_alphanumeric_or_underscore(end), nom::IResult::Done("()[];0", ""));
+        assert_eq!(parser::alphanumeric_or_underscore(none), nom::IResult::Done("'@-<", ""));
+        assert_eq!(parser::alphanumeric_or_underscore(all), nom::IResult::Done("", "_aZ09"));
+        assert_eq!(parser::alphanumeric_or_underscore(beg), nom::IResult::Done("+/@", "_09aZ"));
+        assert_eq!(parser::alphanumeric_or_underscore(mid), nom::IResult::Done("+/@_0Z++", ""));
+        assert_eq!(parser::alphanumeric_or_underscore(end), nom::IResult::Done("()[];0", ""));
     }
 
     #[test]
@@ -396,11 +437,11 @@ mod tests {
         let beg: &str = "|&;()<>aZ";
         let mid: &str = "09|&;()<>aZ_";
         let end: &str = "09aZ_|&;()<>";
-        assert_eq!(parser::is_metacharacter(none), nom::IResult::Done("09aZ-+", ""));
-        assert_eq!(parser::is_metacharacter(all), nom::IResult::Done("", "|&;()<>"));
-        assert_eq!(parser::is_metacharacter(beg), nom::IResult::Done("aZ", "|&;()<>"));
-        assert_eq!(parser::is_metacharacter(mid), nom::IResult::Done("09|&;()<>aZ_", ""));
-        assert_eq!(parser::is_metacharacter(end), nom::IResult::Done("09aZ_|&;()<>", ""));
+        assert_eq!(parser::metacharacter(none), nom::IResult::Done("09aZ-+", ""));
+        assert_eq!(parser::metacharacter(all), nom::IResult::Done("", "|&;()<>"));
+        assert_eq!(parser::metacharacter(beg), nom::IResult::Done("aZ", "|&;()<>"));
+        assert_eq!(parser::metacharacter(mid), nom::IResult::Done("09|&;()<>aZ_", ""));
+        assert_eq!(parser::metacharacter(end), nom::IResult::Done("09aZ_|&;()<>", ""));
     }
 
     #[test]
@@ -410,11 +451,11 @@ mod tests {
         let beg: &str = "../";
         let mid: &str = "/../";
         let end: &str = "/..";
-        assert_eq!(parser::is_dot(none), nom::IResult::Done("aZ09@+", ""));
-        assert_eq!(parser::is_dot(all), nom::IResult::Done("", "..."));
-        assert_eq!(parser::is_dot(beg), nom::IResult::Done("/", ".."));
-        assert_eq!(parser::is_dot(mid), nom::IResult::Done("/../", ""));
-        assert_eq!(parser::is_dot(end), nom::IResult::Done("/..", ""));
+        assert_eq!(parser::dot(none), nom::IResult::Done("aZ09@+", ""));
+        assert_eq!(parser::dot(all), nom::IResult::Done("", "..."));
+        assert_eq!(parser::dot(beg), nom::IResult::Done("/", ".."));
+        assert_eq!(parser::dot(mid), nom::IResult::Done("/../", ""));
+        assert_eq!(parser::dot(end), nom::IResult::Done("/..", ""));
     }
 
     #[test]
@@ -424,11 +465,11 @@ mod tests {
         let beg: &str = "**/";
         let mid: &str = "/*/";
         let end: &str = "/**";
-        assert_eq!(parser::is_star(none), nom::IResult::Done("..", ""));
-        assert_eq!(parser::is_star(all), nom::IResult::Done("", "**"));
-        assert_eq!(parser::is_star(beg), nom::IResult::Done("/", "**"));
-        assert_eq!(parser::is_star(mid), nom::IResult::Done("/*/", ""));
-        assert_eq!(parser::is_star(end), nom::IResult::Done("/**", ""));
+        assert_eq!(parser::star(none), nom::IResult::Done("..", ""));
+        assert_eq!(parser::star(all), nom::IResult::Done("", "**"));
+        assert_eq!(parser::star(beg), nom::IResult::Done("/", "**"));
+        assert_eq!(parser::star(mid), nom::IResult::Done("/*/", ""));
+        assert_eq!(parser::star(end), nom::IResult::Done("/**", ""));
     }
 
     #[test]
@@ -438,11 +479,11 @@ mod tests {
         let beg: &str = "@@/";
         let mid: &str = "/@/";
         let end: &str = "/@@";
-        assert_eq!(parser::is_at(none), nom::IResult::Done("..", ""));
-        assert_eq!(parser::is_at(all), nom::IResult::Done("", "@@"));
-        assert_eq!(parser::is_at(beg), nom::IResult::Done("/", "@@"));
-        assert_eq!(parser::is_at(mid), nom::IResult::Done("/@/", ""));
-        assert_eq!(parser::is_at(end), nom::IResult::Done("/@@", ""));
+        assert_eq!(parser::at(none), nom::IResult::Done("..", ""));
+        assert_eq!(parser::at(all), nom::IResult::Done("", "@@"));
+        assert_eq!(parser::at(beg), nom::IResult::Done("/", "@@"));
+        assert_eq!(parser::at(mid), nom::IResult::Done("/@/", ""));
+        assert_eq!(parser::at(end), nom::IResult::Done("/@@", ""));
     }
 
     #[test]
@@ -452,11 +493,11 @@ mod tests {
         let beg: &str = "))/";
         let mid: &str = "/)/";
         let end: &str = "/))";
-        assert_eq!(parser::is_cparenthesis(none), nom::IResult::Done("..", ""));
-        assert_eq!(parser::is_cparenthesis(all), nom::IResult::Done("", "))"));
-        assert_eq!(parser::is_cparenthesis(beg), nom::IResult::Done("/", "))"));
-        assert_eq!(parser::is_cparenthesis(mid), nom::IResult::Done("/)/", ""));
-        assert_eq!(parser::is_cparenthesis(end), nom::IResult::Done("/))", ""));
+        assert_eq!(parser::cparenthesis(none), nom::IResult::Done("..", ""));
+        assert_eq!(parser::cparenthesis(all), nom::IResult::Done("", "))"));
+        assert_eq!(parser::cparenthesis(beg), nom::IResult::Done("/", "))"));
+        assert_eq!(parser::cparenthesis(mid), nom::IResult::Done("/)/", ""));
+        assert_eq!(parser::cparenthesis(end), nom::IResult::Done("/))", ""));
     }
 
     #[test]
@@ -466,11 +507,11 @@ mod tests {
         let beg: &str = "((/";
         let mid: &str = "/(/";
         let end: &str = "/((";
-        assert_eq!(parser::is_oparenthesis(none), nom::IResult::Done("..", ""));
-        assert_eq!(parser::is_oparenthesis(all), nom::IResult::Done("", "(("));
-        assert_eq!(parser::is_oparenthesis(beg), nom::IResult::Done("/", "(("));
-        assert_eq!(parser::is_oparenthesis(mid), nom::IResult::Done("/(/", ""));
-        assert_eq!(parser::is_oparenthesis(end), nom::IResult::Done("/((", ""));
+        assert_eq!(parser::oparenthesis(none), nom::IResult::Done("..", ""));
+        assert_eq!(parser::oparenthesis(all), nom::IResult::Done("", "(("));
+        assert_eq!(parser::oparenthesis(beg), nom::IResult::Done("/", "(("));
+        assert_eq!(parser::oparenthesis(mid), nom::IResult::Done("/(/", ""));
+        assert_eq!(parser::oparenthesis(end), nom::IResult::Done("/((", ""));
     }
 
     #[test]
@@ -480,11 +521,11 @@ mod tests {
         let beg: &str = "}}/";
         let mid: &str = "/}/";
         let end: &str = "/}}";
-        assert_eq!(parser::is_cbrace(none), nom::IResult::Done("..", ""));
-        assert_eq!(parser::is_cbrace(all), nom::IResult::Done("", "}}"));
-        assert_eq!(parser::is_cbrace(beg), nom::IResult::Done("/", "}}"));
-        assert_eq!(parser::is_cbrace(mid), nom::IResult::Done("/}/", ""));
-        assert_eq!(parser::is_cbrace(end), nom::IResult::Done("/}}", ""));
+        assert_eq!(parser::cbrace(none), nom::IResult::Done("..", ""));
+        assert_eq!(parser::cbrace(all), nom::IResult::Done("", "}}"));
+        assert_eq!(parser::cbrace(beg), nom::IResult::Done("/", "}}"));
+        assert_eq!(parser::cbrace(mid), nom::IResult::Done("/}/", ""));
+        assert_eq!(parser::cbrace(end), nom::IResult::Done("/}}", ""));
     }
 
     #[test]
@@ -494,11 +535,11 @@ mod tests {
         let beg: &str = "{{/";
         let mid: &str = "/{/";
         let end: &str = "/{{";
-        assert_eq!(parser::is_obrace(none), nom::IResult::Done("..", ""));
-        assert_eq!(parser::is_obrace(all), nom::IResult::Done("", "{{"));
-        assert_eq!(parser::is_obrace(beg), nom::IResult::Done("/", "{{"));
-        assert_eq!(parser::is_obrace(mid), nom::IResult::Done("/{/", ""));
-        assert_eq!(parser::is_obrace(end), nom::IResult::Done("/{{", ""));
+        assert_eq!(parser::obrace(none), nom::IResult::Done("..", ""));
+        assert_eq!(parser::obrace(all), nom::IResult::Done("", "{{"));
+        assert_eq!(parser::obrace(beg), nom::IResult::Done("/", "{{"));
+        assert_eq!(parser::obrace(mid), nom::IResult::Done("/{/", ""));
+        assert_eq!(parser::obrace(end), nom::IResult::Done("/{{", ""));
     }
 
     #[test]
@@ -508,11 +549,11 @@ mod tests {
         let beg: &str = "]]/";
         let mid: &str = "/]/";
         let end: &str = "/]]";
-        assert_eq!(parser::is_cbracket(none), nom::IResult::Done("..", ""));
-        assert_eq!(parser::is_cbracket(all), nom::IResult::Done("", "]]"));
-        assert_eq!(parser::is_cbracket(beg), nom::IResult::Done("/", "]]"));
-        assert_eq!(parser::is_cbracket(mid), nom::IResult::Done("/]/", ""));
-        assert_eq!(parser::is_cbracket(end), nom::IResult::Done("/]]", ""));
+        assert_eq!(parser::cbracket(none), nom::IResult::Done("..", ""));
+        assert_eq!(parser::cbracket(all), nom::IResult::Done("", "]]"));
+        assert_eq!(parser::cbracket(beg), nom::IResult::Done("/", "]]"));
+        assert_eq!(parser::cbracket(mid), nom::IResult::Done("/]/", ""));
+        assert_eq!(parser::cbracket(end), nom::IResult::Done("/]]", ""));
     }
 
     #[test]
@@ -522,11 +563,11 @@ mod tests {
         let beg: &str = "[[/";
         let mid: &str = "/[/";
         let end: &str = "/[[";
-        assert_eq!(parser::is_obracket(none), nom::IResult::Done("..", ""));
-        assert_eq!(parser::is_obracket(all), nom::IResult::Done("", "[["));
-        assert_eq!(parser::is_obracket(beg), nom::IResult::Done("/", "[["));
-        assert_eq!(parser::is_obracket(mid), nom::IResult::Done("/[/", ""));
-        assert_eq!(parser::is_obracket(end), nom::IResult::Done("/[[", ""));
+        assert_eq!(parser::obracket(none), nom::IResult::Done("..", ""));
+        assert_eq!(parser::obracket(all), nom::IResult::Done("", "[["));
+        assert_eq!(parser::obracket(beg), nom::IResult::Done("/", "[["));
+        assert_eq!(parser::obracket(mid), nom::IResult::Done("/[/", ""));
+        assert_eq!(parser::obracket(end), nom::IResult::Done("/[[", ""));
     }
 
     #[test]
@@ -536,11 +577,11 @@ mod tests {
         let beg: &str = ">>/";
         let mid: &str = "/>/";
         let end: &str = "/>>";
-        assert_eq!(parser::is_cchevron(none), nom::IResult::Done("..", ""));
-        assert_eq!(parser::is_cchevron(all), nom::IResult::Done("", ">>"));
-        assert_eq!(parser::is_cchevron(beg), nom::IResult::Done("/", ">>"));
-        assert_eq!(parser::is_cchevron(mid), nom::IResult::Done("/>/", ""));
-        assert_eq!(parser::is_cchevron(end), nom::IResult::Done("/>>", ""));
+        assert_eq!(parser::cchevron(none), nom::IResult::Done("..", ""));
+        assert_eq!(parser::cchevron(all), nom::IResult::Done("", ">>"));
+        assert_eq!(parser::cchevron(beg), nom::IResult::Done("/", ">>"));
+        assert_eq!(parser::cchevron(mid), nom::IResult::Done("/>/", ""));
+        assert_eq!(parser::cchevron(end), nom::IResult::Done("/>>", ""));
     }
 
     #[test]
@@ -550,10 +591,11 @@ mod tests {
         let beg: &str = "<</";
         let mid: &str = "/</";
         let end: &str = "/<<";
-        assert_eq!(parser::is_ochevron(none), nom::IResult::Done("..", ""));
-        assert_eq!(parser::is_ochevron(all), nom::IResult::Done("", "<<"));
-        assert_eq!(parser::is_ochevron(beg), nom::IResult::Done("/", "<<"));
-        assert_eq!(parser::is_ochevron(mid), nom::IResult::Done("/</", ""));
-        assert_eq!(parser::is_ochevron(end), nom::IResult::Done("/<<", ""));
+        assert_eq!(parser::ochevron(none), nom::IResult::Done("..", ""));
+        assert_eq!(parser::ochevron(all), nom::IResult::Done("", "<<"));
+        assert_eq!(parser::ochevron(beg), nom::IResult::Done("/", "<<"));
+        assert_eq!(parser::ochevron(mid), nom::IResult::Done("/</", ""));
+        assert_eq!(parser::ochevron(end), nom::IResult::Done("/<<", ""));
     }
 }
+
