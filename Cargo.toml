@@ -17,9 +17,10 @@ test = true
 bench = true
 
 [dependencies]
-chrono="*"
-libc="*"
-linenoise-rust="*"
+chrono="0.2.19"
+libc="0.2.7"
+linenoise-rust="0.1.15"
+rand="0.3.14"
+term="0.4.4"
 nom="1.2.0"
-rand="*"
-term="*"
+
