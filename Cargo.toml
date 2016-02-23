@@ -22,5 +22,5 @@ libc="0.2.7"
 linenoise-rust="0.1.15"
 rand="0.3.14"
 term="0.4.4"
-nom="1.2.0"
-
+chomp="0.2.4"
+clap="2.1.1"

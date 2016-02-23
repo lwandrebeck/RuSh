@@ -30,7 +30,8 @@
 extern crate libc;
 extern crate linenoise;
 #[macro_use]
-extern crate nom;
+extern crate chomp;
+extern crate clap;
 extern crate term;
 
 use std::io;
@@ -38,6 +39,7 @@ use std::io::{stdin, stdout, Write};
 use std::{env, thread, time};
 use std::collections::HashMap;
 use std::collections::HashSet;
+use clap::{App, Arg, SubCommand};
 
 mod builtins;
 mod command;
@@ -163,6 +165,21 @@ fn main() {
     let mut options = HashSet::<Opt>::with_capacity(46);
     config::init_options(&mut options);
     config::init_env();
+    // take care of command line arguments.
+    let clargs = App::new("RuSh")
+                        .version("0.0.1")
+                        .author("Laurent Wandrebeck <l.wandrebeck@quelquesmots.fr")
+                        .about("A Bash compatible (and more) shell written in Rust")
+                        .arg(Arg::with_name("command")
+                                    .short("c")
+                                    .value_name("COMMAND")
+                                    .help("Execute a simple command.")
+                                    .takes_value(true))
+                        .get_matches();
+
+    if let Some(cmd) = clargs.value_of("command") {
+        println!("Value for command: {}", cmd)
+    }
     // take care of SECOND env var
     thread::spawn(move ||  {
         loop {
@@ -192,13 +209,10 @@ fn main() {
             None => { break }
             Some(input) => {
                 linenoise::history_add(&input);
-                if let Ok(parsed_line) = parser::parse_shell(&input) {
-                    print!("it worked !");
-                }
-                // old über basic parser
-                /* if handle_command(&input) {
+                // TODO/FIXME : rewrite the basic parser
+                 if handle_command(&input) {
                     return;
-                } */
+                }
                 cmd_nb +=1;
             }
         }
