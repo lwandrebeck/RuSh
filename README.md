@@ -5,21 +5,20 @@
 
 ## Quick introduction
 
-RuSh aims to be (maybe one day) a POSIX Shell, Bash compatible with candies. RuSh is GPL3.
+RuSh aims to be (maybe one day) a POSIX Shell, Bash compatible (or close to) with candies. Source code is [GPL3](http://www.gnu.org/licenses/gpl-3.0.html).
 Please note that this is a personal project (read not funded), in order to learn Rust language (that does not mean feedback or patches are not welcome (Thanks [Guillaume](https://github.com/GuillaumeGomez) !) :)).
 
-Right now, RuSh is definitely not useable on a day to day basis. Only pwd, cd commands, and classical (external) commands are implemented (and cd is still buggy). Prompt is partially implemented too. Don’t even think of running some kind of script, internals (if, while, pipe, you name it) are not yet implemented. Only a single command may (sort of) work.
+Right now, RuSh is definitely not useable. A couple little things have been done, but nothing serious. To be fair, this is still the drawing board step. The first few tens of lines were written like good ol’ C. And it may not be the brightest idea given features brought by Rust. So it’s time to think about Trait and such so code becomes more modern and maintenable. Please be patient (and/or provide patches) if you’re eager to try RuSh :)
 
-Parser is definitely über basic and far from finished nor in its definitive shape. It does *not* allow for now a complete implementation of POSIX shell syntax. We plan to use « [nom](https://github.com/Geal/nom) » at some time to have a fully functionnal lexer/parser. Localization is TBD. Color management is to be implemented using « [term](https://crates.io/crates/term) » crate.
-
-The TODO list is so huge I don’t even dare to begin to write it. unimplemented!() macro will (partly) show you where work is needed. Just keep in mind function prototypes are not in definitive shape. Don’t forget too that parser needs a complete overhaul, that will (may ?) imply to change quite a bit of…everything. But work done before parser change will help to sort out bugs, so most work already done won’t be lost.
-
-##What features RuSh will have (maybe one day) that bash doesn’t ?
-
-* implement some coreutils commands as internals (no, I don’t think I’ll implement sed or awk, that would be too much work). Avoiding some forks, we’ll gain speed.
-* allow float processing.
-* Add some kind of JIT (speed anyone ?).
-* Last but not least, I *may* begin (as a standalone project) a GTK3 interface à la gnome-terminal, with some GNU Screen features (here won’t be any work on it until RuSh is - kind of - finished).
+## Uncomplete and unordered TODO list:
+* Fill up the drawing board with trait, impl etc, so code organization is more or less fixed until code is once again written.
+* Master [nom](https://github.com/Geal/nom) to write the parser
+* Have a 100% code coverage when it comes to documentation *and* testing.
+* Multi-lingual support (i18n ? l20n.rs ?)
+* Proper color management (using [term](https://crates.io/crates/term) crate maybe ?)
+* Think of ways to get speed with RuSh (read: be faster than Bash). JIT ? Some kind of « parsed script ready to be executed » ?
+* Support float processing.
+* So many things.
 
 ## Building
 
