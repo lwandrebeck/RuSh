@@ -11,6 +11,7 @@ Please note that this is a personal project (read not funded), in order to learn
 Right now, RuSh is definitely not useable. A couple little things have been done, but nothing serious. To be fair, this is still the drawing board step. The first few tens of lines were written like good ol’ C. And it may not be the brightest idea given features brought by Rust. So it’s time to think about Trait and such so code becomes more modern and maintenable. Please be patient (and/or provide patches) if you’re eager to try RuSh :)
 
 20160821: No, this project is not dead. Work is (slowly) ongoing to switch to impl. Please see traits branch (not yet pushed, it is quite a complete mess right now).
+20161208: OK, it is for now stalled, but not yet abandonned. I *may* be able to work again on it somewhere in 2017.
 
 ## Uncomplete and unordered TODO list:
 * Fill up the drawing board with trait, impl etc, so code organization is more or less fixed until code is once again written.
@@ -21,6 +22,7 @@ Right now, RuSh is definitely not useable. A couple little things have been done
 * Think of ways to get speed with RuSh (read: be faster than Bash). JIT ? Some kind of « parsed script ready to be executed » ?
 * Support float processing.
 * Deprecate several bashy thing (older versions compatibility etc, bash is so much of a noodles plate now due to history that I won’t be able to cover every point so I’ll have to focus).
+* Use [seahash](https://crates.io/crates/seahash) instead of fnv.
 * So many things.
 
 ## Building
