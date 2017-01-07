@@ -1,7 +1,7 @@
 /*
  * command.rs
  *
- * Copyright 2015-2016 Laurent Wandrebeck <l.wandrebeck@quelquesmots.fr>
+ * Copyright 2015-2017 Laurent Wandrebeck <l.wandrebeck@quelquesmots.fr>
  * Copyright 2015 Guillaume Gomez <guillaume1.gomez@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
