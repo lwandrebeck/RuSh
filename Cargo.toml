@@ -1,6 +1,6 @@
 [package]
-name = "Rush"
-description = "rush aims to be a bash compatible shell (with more candies) written in rust."
+name = "RuSh"
+description = "RuSh aims to be a bash compatible shell (with more candies) written in rust."
 license = "GPL3"
 version = "0.0.1"
 authors = [ "Laurent Wandrebeck <l.wandrebeck@quelquesmots.fr>",
@@ -18,8 +18,10 @@ bench = true
 
 [dependencies]
 rustyline="1.0.0"
-chrono="0.2.25"
+chrono="0.3.0"
 libc="0.2.7"
-rand="0.3.14"
-term="0.4.4"
-fnv="1.0.3"
+rand="0.3.15"
+term="0.4.5"
+fnv="1.0.5"
+pest="0.4.1"
+
