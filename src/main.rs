@@ -31,7 +31,7 @@ extern crate libc;
 extern crate rustyline;
 #[macro_use]
 extern crate term;
-extern crate fnv;
+extern crate seahash;
 extern crate rand;
 extern crate chrono;
 extern crate pest;
@@ -42,15 +42,24 @@ use std::{env, thread, time, str};
 use std::collections::BTreeMap;
 use std::collections::HashMap;
 use std::collections::hash_map::Entry;
-use std::hash::BuildHasherDefault;
-use self::fnv::FnvHasher;
+//use std::hash::BuildHasherDefault;
+use std::hash::BuildHasher;
 use libc::{geteuid, getpid, getppid, getuid, getgid, getlogin, c_char, size_t, c_int};
 use std::path::PathBuf;
 use self::rand::Rng;
 use self::chrono::*;
 use std::ffi::CStr;
 
-pub type MyHasher = BuildHasherDefault<FnvHasher>;
+/// For seahash maps.
+pub struct SeaRandomState;
+//type Hasher = seahash::SeaHasher;
+
+impl BuildHasher for SeaRandomState {
+    type Hasher = seahash::SeaHasher;
+    fn build_hasher(&self) -> seahash::SeaHasher {
+        seahash::SeaHasher::new()
+    }
+}
 
 /// Structure to store variable value and rw state.
 #[derive(Hash, Eq, PartialEq, Debug)]
@@ -66,17 +75,39 @@ pub struct OptionRW {
     rw: bool
 }
 
+/// In order to get a proper execution speed, let’s have 3 default types
+pub struct Floats {
+    value: f32,
+    rw: bool
+}
+
+pub struct Uints {
+    value: u64,
+    rw: bool
+}
+
+pub struct Sints {
+    value: i64,
+    rw: bool
+}
+
 /// Core structure containing everything needed for RuSh
 //#[derive(Hash, Eq, PartialEq, Debug)]
 pub struct RuSh {
     /// aliases: Stored as HashMap<&str, &str>
-    aliases: HashMap<String, String, MyHasher>,
+    aliases: HashMap<String, String, SeaRandomState>,
     /// shopt_options: autocd, etc. See man bash, shopt options. Stored as HashMap<&str, &bool>
-    shopt_options: HashMap<String, OptionRW, MyHasher>,
+    shopt_options: HashMap<String, OptionRW, SeaRandomState>,
     /// set_options: allexport, braceexpand, etc. See man bash, set command. Stored as HashMap<&str, &bool>
-    set_options: HashMap<String, OptionRW, MyHasher>,
+    set_options: HashMap<String, OptionRW, SeaRandomState>,
     /// shell_vars: RUSH, RUSHPID, etc. See man bash, shell variables. Stored as HashMap<&str, &str>
-    shell_vars: HashMap<String, ValueRW, MyHasher>,
+    shell_vars: HashMap<String, ValueRW, SeaRandomState>,
+    /// shell_floats: store float vars in native format (speeeeeeeed)
+    shell_floats: HashMap<String, Floats, SeaRandomState>,
+    /// Shell_uints: store uints vars in native format (speeeeeeeed)
+    shell_uints: HashMap<String, Uints, SeaRandomState>,
+    /// Shell_sints: store sints vars in native format (speeeeeeeed)
+    shell_sints: HashMap<String, Sints, SeaRandomState>,
     /// Command history. Stored as History from rustyline
     history: rustyline::history::History,
     /// line case, needed for prompt management
@@ -90,7 +121,7 @@ pub struct RuSh {
 impl Default for RuSh {
     fn default() -> RuSh {
         let mut shell = RuSh {
-            // 15 aliases by default in Fedora 25.
+            // 15 aliases by default in Fedora 26.
             aliases: RuSh::init_aliases(),
             // 46 shopt options by default, so let’s have a big enough HashMap to store these.
             shopt_options: RuSh::init_shopt_options(),
@@ -98,6 +129,12 @@ impl Default for RuSh {
             set_options: RuSh::init_set_options(),
             // 100 or so shell vars are defined upon startup. Let’s say most scripts do use up to 200 vars, so let’s alloc enough.
             shell_vars: RuSh::init_shell_vars(),
+            // Shell variables, float format.
+            shell_floats: RuSh::init_shell_floats(),
+            // Shell variables, unsigned int format.
+            shell_uints: RuSh::init_shell_uints(),
+            // Shell variables, signed int format.
+            shell_sints: RuSh::init_shell_sints(),
             // commands history is stored using rustyline.
             // TODO set history size
             // rl.set_history_max_len(1000);
@@ -139,9 +176,9 @@ impl Default for RuSh {
 }
 
 impl RuSh {
-    pub fn init_shopt_options() -> HashMap<String, OptionRW, MyHasher> {
+    pub fn init_shopt_options() -> HashMap<String, OptionRW, SeaRandomState> {
         // 46 shopt entries. Allocate a big enough HashMap.
-        let mut options = HashMap::with_capacity_and_hasher(46, BuildHasherDefault::<FnvHasher>::default());
+        let mut options = HashMap::with_capacity_and_hasher(46, SeaRandomState);
         // initialize default options.
         // If set, a command name that is the name of a directory is executed as if it were the argument to the cd command.  This option is only used by interactive shells.
         options.insert("autocd".to_string(), OptionRW { set: false, rw: false });
@@ -247,9 +284,9 @@ impl RuSh {
     /// Initialize set_options(&mut self) {
     /// according to help set and echo $-
     /// himBH. i not to be found anywhere !?
-    pub fn init_set_options() -> HashMap<String, OptionRW, MyHasher> {
+    pub fn init_set_options() -> HashMap<String, OptionRW, SeaRandomState> {
         // 27 set options. Allocate a big enough HashMap.
-        let mut options = HashMap::with_capacity_and_hasher(27, BuildHasherDefault::<FnvHasher>::default());
+        let mut options = HashMap::with_capacity_and_hasher(27, SeaRandomState);
         options.insert("allexport".to_string(), OptionRW { set: false, rw: false });
         options.insert("braceexpand".to_string(), OptionRW { set: true, rw: false });
         options.insert("emacs".to_string(), OptionRW { set: false, rw: false });
@@ -280,9 +317,30 @@ impl RuSh {
         options
     }
 
+    /// Init float shell variables 
+    pub fn init_shell_floats() -> HashMap<String, Floats, SeaRandomState> {
+        let mut variables = HashMap::with_capacity_and_hasher(200, SeaRandomState);
+        variables.insert("RUSH".to_string(), Floats { value: 1.0, rw: true });
+        variables
+    }
+
+    /// Init uint shell variables
+    pub fn init_shell_uints() -> HashMap<String, Uints, SeaRandomState> {
+        let mut variables = HashMap::with_capacity_and_hasher(200, SeaRandomState);
+        variables.insert("RUSH".to_string(), Uints { value: 1, rw: true });
+        variables
+    }
+
+    /// Init sint shell variables
+    pub fn init_shell_sints() -> HashMap<String, Sints, SeaRandomState> {
+        let mut variables = HashMap::with_capacity_and_hasher(200, SeaRandomState);
+        variables.insert("RUSH".to_string(), Sints { value: -1, rw: true });
+        variables
+    }
+
     /// Default shell variables are set here, following the bash way.
-    pub fn init_shell_vars() -> HashMap<String, ValueRW, MyHasher> {
-        let mut variables = HashMap::with_capacity_and_hasher(200, BuildHasherDefault::<FnvHasher>::default());
+    pub fn init_shell_vars() -> HashMap<String, ValueRW, SeaRandomState> {
+        let mut variables = HashMap::with_capacity_and_hasher(200, SeaRandomState);
         // see man bash (Shell variables)
         // Expands to the full filename used to invoke this instance of rush.
         match env::current_exe() {
@@ -436,6 +494,7 @@ impl RuSh {
         unsafe {
             let log = getlogin();
             variables.insert("USERNAME".to_string(), ValueRW { value: CStr::from_ptr(log).to_string_lossy().into_owned(), rw: true });
+            //variables.insert("USERNAME".to_string(), ValueRW { value: log.to_string(), rw: true });
         }
         variables.insert("HISTSIZE".to_string(), ValueRW { value: "1000".to_string(), rw: true });
         variables
@@ -507,8 +566,8 @@ impl RuSh {
     }
 
     /// Initialize default aliases
-    pub fn init_aliases () -> HashMap<String, String, MyHasher> {
-        let mut aliases = HashMap::with_capacity_and_hasher(30, BuildHasherDefault::<FnvHasher>::default());
+    pub fn init_aliases () -> HashMap<String, String, SeaRandomState> {
+        let mut aliases = HashMap::with_capacity_and_hasher(30, SeaRandomState);
         aliases.insert("egrep".to_string(), "egrep --color=auto".to_string());
         aliases.insert("fgrep".to_string(), "fgrep --color=auto".to_string());
         aliases.insert("grep".to_string(), "grep --color=auto".to_string());

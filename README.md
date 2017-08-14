@@ -17,7 +17,7 @@ Right now, RuSh is definitely not useable. A couple little things have been done
 * Proper color management (using [term](https://crates.io/crates/term) crate maybe ?)
 * Think of ways to get speed with RuSh (read: be faster than Bash). JIT ? Some kind of « parsed script ready to be executed » ?
 * Support float processing.
-* So many things.
+* So many things. multidimensionnal arrays ? Use clippy, rustfmt, error-chain, tarpaulin
 
 ## Building
 
