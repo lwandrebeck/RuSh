@@ -34,6 +34,7 @@ extern crate term;
 extern crate seahash;
 extern crate rand;
 extern crate chrono;
+#[macro_use]
 extern crate pest;
 
 use std::io;
@@ -49,6 +50,7 @@ use std::path::PathBuf;
 use self::rand::Rng;
 use self::chrono::*;
 use std::ffi::CStr;
+use pest::inputs::{Input, Position, Span, StringInput};
 
 /// For seahash maps.
 pub struct SeaRandomState;
@@ -162,7 +164,7 @@ impl Default for RuSh {
             match line {
                 Ok(input) => {
                     rl.add_history_entry(&input);
-                    let mut pest = pest::StringInput::new(&input);
+                    let mut pest = StringInput::new(input);
                     // TODO/FIXME : rewrite the basic parser
                     //if handle_command(&input) {
                     //    shell
