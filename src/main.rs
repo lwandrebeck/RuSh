@@ -34,8 +34,9 @@ extern crate term;
 extern crate seahash;
 extern crate rand;
 extern crate chrono;
-#[macro_use]
 extern crate pest;
+#[macro_use]
+extern crate pest_derive;
 
 use std::io;
 use std::io::{stdin, stdout, Write};
@@ -153,11 +154,11 @@ impl Default for RuSh {
         //    loop {
         //        thread::sleep(time::Duration::new(1, 0));
         //        match shell.shell_vars.entry("SECONDS".into()) {
-		//			Entry::Occupied(val) =>  { let mut s:u64 = val.get().value.parse().unwrap_or(0); s += 1; shell.shell_vars.insert("SECONDS".to_string(), ValueRW { value: s.to_string(), rw: true }); },
-		//			Entry::Vacant(val) => { shell.shell_vars.insert("SECONDS".to_string(), ValueRW { value: "1".to_string(), rw: true }); }
-		//		}
-		//	}
-		//});
+        //          Entry::Occupied(val) =>  { let mut s:u64 = val.get().value.parse().unwrap_or(0); s += 1; shell.shell_vars.insert("SECONDS".to_string(), ValueRW { value: s.to_string(), rw: true }); },
+        //          Entry::Vacant(val) => { shell.shell_vars.insert("SECONDS".to_string(), ValueRW { value: "1".to_string(), rw: true }); }
+        //      }
+        //  }
+        //});
         loop {
             shell.prompt_update();
             let line = rl.readline(&shell.prompt);
@@ -319,7 +320,7 @@ impl RuSh {
         options
     }
 
-    /// Init float shell variables 
+    /// Init float shell variables
     pub fn init_shell_floats() -> HashMap<String, Floats, SeaRandomState> {
         let mut variables = HashMap::with_capacity_and_hasher(200, SeaRandomState);
         variables.insert("RUSH".to_string(), Floats { value: 1.0, rw: true });
@@ -508,17 +509,17 @@ impl RuSh {
         let mut pt = String::new();
         let mut ps: String = match self.line_case {
             1 => self.shell_vars.entry("PS1".into())
-					.or_insert_with(|| ValueRW { value: "[\\u@\\h \\W]\\$ ".to_string(), rw: true })
-					.value.clone(),
+                    .or_insert_with(|| ValueRW { value: "[\\u@\\h \\W]\\$ ".to_string(), rw: true })
+                    .value.clone(),
             2 => self.shell_vars.entry("PS2".into())
-					.or_insert_with(|| ValueRW { value: ">".to_string(), rw: true })
-					.value.clone(),
+                    .or_insert_with(|| ValueRW { value: ">".to_string(), rw: true })
+                    .value.clone(),
             3 => self.shell_vars.entry("PS3".into())
-					.or_insert_with(|| ValueRW { value: ">".to_string(), rw: true })
-					.value.clone(),
+                    .or_insert_with(|| ValueRW { value: ">".to_string(), rw: true })
+                    .value.clone(),
             4 => self.shell_vars.entry("PS4".into())
-					.or_insert_with(|| ValueRW { value: ">".to_string(), rw: true })
-					.value.clone(),
+                    .or_insert_with(|| ValueRW { value: ">".to_string(), rw: true })
+                    .value.clone(),
             _  => { panic!("prompt env var should not have that value !"); },
         };
         let mut pr: Vec<(usize, char)> = ps.char_indices().collect();
@@ -578,11 +579,11 @@ impl RuSh {
         aliases.insert("ls".to_string(), "ls --color=auto".to_string());
         aliases.insert("which".to_string(), "alias | /usr/bin/which --tty-only --read-alias --show-dot --show-tilde".to_string());
         aliases.insert("xzegrep".to_string(), "xzegrep --color=auto".to_string());
-		aliases.insert("xzfgrep".to_string(), "xzfgrep --color=auto".to_string());
-		aliases.insert("xzgrep".to_string(), "xzgrep --color=auto".to_string());
-		aliases.insert("zegrep".to_string(), "zegrep --color=auto".to_string());
-		aliases.insert("zfgrep".to_string(), "zfgrep --color=auto".to_string());
-		aliases.insert("zgrep".to_string(), "zgrep --color=auto".to_string());
+        aliases.insert("xzfgrep".to_string(), "xzfgrep --color=auto".to_string());
+        aliases.insert("xzgrep".to_string(), "xzgrep --color=auto".to_string());
+        aliases.insert("zegrep".to_string(), "zegrep --color=auto".to_string());
+        aliases.insert("zfgrep".to_string(), "zfgrep --color=auto".to_string());
+        aliases.insert("zgrep".to_string(), "zgrep --color=auto".to_string());
         aliases
     }
 }
