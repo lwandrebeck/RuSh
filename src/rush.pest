@@ -1,0 +1,47 @@
+/// RuSh grammar using Pest
+// pest matches white space by default ?
+// _ silent rule
+// @ atomic rule (no whitespace)
+// ? optionnal
+// ! not
+// * 0 or more
+// + 1 or more
+// ~ followed by
+// | or
+// soi start of input
+// eoi end of input
+// any any character
+// ^ case insensitive (strings only)
+// .. up to
+
+plus   = { "+" }
+minus  = { "-" }
+sign = { minus | plus }
+alpha = { 'a'..'z' | 'A'..'Z' }
+minalpha = { 'a'..'z' }
+capalpha = { 'A'..'Z' }
+digit = { '0'..'9' }
+alphanum = { alpha | digit }
+minalphanum = { minalpha | digit }
+capalphanum = { capalpha | digit }
+octdigit = { '0'..'7' }
+hexdigit = { '0'..'9' | 'a'..'f' | 'A'..'F' }
+uint = @{ "0" | '1'..'9' ~ digit* }
+sint = @{ sign ~ uint }
+exp = { "e" | "E" }
+ufloat = @{ uint ~ "." ~ digit* ~ ( exp ~ ( uint | sint ))? }
+sfloat = @{ sign ~ ufloat }
+octnum = @{ "0" ~ octdigit+ }
+hexnum = @{ "0x" ~ hexdigit+ }
+numbers = _{ sfloat | ufloat | hexnum | octnum | sint | uint }
+descape = @{ "\\" ~ ("\"" | "\\") }
+dquoted = @{ "\"" ~ (descape | !("\"" | "\\") ~ any)* ~ "\"" }
+sescape = @{ "\\" ~ ("\'" | "\\") }
+squoted = @{ "'" ~ (sescape | !("\'" | "\\") ~ any)* ~ "'" }
+btescape = @{ "\\" ~ ("`" | "\\") }
+btquoted = @{ "`" ~ (btescape | !("`" | "\\") ~ any)* ~ "`" }
+quoted = _{ dquoted | squoted | btquoted }
+shebang = { "#!" ~ any* }
+comment = { "#" ~ any* }
+comments = _{ shebang | comment }
+bla = _{ numbers | quoted | comments }

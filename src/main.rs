@@ -52,10 +52,17 @@ use self::rand::Rng;
 use self::chrono::*;
 use std::ffi::CStr;
 use pest::inputs::{Input, Position, Span, StringInput};
+use pest::Parser;
+
+/// pest grammar inclusion. dummy const so that .pest file changes are taken care of.
+const _GRAMMAR: &'static str = include_str!("rush.pest"); // relative to src path
+
+#[derive(Parser)]
+#[grammar = "rush.pest"]
+struct Script;
 
 /// For seahash maps.
 pub struct SeaRandomState;
-//type Hasher = seahash::SeaHasher;
 
 impl BuildHasher for SeaRandomState {
     type Hasher = seahash::SeaHasher;
@@ -165,7 +172,25 @@ impl Default for RuSh {
             match line {
                 Ok(input) => {
                     rl.add_history_entry(&input);
-                    let mut pest = StringInput::new(input);
+                    //let mut pest = StringInput::new(input);
+                    let pest = Script::parse_str(Rule::bla, &input).unwrap_or_else(|e| panic!("{}", e));
+
+                    for line in pest {
+                        match line.as_rule() {
+                            Rule::sfloat => println!("sfloat: {}", line.into_span().as_str()),
+                            Rule::ufloat => println!("ufloat: {}", line.into_span().as_str()),
+                            Rule::hexnum => println!("hexnum: {}", line.into_span().as_str()),
+                            Rule::octnum => println!("octnum: {}", line.into_span().as_str()),
+                            Rule::sint => println!("sint: {}", line.into_span().as_str()),
+                            Rule::uint => println!("uint: {}", line.into_span().as_str()),
+                            Rule::squoted => println!("squoted: {}", line.into_span().as_str()),
+                            Rule::dquoted => println!("dquoted: {}", line.into_span().as_str()),
+                            Rule::btquoted => println!("btquoted: {}", line.into_span().as_str()),
+                            Rule::shebang => println!("shebang: {}", line.into_span().as_str()),
+                            Rule::comment => println!("comment: {}", line.into_span().as_str()),
+                            _ => unreachable!() // ident rule is silent and cannot be reached
+                        };
+                    }
                     // TODO/FIXME : rewrite the basic parser
                     //if handle_command(&input) {
                     //    shell
