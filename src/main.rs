@@ -186,8 +186,14 @@ impl Default for RuSh {
                             Rule::squoted => println!("squoted: {}", line.into_span().as_str()),
                             Rule::dquoted => println!("dquoted: {}", line.into_span().as_str()),
                             Rule::btquoted => println!("btquoted: {}", line.into_span().as_str()),
+                            Rule::nonquoted => println!("nonquoted: {}", line.into_span().as_str()),
                             Rule::shebang => println!("shebang: {}", line.into_span().as_str()),
                             Rule::comment => println!("comment: {}", line.into_span().as_str()),
+                            Rule::floatvarassign => println!("floatvarassign: {}", line.into_span().as_str()),
+                            Rule::intvarassign => println!("intvarassign: {}", line.into_span().as_str()),
+                            Rule::hexvarassign => println!("hexvarassign: {}", line.into_span().as_str()),
+                            Rule::octvarassign => println!("octvarassign: {}", line.into_span().as_str()),
+                            Rule::stringvarassign => println!("stringvarassign: {}", line.into_span().as_str()),
                             _ => unreachable!() // ident rule is silent and cannot be reached
                         };
                     }

@@ -26,22 +26,32 @@ minalphanum = { minalpha | digit }
 capalphanum = { capalpha | digit }
 octdigit = { '0'..'7' }
 hexdigit = { '0'..'9' | 'a'..'f' | 'A'..'F' }
-uint = @{ "0" | '1'..'9' ~ digit* }
+uint = @{ ("0" ~ eoi) | ('1'..'9' ~ digit*) }
 sint = @{ sign ~ uint }
+int = @{ sint | uint }
 exp = { "e" | "E" }
 ufloat = @{ uint ~ "." ~ digit* ~ ( exp ~ ( uint | sint ))? }
 sfloat = @{ sign ~ ufloat }
+float = @{ sfloat | ufloat }
 octnum = @{ "0" ~ octdigit+ }
 hexnum = @{ "0x" ~ hexdigit+ }
 numbers = _{ sfloat | ufloat | hexnum | octnum | sint | uint }
-descape = @{ "\\" ~ ("\"" | "\\") }
+descape  = @{ "\\" ~ ("\"" | "\\" | "/" | "b" | "f" | "n" | "r" | "t" | unicode) }
+unicode = @{ "u" ~ hexdigit ~ hexdigit ~ hexdigit ~ hexdigit }
 dquoted = @{ "\"" ~ (descape | !("\"" | "\\") ~ any)* ~ "\"" }
-sescape = @{ "\\" ~ ("\'" | "\\") }
+// string without quotes
+nonquoted = @{ (( descape | sescape | btescape) | !("\"" | "\\" | "\'" | "`") ~ any)* }
+sescape  = @{ "\\" ~ ("\'" | "\\" | "/" | "b" | "f" | "n" | "r" | "t" | unicode) }
 squoted = @{ "'" ~ (sescape | !("\'" | "\\") ~ any)* ~ "'" }
-btescape = @{ "\\" ~ ("`" | "\\") }
+btescape  = @{ "\\" ~ ("`" | "\\" | "/" | "b" | "f" | "n" | "r" | "t" | unicode) }
 btquoted = @{ "`" ~ (btescape | !("`" | "\\") ~ any)* ~ "`" }
-quoted = _{ dquoted | squoted | btquoted }
 shebang = { "#!" ~ any* }
 comment = { "#" ~ any* }
 comments = _{ shebang | comment }
-bla = _{ numbers | quoted | comments }
+varname = @{ (alpha | "_") ~ (alphanum | "_")* }
+intvarassign = @{ varname ~ "=" ~ int }
+floatvarassign = @{ varname ~ "=" ~ float }
+octvarassign = @{ varname ~ "=" ~ octnum }
+hexvarassign = @{ varname ~ "=" ~ hexnum }
+stringvarassign = @{ varname ~ "=" ~ (dquoted | squoted | btquoted | nonquoted) }
+bla = _{ floatvarassign | octvarassign | hexvarassign | intvarassign | stringvarassign | numbers | dquoted |squoted | btquoted | comments | nonquoted }
