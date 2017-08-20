@@ -177,12 +177,11 @@ impl Default for RuSh {
 
                     for line in pest {
                         match line.as_rule() {
-                            Rule::sfloat => println!("sfloat: {}", line.into_span().as_str()),
-                            Rule::ufloat => println!("ufloat: {}", line.into_span().as_str()),
+                            Rule::float => println!("float: {}", line.into_span().as_str()),
+                            Rule::binnum => println!("binnum: {}", line.into_span().as_str()),
                             Rule::hexnum => println!("hexnum: {}", line.into_span().as_str()),
                             Rule::octnum => println!("octnum: {}", line.into_span().as_str()),
-                            Rule::sint => println!("sint: {}", line.into_span().as_str()),
-                            Rule::uint => println!("uint: {}", line.into_span().as_str()),
+                            Rule::int => println!("int: {}", line.into_span().as_str()),
                             Rule::squoted => println!("squoted: {}", line.into_span().as_str()),
                             Rule::dquoted => println!("dquoted: {}", line.into_span().as_str()),
                             Rule::btquoted => println!("btquoted: {}", line.into_span().as_str()),
@@ -190,6 +189,7 @@ impl Default for RuSh {
                             Rule::shebang => println!("shebang: {}", line.into_span().as_str()),
                             Rule::comment => println!("comment: {}", line.into_span().as_str()),
                             Rule::floatvarassign => println!("floatvarassign: {}", line.into_span().as_str()),
+                            Rule::binvarassign => println!("binvarassign: {}", line.into_span().as_str()),
                             Rule::intvarassign => println!("intvarassign: {}", line.into_span().as_str()),
                             Rule::hexvarassign => println!("hexvarassign: {}", line.into_span().as_str()),
                             Rule::octvarassign => println!("octvarassign: {}", line.into_span().as_str()),

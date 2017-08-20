@@ -14,9 +14,6 @@
 // ^ case insensitive (strings only)
 // .. up to
 
-plus   = { "+" }
-minus  = { "-" }
-sign = { minus | plus }
 alpha = { 'a'..'z' | 'A'..'Z' }
 minalpha = { 'a'..'z' }
 capalpha = { 'A'..'Z' }
@@ -24,18 +21,16 @@ digit = { '0'..'9' }
 alphanum = { alpha | digit }
 minalphanum = { minalpha | digit }
 capalphanum = { capalpha | digit }
+bindigit = { '0'..'1' }
 octdigit = { '0'..'7' }
 hexdigit = { '0'..'9' | 'a'..'f' | 'A'..'F' }
-uint = @{ ("0" ~ eoi) | ('1'..'9' ~ digit*) }
-sint = @{ sign ~ uint }
-int = @{ sint | uint }
-exp = { "e" | "E" }
-ufloat = @{ uint ~ "." ~ digit* ~ ( exp ~ ( uint | sint ))? }
-sfloat = @{ sign ~ ufloat }
-float = @{ sfloat | ufloat }
-octnum = @{ "0" ~ octdigit+ }
-hexnum = @{ "0x" ~ hexdigit+ }
-numbers = _{ sfloat | ufloat | hexnum | octnum | sint | uint }
+int = @{ ("0" ~ eoi) | ("-"? ~ '1'..'9' ~ digit* ~ eoi) }
+exp = { ^"e" }
+float = @{ int ~ "." ~ digit* ~ ( exp ~ int)? ~ eoi }
+binnum = @{ "0b" ~ bindigit+ ~ eoi }
+octnum = @{ "0" ~ octdigit+ ~ eoi }
+hexnum = @{ "0x" ~ hexdigit+ ~eoi }
+numbers = _{ float | hexnum | octnum | binnum | int }
 descape  = @{ "\\" ~ ("\"" | "\\" | "/" | "b" | "f" | "n" | "r" | "t" | unicode) }
 unicode = @{ "u" ~ hexdigit ~ hexdigit ~ hexdigit ~ hexdigit }
 dquoted = @{ "\"" ~ (descape | !("\"" | "\\") ~ any)* ~ "\"" }
@@ -51,7 +46,8 @@ comments = _{ shebang | comment }
 varname = @{ (alpha | "_") ~ (alphanum | "_")* }
 intvarassign = @{ varname ~ "=" ~ int }
 floatvarassign = @{ varname ~ "=" ~ float }
+binvarassign = @{ varname ~ "=" ~ binnum }
 octvarassign = @{ varname ~ "=" ~ octnum }
 hexvarassign = @{ varname ~ "=" ~ hexnum }
 stringvarassign = @{ varname ~ "=" ~ (dquoted | squoted | btquoted | nonquoted) }
-bla = _{ floatvarassign | octvarassign | hexvarassign | intvarassign | stringvarassign | numbers | dquoted |squoted | btquoted | comments | nonquoted }
+bla = _{ floatvarassign | octvarassign | hexvarassign | binvarassign | intvarassign | stringvarassign | numbers | dquoted |squoted | btquoted | comments | nonquoted }
