@@ -1,0 +1,53 @@
+/// RuSh grammar using Pest
+// pest matches white space by default ?
+// _ silent rule
+// @ atomic rule (no whitespace)
+// ? optionnal
+// ! not
+// * 0 or more
+// + 1 or more
+// ~ followed by
+// | or
+// soi start of input
+// eoi end of input
+// any any character
+// ^ case insensitive (strings only)
+// .. up to
+
+alpha = { 'a'..'z' | 'A'..'Z' }
+minalpha = { 'a'..'z' }
+capalpha = { 'A'..'Z' }
+digit = { '0'..'9' }
+alphanum = { alpha | digit }
+minalphanum = { minalpha | digit }
+capalphanum = { capalpha | digit }
+bindigit = { '0'..'1' }
+octdigit = { '0'..'7' }
+hexdigit = { '0'..'9' | 'a'..'f' | 'A'..'F' }
+int = @{ ("0" ~ eoi) | ("-"? ~ '1'..'9' ~ digit* ~ eoi) }
+exp = { ^"e" }
+float = @{ int ~ "." ~ digit* ~ ( exp ~ int)? ~ eoi }
+binnum = @{ "0b" ~ bindigit+ ~ eoi }
+octnum = @{ "0" ~ octdigit+ ~ eoi }
+hexnum = @{ "0x" ~ hexdigit+ ~eoi }
+numbers = _{ float | hexnum | octnum | binnum | int }
+descape  = @{ "\\" ~ ("\"" | "\\" | "/" | "b" | "f" | "n" | "r" | "t" | unicode) }
+unicode = @{ "u" ~ hexdigit ~ hexdigit ~ hexdigit ~ hexdigit }
+dquoted = @{ "\"" ~ (descape | !("\"" | "\\") ~ any)* ~ "\"" }
+// string without quotes
+nonquoted = @{ (( descape | sescape | btescape) | !("\"" | "\\" | "\'" | "`") ~ any)* }
+sescape  = @{ "\\" ~ ("\'" | "\\" | "/" | "b" | "f" | "n" | "r" | "t" | unicode) }
+squoted = @{ "'" ~ (sescape | !("\'" | "\\") ~ any)* ~ "'" }
+btescape  = @{ "\\" ~ ("`" | "\\" | "/" | "b" | "f" | "n" | "r" | "t" | unicode) }
+btquoted = @{ "`" ~ (btescape | !("`" | "\\") ~ any)* ~ "`" }
+shebang = { "#!" ~ any* }
+comment = { "#" ~ any* }
+comments = _{ shebang | comment }
+varname = @{ (alpha | "_") ~ (alphanum | "_")* }
+intvarassign = @{ varname ~ "=" ~ int }
+floatvarassign = @{ varname ~ "=" ~ float }
+binvarassign = @{ varname ~ "=" ~ binnum }
+octvarassign = @{ varname ~ "=" ~ octnum }
+hexvarassign = @{ varname ~ "=" ~ hexnum }
+stringvarassign = @{ varname ~ "=" ~ (dquoted | squoted | btquoted | nonquoted) }
+bla = _{ floatvarassign | octvarassign | hexvarassign | binvarassign | intvarassign | stringvarassign | numbers | dquoted |squoted | btquoted | comments | nonquoted }
