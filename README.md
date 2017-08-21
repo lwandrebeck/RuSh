@@ -51,6 +51,18 @@ Right now, RuSh is definitely not useable. A couple little things have been done
 - [ ] [[ ]] expansion.
 - [ ] [ ] expansion.
 - [ ] * ? etc expansion.
+- [ ] regexp support =~
+- [ ] POSIX characters classes [:alnum:] matches alphabetic or numeric characters. This is equivalent to A-Za-z0-9.
+- [ ] POSIX characters classes [:alpha:] matches alphabetic characters. This is equivalent to A-Za-z.
+- [ ] POSIX characters classes [:blank:] matches a space or a tab.
+- [ ] POSIX characters classes [:cntrl:] matches control characters.
+- [ ] POSIX characters classes [:digit:] matches (decimal) digits. This is equivalent to 0-9.
+- [ ] POSIX characters classes [:graph:] (graphic printable characters). Matches characters in the range of ASCII 33 - 126. This is the same as [:print:], below, but excluding the space character.
+- [ ] POSIX characters classes [:lower:] matches lowercase alphabetic characters. This is equivalent to a-z.
+- [ ] POSIX characters classes [:print:] (printable characters). Matches characters in the range of ASCII 32 - 126. This is the same as [:graph:], above, but adding the space character.
+- [ ] POSIX characters classes [:space:] matches whitespace characters (space and horizontal tab).
+- [ ] POSIX characters classes [:upper:] matches uppercase alphabetic characters. This is equivalent to A-Z.
+- [ ] POSIX characters classes [:xdigit:] matches hexadecimal digits. This is equivalent to 0-9A-Fa-f.
 - [ ] if elif else fi.
 - [ ] case "$var" in "value") command ;; "value2") command ;; esac.
 - [ ] for n in list do done { } may be used instead of do done
@@ -65,7 +77,7 @@ Right now, RuSh is definitely not useable. A couple little things have been done
 - [ ] select variable in list (optional in list) do command break done
 - [ ] command execution
 - [ ] pipes
-- [ ] > < >> << 2>&1 etc redirections.
+- [ ] > < >> << 2>&1 etc redirections. don’t forget <<EOF kind.
 - [ ] || && operators
 - [ ] echo
 - [ ] printf
