@@ -23,6 +23,22 @@ Right now, RuSh is definitely not useable. A couple little things have been done
 - [x] (signed) float support (f64 by default). exponent correctly parsed.
 - [x] variable assignment. (type is autodetected)
 - [x] shebang (#!) and comments are correctly parsed.
+- [ ] : syntax
+- [ ] compgen builtin.
+- [ ] complete builtin.
+- [ ] compopt builtin.
+- [ ] fc builtin.
+- [ ] history builtin.
+- [ ] local builtin.
+- [ ] mapfile builtin.
+- [ ] readarray builtin.
+- [ ] return builtin.
+- [ ] shift builtin.
+- [ ] test builtin.
+- [ ] trap builtin.
+- [ ] ulimit builtin.
+- [ ] umask builtin.
+- [ ] unalias builtin.
 - [ ] use [pest](https://github.com/dragostis/pest) to parse prompt
 - [ ] arrays support.
 - [ ] $variable, ${variable} and parameter ($1 etc) expansion.
@@ -42,7 +58,7 @@ Right now, RuSh is definitely not useable. A couple little things have been done
 - [ ] variable builtin ${string/#substr/repl} (If $substr matches front end of $string, substitute $repl for $substr.).
 - [ ] variable builtin ${string/%substr/repl} (If $substr matches back end of $string, substitute $repl for $substr.).
 - [ ] variable builtin ${!varprefix*}, ${!varprefix@} (Matches names of all previously declared variables beginning with varprefix.).
-- [ ] alias substitution.
+- [ ] alias substitution and builtin.
 - [ ] $(command) substitution (kind of similar to backtick).
 - [ ] ~ expansion.
 - [ ] !! expansion (history).
@@ -73,11 +89,12 @@ Right now, RuSh is definitely not useable. A couple little things have been done
 - [ ] do done
 - [ ] break
 - [ ] continue
-- [ ] function() { }
+- [ ] function function_name() { } and function() { }
 - [ ] select variable in list (optional in list) do command break done
 - [ ] command execution
 - [ ] pipes
 - [ ] > < >> << 2>&1 etc redirections. don’t forget <<EOF kind.
+- [ ] <(command list) >(command list) process substitution.
 - [ ] || && operators
 - [ ] echo
 - [ ] printf
