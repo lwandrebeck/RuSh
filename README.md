@@ -140,7 +140,7 @@ Right now, RuSh is definitely not useable. A couple little things have been done
 - [ ] autoload
 
 ### core
-- [ ] Take a decision about variables management implemention (hashmap with enum ?)
+- [ ] Take a decision about variables management implemention (I’m currently (albeit slowly, fighting the borrow checker ;)) working on it, using a hashmap with enum)
 - [ ] Rewrite prompt routine once [pest](https://github.com/dragostis/pest) parser is done.
 - [ ] Clean up code (commented tries here and there…)
 - [ ] Split up code (variables.rs prompt.rs etc).
