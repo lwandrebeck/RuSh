@@ -12,10 +12,10 @@ Right now, RuSh is definitely not useable. A couple little things have been done
 
 ## TODO:
 ### parser
-- [x] unquoted string suppport. (espace character taken care of)
-- [x] "quoted" string support. (espace character taken care of)
-- [x] 'quoted' string support. (espace character taken care of)
-- [x] \`backticked\` string support. (espace character taken care of)
+- [x] unquoted string suppport. (space character taken care of)
+- [x] "quoted" string support. (space character taken care of)
+- [x] 'quoted' string support. (space character taken care of)
+- [x] \`backticked\` string support. (space character taken care of)
 - [x] binary numbers support (uint only for now ?). 0b mark. (i64 by default)
 - [x] octal numbers support (uint only for now ?). 0 mark. (i64 by default)
 - [x] hexadecimal numbers support (uint only for now ?). 0x mark. (i64 by default)
