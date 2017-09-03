@@ -15,7 +15,7 @@ script:
     travis-cargo --only stable doc
 
 after_success:
-  - travis-cargo coveralls --no-sudo
+  - cargo coveralls --verbose
 
 env:
   global:
