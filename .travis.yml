@@ -1,21 +1,38 @@
 language: rust
+cache: cargo
+os: 
+  - linux
 rust:
 - stable
 - beta
 - nightly
+addons:
+  apt:
+    packages:
+      - libcurl4-openssl-dev
+      - libelf-dev
+      - libdw-dev
+      - binutils-dev
+      - cmake
+    sources:
+      - kalakris-cmake
 
 before_script:
-  - pip install 'travis-cargo<0.2' --user && export PATH=$HOME/.local/bin:$PATH
-
+  - |
+      cargo install --force cargo-travis &&
+      export PATH=$HOME/.cargo/bin:$PATH
 script:
   - |
-    travis-cargo build &&
-    travis-cargo test &&
-    travis-cargo bench &&
-    travis-cargo --only stable doc
+    cargo build --all --verbose &&
+    cargo test --all --verbose &&
+    cargo bench --all --verbose &&
+    cargo --only stable doc
 
 after_success:
-  - cargo coveralls --verbose
+  - |
+      cargo coveralls --verbose &&
+      cargo coverage -m ../kcov --all
+      bash <(curl -s https://codecov.io/bash)
 
 env:
   global:
