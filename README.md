@@ -142,10 +142,10 @@ Right now, RuSh is definitely not useable. A couple little things have been done
 - [ ] autoload
 
 ### core
-- [ ] Take a decision about variables management implemention (I’m currently (albeit slowly, fighting the borrow checker ;)) working on it, using a hashmap with enum)
+- [ ] Variables management (partly done, arrays still have to be taken care of).
 - [ ] Rewrite prompt routine once [pest](https://github.com/dragostis/pest) parser is done.
 - [ ] Clean up code (commented tries here and there…)
-- [ ] Split up code (variables.rs prompt.rs etc).
+- [ ] Split up code (variables.rs prompt.rs etc. Partly done).
 - [ ] Write everything linked to builtins, pipes etc (yeah, that will be *very* long)
 - [ ] Have a 100% code coverage when it comes to documentation *and* testing.
 - [ ] Multi-lingual support (i18n ? l20n.rs ?)
