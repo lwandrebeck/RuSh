@@ -122,7 +122,7 @@ impl Variables {
     }
 
     /// Default shell variables are set here, following the bash way.
-    pub fn init_shell_vars() -> Variables { // HashMap<String, Variable, SeaRandomState> {
+    pub fn init_shell_vars() -> Variables {
         let mut vars = Variables { vars: HashMap::with_capacity_and_hasher(200, SeaRandomState) };
         // see man bash (Shell vars)
         // Expands to the full filename used to invoke this instance of rush.
