@@ -1,42 +1,44 @@
-/*
- * opt.rs
- *
- * Copyright 2015-2017 Laurent Wandrebeck <l.wandrebeck@quelquesmots.fr>
- *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
- * MA 02110-1301, USA.
- *
- *
- */
+//
+// opt.rs
+//
+// Copyright 2015-2017 Laurent Wandrebeck <l.wandrebeck@quelquesmots.fr>
+//
+// This program is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program; if not, write to the Free Software
+// Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+// MA 02110-1301, USA.
+//
 
-//! RuSh opt (shopt, set) management begins here.
-//!
-//! opt.rs contains opt structure and affiliated methods.
-//! opt (un)setting, update methods for both shopt and options.
+/// RuSh opt (shopt, set) management begins here.
+///
+/// opt.rs contains OptionRW and Opt structures and affiliated methods.
+/// opt (un)setting, update methods for both shopt and options.
 
 extern crate seahash;
 
 use std::collections::HashMap;
 use variables::SeaRandomState;
 
+/// OptionRW structure, allows to store values for a given option.
 pub struct OptionRW {
+    /// Is the option set or not ?
     set: bool,
+    /// Is it allowed to change option value ?
     rw: bool
 }
-
+/// Methods linked to OptionRW
 impl OptionRW {
+    /// Classic getter returning if the OptionRW is set or not.
     pub fn get(&self) -> bool {
             self.set
     }
@@ -45,10 +47,11 @@ impl OptionRW {
 /// Opt structure is defined here to store options status (setopt)
 //#[derive(Hash, Eq, PartialEq, Debug)]
 pub struct Opt {
+    /// Opt has a single field
     opt: HashMap<String, OptionRW, SeaRandomState>
 }
 
-/// Needed methods for Opt.
+/// Methods linked to Opt structure.
 impl Opt {
     /// Get a opt value from its name. Returns value as Option<OptionRW>.
     /// Returns None if key does not exist.
@@ -172,7 +175,7 @@ impl Opt {
 
     /// Initialize set_options(&mut self) {
     /// according to help set and echo $-
-    /// himBH. i not to be found anywhere !?
+    /// himBHs is not to be found anywhere !?
     pub fn init_set_options() -> Opt {
         // 27 set options. Allocate a big enough HashMap.
         let mut options = Opt { opt: HashMap::with_capacity_and_hasher(27, SeaRandomState) };

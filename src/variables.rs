@@ -1,30 +1,28 @@
-/*
- * variables.rs
- *
- * Copyright 2015-2017 Laurent Wandrebeck <l.wandrebeck@quelquesmots.fr>
- *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
- * MA 02110-1301, USA.
- *
- *
- */
+//
+// variables.rs
+//
+// Copyright 2015-2017 Laurent Wandrebeck <l.wandrebeck@quelquesmots.fr>
+//
+// This program is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program; if not, write to the Free Software
+// Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+// MA 02110-1301, USA.
+//
 
-//! RuSh variables management begins here.
-//!
-//! variables.rs contains variables structures and affiliated methods.
-//! variables (un)setting, update methods for both classical variables and arrays.
+/// RuSh variables management begins here.
+///
+/// variables.rs contains variables structures and affiliated methods.
+/// variables (un)setting, update methods for both classical variables and arrays.
 
 extern crate rand;
 extern crate seahash;
@@ -105,7 +103,7 @@ impl Variables {
 
     /// Set a variable value for a given name. Variable is created if needed, otherwise value is updated if rw.
     pub fn set(&mut self, key: String, v: Variable) {
-        // is the var already existing ?
+        /// does the var already exist ?
         match self.vars.entry(key) {
             Occupied(mut entry) => {
                 let contents = entry.get_mut();

@@ -1,36 +1,37 @@
-/*
- * main.rs
- *
- * Copyright 2015-2017 Laurent Wandrebeck <l.wandrebeck@quelquesmots.fr>
- *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
- * MA 02110-1301, USA.
- *
- *
- */
+//
+// main.rs
+//
+// Copyright 2015-2017 Laurent Wandrebeck <l.wandrebeck@quelquesmots.fr>
+//
+// This program is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program; if not, write to the Free Software
+// Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+// MA 02110-1301, USA.
+//
 
-//! RuSh begins here.
-//!
-//! main.rs contains the very beginning of RuSh.
-//! aliases, options structures, environment are defined/set.
-//! prompt is updated there.
+/// RuSh begins here.
+///
+/// main.rs contains the very beginning of RuSh.
+/// Shell structure is defined and initialized here.
+/// Main loop of the program.
 
-// Include other files.
+/// Include variables management.
 mod variables;
+/// Include prompt management.
 mod prompt;
+/// Include options management (shopt, set)
 mod opt;
+/// Include aliases management (alias, unalias)
 mod aliases;
 
 extern crate libc;
@@ -43,9 +44,12 @@ extern crate pest;
 #[macro_use]
 extern crate pest_derive;
 
+//use std::{str, thread, time};
 use std::str;
 use std::collections::HashMap;
+//use std::collections::hash_map::Entry::{Occupied, Vacant};
 use pest::Parser;
+//use variables::{Variables, Variable, Value};
 use variables::Variables;
 use opt::Opt;
 use aliases::Aliases;
@@ -57,23 +61,15 @@ const _GRAMMAR: &'static str = include_str!("rush.pest"); // relative to src pat
 #[grammar = "rush.pest"]
 struct Script;
 
-/// Structure to store variable value and rw state.
-#[derive(Hash, Eq, PartialEq, Debug)]
-pub struct ValueRW {
-    value: String,
-    rw: bool
-}
-
 /// Core structure containing everything needed for RuSh
-//#[derive(Hash, Eq, PartialEq, Debug)]
 pub struct RuSh {
-    /// aliases: Stored as HashMap<&str, &str>
+    /// aliases: Stored as Aliases { aliases: HashMap<String, String> }
     aliases: Aliases,
-    /// shopt_options: autocd, etc. See man bash, shopt options. Stored as HashMap<&str, &bool>
+    /// shopt_options: autocd, etc. See man bash, shopt options. Stored as Opt { opt: HashMap<String, <set: bool, rw: bool>> }
     shopt_options: Opt,
-    /// set_options: allexport, braceexpand, etc. See man bash, set command. Stored as HashMap<&str, &bool>
+    /// set_options: allexport, braceexpand, etc. See man bash, set command. Stored as HashMap<String, <bool, bool>>
     set_options: Opt,
-    /// shell_vars: RUSH, RUSHPID, etc. See man bash, shell variables. Stored as HashMap<&str, &str>
+    /// shell_vars: RUSH, RUSHPID, etc. See man bash, shell variables. Stored as HashMap<String, <i64 or f64 or String, bool>>
     shell_vars: Variables,
     /// Command history. Stored as History from rustyline
     history: rustyline::history::History,
@@ -81,44 +77,48 @@ pub struct RuSh {
     line_case: u8,
     /// command number, may be needed by prompt
     cmd_nb: u64,
-    /// prompt contents. Stored as a simple String.
+    /// prompt contents. Stored as Prompt { prompt: String }
     prompt: prompt::Prompt,
 }
 
+/// Default method for RuSh
 impl Default for RuSh {
     fn default() -> RuSh {
         let mut shell = RuSh {
-            // 15 aliases by default in Fedora 26.
+            /// 15 aliases are defined by default in Fedora 26, so let’s allocate twice that.
             aliases: Aliases::init_aliases(),
-            // 46 shopt options by default, so let’s have a big enough HashMap to store these.
+            /// 46 shopt options by default, so let’s have a big enough HashMap to store these.
             shopt_options: Opt::init_shopt_options(),
-            // 27 set options by default, so let’s have a big enough HashMap to store these.
+            /// 27 set options by default, so let’s have a big enough HashMap to store these.
             set_options: Opt::init_set_options(),
-            // 100 or so shell vars are defined upon startup. Let’s say most scripts do use up to 200 vars, so let’s alloc enough.
+            /// 100 or so shell vars are defined upon startup. Allocate twice that.
             shell_vars: Variables::init_shell_vars(),
             // TODO set history size
             // rl.set_history_max_len(1000);
             history: rustyline::history::History::new(),
-            // prompt management. TODO
+            /// Variable line_case allows to know which PS[1234] variable to use to display prompt.
             line_case: 1,
+            /// Command number in this session. Can be used in prompt.
             cmd_nb: 0,
+            /// Variable prompt contains interpreted definition of PS[1234].
             prompt: prompt::Prompt { prompt: String::from("") }
         };
         shell.prompt = prompt::Prompt::get(&mut shell.shell_vars, "PS1");
         //let mut stdin = io::stdin();
         let mut rl = rustyline::Editor::<()>::new();
         // take care of SECOND env var
-        //thread::spawn(move ||  {
-        //    loop {
-        //        thread::sleep(time::Duration::new(1, 0));
-        //        match shell.shell_vars.entry("SECONDS".into()) {
-        //          Entry::Occupied(val) =>  { let mut s:u64 = val.get().value.parse().unwrap_or(0); s += 1; shell.shell_vars.insert("SECONDS".to_string(), ValueRW { value: s.to_string(), rw: true }); },
-        //          Entry::Vacant(val) => { shell.shell_vars.insert("SECONDS".to_string(), ValueRW { value: "1".to_string(), rw: true }); }
-        //      }
-        //  }
-        //});
+        //~ let child = thread::spawn(move ||  {
+            //~ loop {
+                //~ thread::sleep(time::Duration::new(1, 0));
+                //~ match shell.shell_vars.get("SECONDS") {
+                  //~ Some(val) =>  { let mut s = val.geti(); s += 1; shell.shell_vars.set("SECONDS".to_string(), Variable { value: Value::I(s), rw: true }); },
+                  //~ None => { shell.shell_vars.set("SECONDS".to_string(), Variable { value: Value::I(1), rw: true }); }
+              //~ }
+          //~ }
+        //~ });
         loop {
             let line = rl.readline(&shell.prompt.prompt);
+            /// (very) Basic parsing for now. To be moved in parser.rs later on.
             match line {
                 Ok(input) => {
                     // TODO fix history management
@@ -150,6 +150,7 @@ impl Default for RuSh {
                     },
                 Err(_) => { break }
             }
+            /// Use correct variable to define next prompt display.
             match shell.line_case {
                 1 => shell.prompt = prompt::Prompt::get(&mut shell.shell_vars, "PS1"),
                 2 => shell.prompt = prompt::Prompt::get(&mut shell.shell_vars, "PS2"),
@@ -166,4 +167,3 @@ impl Default for RuSh {
 fn main() {
     RuSh::default();
 }
-

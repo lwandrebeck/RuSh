@@ -1,39 +1,37 @@
-/*
- * aliases.rs
- *
- * Copyright 2015-2017 Laurent Wandrebeck <l.wandrebeck@quelquesmots.fr>
- *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
- * MA 02110-1301, USA.
- *
- *
- */
+//
+// aliases.rs
+//
+// Copyright 2015-2017 Laurent Wandrebeck <l.wandrebeck@quelquesmots.fr>
+//
+// This program is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program; if not, write to the Free Software
+// Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+// MA 02110-1301, USA.
+//
 
-//! RuSh aliases management begins here.
-//!
-//! aliases.rs contains aliases structure and affiliated methods.
-//! aliases (un)setting, update methods.
+/// RuSh aliases management begins here.
+///
+/// aliases.rs contains aliases structure and affiliated methods.
+/// aliases (un)setting, update methods.
 
 extern crate seahash;
 
 use std::collections::HashMap;
-use std::hash::BuildHasher;
-use variables::{Variable, Variables, Value, SeaRandomState};
+//use std::hash::BuildHasher;
+//use variables::{Variable, Variables, Value, SeaRandomState};
+use variables::SeaRandomState;
 
 /// Opt structure is defined here to store options status (setopt)
-//#[derive(Hash, Eq, PartialEq, Debug)]
 pub struct Aliases {
     aliases: HashMap<String, String, SeaRandomState>
 }
@@ -49,11 +47,12 @@ impl Aliases {
         }
     }
 
-    /// Set a opt for a given name. Opt is created if needed, otherwise value is updated.
+    /// Set an alias for a given name. Entry is created if needed, otherwise value is updated.
     pub fn set(&mut self, key: String, value: String) {
         self.aliases.insert(key, value);
     }
 
+    /// Define a couple default aliases.
     pub fn init_aliases () -> Aliases {
         let mut aliases = Aliases { aliases: HashMap::with_capacity_and_hasher(30, SeaRandomState) };
         aliases.set("egrep".to_string(), "egrep --color=auto".to_string());
