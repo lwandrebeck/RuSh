@@ -44,17 +44,26 @@ impl OptionRW {
     }
 }
 
-/// Opt structure is defined here to store options status (setopt)
+/// Opt structure is defined here to store options status (setopt and set)
 //#[derive(Hash, Eq, PartialEq, Debug)]
 pub struct Opt {
     /// Opt has a single field
     opt: HashMap<String, OptionRW, SeaRandomState>
 }
 
-/// Methods linked to Opt structure.
+/// Methods for Opt structure.
 impl Opt {
-    /// Get a opt value from its name. Returns value as Option<OptionRW>.
-    /// Returns None if key does not exist.
+    /// Get an opt value from `Opt`. Returns value as Option<OptionRW>.
+	///
+	/// # Examples
+	/// ```rust
+	/// let mut opt = Opt { opt: HashMap::with_capacity_and_hasher(30, SeaRandomState) };
+	/// opt.set(String::from("autocd"), OptionRW { set: false, rw: true });
+	/// match opt.get("autocd") {
+	///     Some(val) => println!("autocd value is: {}", val.set);
+	///     None => println!("autocd option does not exist.");
+	/// }
+	/// ```
     pub fn get(&self, key: &str) -> Option<OptionRW> {
         match self.opt.get(key) {
             Some(val) => { let var = OptionRW { set: val.set.clone(), rw: val.rw }; Some(var) },
@@ -63,11 +72,21 @@ impl Opt {
     }
 
     /// Set a opt for a given name. Opt is created if needed, otherwise value is updated.
-    pub fn set(&mut self, key: String, value: OptionRW) {
+	///
+	/// # Examples
+	/// ```rust
+	/// let mut opt = Opt { opt: HashMap::with_capacity_and_hasher(30, SeaRandomState) };
+	/// opt.set(String::from("autocd"), OptionRW { set: false, rw: true });
+	/// match opt.get("autocd") {
+	///     Some(val) => println!("autocd value is: {}", val.set);
+	///     None => println!("autocd option does not exist.");
+	/// }
+	/// ```
+	pub fn set(&mut self, key: String, value: OptionRW) {
         self.opt.insert(key, value);
     }
 
-    /// Initialize shopt_options(&mut self) {
+    /// Initialize default shopt_options(&mut self). Returns `Opt`.
     pub fn init_shopt_options() -> Opt {
         // 43 shopt entries. Allocate a big enough HashMap.
         let mut options = Opt { opt: HashMap::with_capacity_and_hasher(43, SeaRandomState) };
@@ -173,9 +192,9 @@ impl Opt {
         options
     }
 
-    /// Initialize set_options(&mut self) {
-    /// according to help set and echo $-
-    /// himBHs is not to be found anywhere !?
+    /// Initialize default set_options(&mut self)
+    /// According to help set and echo $-
+    /// himBHs (or himBH depending on bash version it seems) is not to be found anywhere !?
     pub fn init_set_options() -> Opt {
         // 27 set options. Allocate a big enough HashMap.
         let mut options = Opt { opt: HashMap::with_capacity_and_hasher(27, SeaRandomState) };

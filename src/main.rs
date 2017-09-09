@@ -56,9 +56,10 @@ use std::collections::HashMap;
 //use std::collections::hash_map::Entry::{Occupied, Vacant};
 use pest::Parser;
 //use variables::{Variables, Variable, Value};
-use variables::Variables;
-use opt::Opt;
-use aliases::Aliases;
+// pub for use is there so doc is generated.
+pub use variables::Variables;
+pub use opt::Opt;
+pub use aliases::Aliases;
 
 /// pest grammar inclusion. dummy const so that .pest file changes are taken care of.
 const _GRAMMAR: &'static str = include_str!("rush.pest"); // relative to src path
@@ -122,6 +123,7 @@ impl Default for RuSh {
               //~ }
           //~ }
         //~ });
+        /// main loop. display prompt, wait for input, parse, etc.
         loop {
             let line = rl.readline(&shell.prompt.prompt);
             /// (very) Basic parsing for now. To be moved in parser.rs later on.
@@ -169,7 +171,7 @@ impl Default for RuSh {
     }
 }
 
-/// main loop. the fun begins here !
+/// This is the main function. Initializes RuSh structure and starts the shell.
 fn main() {
     RuSh::default();
 }

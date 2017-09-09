@@ -22,7 +22,7 @@
 /// RuSh prompt management begins here.
 ///
 /// prompt.rs contains prompt affiliated methods.
-
+/// prompt is parsed here too.
 extern crate chrono;
 extern crate rand;
 
@@ -35,7 +35,17 @@ pub struct Prompt {
     pub prompt: String
 }
 
+/// Methods for Prompt.
 impl Prompt {
+    /// Get `Prompt` from `Variables`. Returns interpreted `Prompt`.
+	///
+	/// # Examples
+	/// ```rust
+	/// let mut var = Variables { vars: HashMap::with_capacity_and_hasher(200, SeaRandomState) };
+	/// var.set("PS1", Variable { value: Value::S(""), rw: true);
+	/// p = Prompt.get("PS1");
+	/// println!("Prompt var value interpreted from PS1 variable is: {}", p.prompt);
+	/// ```
     pub fn get(vars: &mut Variables, p: &str) -> Prompt {
         let mut aslash = false;
         let mut pt = String::new();

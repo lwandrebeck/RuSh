@@ -19,9 +19,10 @@
 // MA 02110-1301, USA.
 //
 
-/// RuSh variables management begins here.
+/// RuSh variables management is located in this module.
 ///
 /// variables.rs contains variables structures and affiliated methods.
+/// `Variable` and `Variables` are defined here.
 /// variables (un)setting, update methods for both classical variables and arrays.
 
 extern crate rand;
@@ -39,6 +40,7 @@ use self::rand::Rng;
 #[allow(dead_code)]
 pub struct SeaRandomState;
 
+/// BuildHasher trait is needed for SeaRandomState.
 impl BuildHasher for SeaRandomState {
     type Hasher = seahash::SeaHasher;
     fn build_hasher(&self) -> seahash::SeaHasher {
@@ -46,7 +48,7 @@ impl BuildHasher for SeaRandomState {
     }
 }
 
-/// enum type. Value contains variable value, be it a i64, f64 or String.
+/// Value contains variable value, be it a i64, f64 or String, defined as an enum.
 #[allow(dead_code)]
 #[derive(Clone, Debug)]
 pub enum Value {
@@ -57,12 +59,24 @@ pub enum Value {
 
 #[allow(dead_code)]
 #[derive(Clone)]
+/// Variable Structure.
 pub struct Variable {
+	/// Variable value is stored as Value enum.
     pub value: Value,
+    /// Is the variable rw (or ro if false).
     pub rw: bool
 }
 
+/// Methods for Variable structure.
 impl Variable {
+	/// Extract `i64` from Variable.value
+	///
+	/// # Examples
+	/// ```rust
+	/// let var = Variable { value: Value::I(-42), rw: true };
+	/// let val = var.geti();
+	/// println!("Integer var value is: {}", val);
+	/// ```
     pub fn geti(&self) -> i64 {
         match self.value {
             Value::I(i) => i,
@@ -70,6 +84,14 @@ impl Variable {
         }
     }
 
+	/// Extract `f64` from Variable.value
+	///
+	/// # Examples
+	/// ```rust
+	/// let var = Variable { value: Value::F(-42.5), rw: true };
+	/// let val = var.getf();
+	/// println!("Float var value is: {}", val);
+	/// ```
     pub fn getf(&self) -> f64 {
         match self.value {
             Value::F(f) => f,
@@ -77,6 +99,14 @@ impl Variable {
         }
     }
 
+	/// Extract `String` from Variable.value
+	///
+	/// # Examples
+	/// ```rust
+	/// let var = Variable { value: Value::S("Forty two"), rw: true };
+	/// let val = var.gets();
+	/// println!("String var value is: {}", val);
+	/// ```
     pub fn gets(&self) -> String {
         match self.value {
             Value::S(ref s) => s.to_string(),
@@ -85,15 +115,25 @@ impl Variable {
     }
 }
 
-/// Public structure Variables
+/// Public structure `Variables`.
 pub struct Variables {
-    /// variables are stored in a HashMap<String, String>. First String being the variable name (key), the second the value.
+    /// variables are stored in a HashMap<String, `Variable`>. First String being the variable name (key), the second the value and rw state.
     vars: HashMap<String, Variable, SeaRandomState>
 }
 
-/// Needed methods for Variables.
+/// Methods for `Variables`.
 impl Variables {
-    /// Get a variable value from its name. Returns value as Option.
+    /// Get `Variable` from its name. Returns `Variable` as `Option`.
+	///
+	/// # Examples
+	/// ```rust
+	/// let mut var = Variables { vars: HashMap::with_capacity_and_hasher(200, SeaRandomState) };
+	/// var.set("try", Variable { value: Value::i(42), rw: true);
+	/// match var.get("try") {
+	///     Some(val) => println!("try var value is: {}", val);
+	///     None => println!("try variable does not exist.");
+	/// }
+	/// ```
     pub fn get(&self, key: &str) -> Option<Variable> {
         match self.vars.get(key) {
             Some(val) => { let var = Variable { value: val.value.clone(), rw: val.rw }; Some(var) },
@@ -102,6 +142,16 @@ impl Variables {
     }
 
     /// Set a variable value for a given name. Variable is created if needed, otherwise value is updated if rw.
+	///
+	/// # Examples
+	/// ```rust
+	/// let mut var = Variables { vars: HashMap::with_capacity_and_hasher(200, SeaRandomState) };
+	/// var.set("try", Variable { value: Value::i(42), rw: true);
+	/// match var.get("try") {
+	///     Some(val) => println!("try var value is: {}", val);
+	///     None => println!("try variable does not exist.");
+	/// }
+	/// ```
     pub fn set(&mut self, key: String, v: Variable) {
         /// does the var already exist ?
         match self.vars.entry(key) {
@@ -114,12 +164,32 @@ impl Variables {
     }
 
     /// Unset a variable name and its value. So is the associated environment variable and value.
+	///
+	/// # Examples
+	/// ```rust
+	/// let mut var = Variables { vars: HashMap::with_capacity_and_hasher(200, SeaRandomState) };
+	/// var.set("try", Variable { value: Value::i(42), rw: true);
+	/// var.unset("try");
+	/// match var.get("try") {
+	///     Some(val) => println!("try var value is: {}", val);
+	///     None => println!("try variable does not exist.");
+	/// }
+	/// ```
     pub fn unset(&mut self, key: String) {
         self.vars.remove(&key);
         env::remove_var(key);
     }
 
     /// Default shell variables are set here, following the bash way.
+	///
+	/// # Examples
+	/// ```rust
+	/// let mut vars = init_shell_vars();
+	/// match var.get("RUSH") {
+	///     Some(val) => println!("RUSH var value is: {}", val);
+	///     None => println!("RUSH variable does not exist.");
+	/// }
+	/// ```
     pub fn init_shell_vars() -> Variables {
         let mut vars = Variables { vars: HashMap::with_capacity_and_hasher(200, SeaRandomState) };
         // see man bash (Shell vars)
