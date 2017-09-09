@@ -43,7 +43,13 @@ extern crate chrono;
 extern crate pest;
 #[macro_use]
 extern crate pest_derive;
+extern crate structopt;
+#[macro_use]
+extern crate structopt_derive;
+#[macro_use]
+extern crate error_chain;
 
+use structopt::StructOpt;
 //use std::{str, thread, time};
 use std::str;
 use std::collections::HashMap;

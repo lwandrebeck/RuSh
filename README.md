@@ -158,6 +158,8 @@ Right now, RuSh is definitely not useable. A couple little things have been done
 
 ## Building
 
+You need Rust 1.20.0 or newer. I do use latest stable versions.
+
 It’s as simple as:
 
     cargo build
