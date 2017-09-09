@@ -134,3 +134,21 @@ impl Prompt {
         prompt
     }
 }
+
+#[cfg(test)]
+mod tests {
+	use prompt::Prompt;
+	use Variables;
+	use variables::{Variable, Value};
+	
+	#[test]
+	fn test_get() {
+		let mut vars = Variables::init_shell_vars();
+		let mut p = Prompt::get(&mut vars, "PS2");
+		assert_eq!(p.prompt, ">");
+		p = Prompt::get(&mut vars, "PS3");
+		assert_eq!(p.prompt, ">");
+		p = Prompt::get(&mut vars, "PS4");
+		assert_eq!(p.prompt, ">");
+	}
+}

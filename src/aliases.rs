@@ -91,3 +91,36 @@ impl Aliases {
         aliases
     }
 }
+
+#[cfg(test)]
+mod tests {
+	use Aliases;
+	
+	#[test]
+	fn test_get() {
+		let al = Aliases::init_aliases();
+		match al.get("egrep") {
+			Some(s) => assert_eq!(s, "egrep --color=auto"),
+			None => panic!("egrep alias should be defined")
+		}
+	}
+	
+	#[test]
+	fn test_init_aliases() {
+		let al = Aliases::init_aliases();
+		match al.get("l.") {
+			Some(s) => assert_eq!(s, "ls -d .* --color=auto"),
+			None => panic!("l. alias should be defined")
+		}	
+	}
+	
+	#[test]
+	fn test_set() {
+		let mut al = Aliases::init_aliases();
+		al.set(String::from("aliastest"), String::from("aliastest result"));
+		match al.get("aliastest") {
+			Some(s) => assert_eq!(s, "aliastest result"),
+			None => panic!("aliastest alias should be defined")
+		}
+	}
+}
