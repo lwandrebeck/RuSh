@@ -76,6 +76,7 @@ impl Variable {
 	/// let var = Variable { value: Value::I(-42), rw: true };
 	/// let val = var.geti();
 	/// println!("Integer var value is: {}", val);
+	/// assert_eq!(val, -42);
 	/// ```
     pub fn geti(&self) -> i64 {
         match self.value {
@@ -369,3 +370,81 @@ impl Variables {
 //~ impl Arrays {
 
 //~ }
+
+#[cfg(test)]
+mod tests {
+	use Variables;
+	use variables::{Variable, Value};
+	
+	#[test]
+	fn test_init_shell_vars() {
+		let mut vars = Variables::init_shell_vars();
+		let mut var = vars.get("RUSH_COMMAND");
+		match var {
+			Some(v) => assert_eq!(v.gets(), ""),
+			None => panic!("RUSH_COMMAND should be defined.")
+		}
+		var = vars.get("HISTSIZE");
+		match var {
+			Some(v) => assert_eq!(v.geti(), 1000),
+			None => panic!("HISTSIZE should be defined.")
+		}
+	}
+	
+	#[test]
+	fn test_unset() {
+		let mut vars = Variables::init_shell_vars();
+		let mut var = vars.get("RUSH_COMMAND");
+		match var {
+			Some(v) => assert_eq!(v.gets(), ""),
+			None => panic!("RUSH_COMMAND should be defined.")
+		}
+		vars.unset(String::from("RUSH_COMMAND"));
+		var = vars.get("RUSH_COMMAND");
+		match var {
+			Some(v) => panic!("RUSH_COMMAND should have been unset."),
+			None => println!("RUSH_COMMAND is not set.")
+		}	
+	}
+
+	#[test]
+	fn test_get() {
+		let mut vars = Variables::init_shell_vars();
+		let mut var = vars.get("RUSH_COMMAND");
+		match var {
+			Some(v) => assert_eq!(v.gets(), ""),
+			None => panic!("RUSH_COMMAND should be defined.")
+		}
+		var = vars.get("HISTSIZE");
+		match var {
+			Some(v) => assert_eq!(v.geti(), 1000),
+			None => panic!("HISTSIZE should be defined.")
+		}
+		vars.set(String::from("TEST"), Variable { value: Value::F(-49.3), rw: true });
+		var = vars.get("TEST");
+		match var {
+			Some(v) => { if v.getf() != -49.3 { panic!("TEST var does not equal -49.3"); } },
+			None => panic!("TEST variable should be defined.")
+		}
+	}
+
+	#[test]
+	fn test_set() {
+		let mut vars = Variables::init_shell_vars();
+		vars.set(String::from("TESTF"), Variable { value: Value::F(-49.3), rw: true });
+		match vars.get("TESTF") {
+			Some(v) => assert_eq!(v.getf(), -49.3),
+			None => panic!("TESTF should be defined.")
+		}
+		vars.set(String::from("TESTI"), Variable { value: Value::I(-42), rw: true });
+		match vars.get("TESTI") {
+			Some(v) => assert_eq!(v.geti(), -42),
+			None => panic!("TESTI should be defined.")
+		}
+		vars.set(String::from("TESTS"), Variable { value: Value::S(String::from("RuSh will rock (one day)")), rw: true });
+		match vars.get("TESTS") {
+			Some(v) => assert_eq!(v.gets(), "RuSh will rock (one day)"),
+			None => panic!("TESTS variable should be defined.")
+		}
+	}
+}
