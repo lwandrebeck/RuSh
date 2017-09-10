@@ -41,10 +41,16 @@ impl Prompt {
 	///
 	/// # Examples
 	/// ```rust
-	/// let mut var = Variables { vars: HashMap::with_capacity_and_hasher(200, SeaRandomState) };
-	/// var.set("PS1", Variable { value: Value::S(""), rw: true);
-	/// p = Prompt.get("PS1");
-	/// println!("Prompt var value interpreted from PS1 variable is: {}", p.prompt);
+	/// use prompt::Prompt;
+	/// use Variables;
+	/// use variables::{Variable, Value};
+	/// let mut vars = Variables::init_shell_vars();
+	/// let mut p = Prompt::get(&mut vars, "PS2");
+	/// assert_eq!(p.prompt, ">");
+	/// p = Prompt::get(&mut vars, "PS3");
+	/// assert_eq!(p.prompt, ">");
+	/// p = Prompt::get(&mut vars, "PS4");
+	/// assert_eq!(p.prompt, ">");
 	/// ```
     pub fn get(vars: &mut Variables, p: &str) -> Prompt {
         let mut aslash = false;

@@ -57,11 +57,12 @@ impl Opt {
 	///
 	/// # Examples
 	/// ```rust
-	/// let mut opt = Opt { opt: HashMap::with_capacity_and_hasher(30, SeaRandomState) };
-	/// opt.set(String::from("autocd"), OptionRW { set: false, rw: true });
-	/// match opt.get("autocd") {
-	///     Some(val) => println!("autocd value is: {}", val.set);
-	///     None => println!("autocd option does not exist.");
+	/// use Opt;
+	/// use opt::OptionRW;
+	/// let mut o = Opt::init_set_options();
+	/// match o.get("notify") {
+	/// 	Some(v) => { assert_eq!(v.set, false); assert_eq!(v.rw, true); },
+	/// 	None => panic!("notify set option should be defined.")
 	/// }
 	/// ```
     pub fn get(&self, key: &str) -> Option<OptionRW> {
@@ -75,11 +76,13 @@ impl Opt {
 	///
 	/// # Examples
 	/// ```rust
-	/// let mut opt = Opt { opt: HashMap::with_capacity_and_hasher(30, SeaRandomState) };
-	/// opt.set(String::from("autocd"), OptionRW { set: false, rw: true });
-	/// match opt.get("autocd") {
-	///     Some(val) => println!("autocd value is: {}", val.set);
-	///     None => println!("autocd option does not exist.");
+	/// use Opt;
+	/// use opt::OptionRW;
+	/// let mut o = Opt::init_shopt_options();
+	/// o.set(String::from("opttest"), OptionRW { set: false, rw: false });
+	/// match o.get("opttest") {
+	/// 	Some(v) => { assert_eq!(v.set, false); assert_eq!(v.rw, false); },
+	/// 	None => panic!("opttest shopt option should be defined.")
 	/// }
 	/// ```
 	pub fn set(&mut self, key: String, value: OptionRW) {
@@ -269,9 +272,5 @@ mod tests {
 			Some(v) => { assert_eq!(v.set, false); assert_eq!(v.rw, false); },
 			None => panic!("opttest shopt option should be defined.")
 		}
-	}
-
-	#[test]
-	fn test_optionrw_get() {
 	}
 }

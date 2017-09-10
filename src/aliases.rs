@@ -43,11 +43,11 @@ impl Aliases {
 	///
 	/// # Examples
 	/// ```rust
-	/// let al = Aliases { aliases: HashMap::with_capacity_and_hasher(30, SeaRandomState) };
-	/// al.set(String::from("ll"), String::from("ls -l --color=auto");
-	/// match al.get("ll") {
-	///     Some(val) => println!("ll alias value is: {}", val);
-	///     None => println!("ll alias does not exist.");
+	/// use Aliases;
+	/// let al = Aliases::init_aliases();
+	/// match al.get("egrep") {
+	/// 	Some(s) => assert_eq!(s, "egrep --color=auto"),
+	/// 	None => panic!("egrep alias should be defined")
 	/// }
 	/// ```
     pub fn get(&self, key: &str) -> Option<String> {
@@ -61,11 +61,12 @@ impl Aliases {
 	///
 	/// # Examples
 	/// ```rust
-	/// let mut al = Aliases { aliases: HashMap::with_capacity_and_hasher(30, SeaRandomState) };
-	/// al.set(String::from("ll"), String::from("ls -l --color=auto");
-	/// match al.get("ll") {
-	///     Some(val) => println!("ll alias value is: {}", val);
-	///     None => println!("ll alias does not exist.");
+	/// use Aliases;
+	/// let mut al = Aliases::init_aliases();
+	/// al.set(String::from("aliastest"), String::from("aliastest result"));
+	/// match al.get("aliastest") {
+	/// 	Some(s) => assert_eq!(s, "aliastest result"),
+	/// 	None => panic!("aliastest alias should be defined")
 	/// }
 	/// ```
     pub fn set(&mut self, key: String, value: String) {
