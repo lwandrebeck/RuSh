@@ -23,11 +23,19 @@ addons:
 
 before_script:
   - cargo install --force cargo-travis
+  - |
+      if [[ "$TRAVIS_RUST_VERSION" == "nightly" ]]; then
+        ( ( cargo install clippy && export CLIPPY=true ) || export CLIPPY=false );
+      fi
   - export PATH=$HOME/.cargo/bin:$PATH
 script:
   - cargo build --verbose
   - cargo test --verbose
   - cargo bench --verbose
+  - |
+      if [[ "$TRAVIS_RUST_VERSION" == "nightly" && $CLIPPY ]]; then
+        cargo clippy
+      fi
 
 after_success:
   - |
