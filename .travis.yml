@@ -3,9 +3,13 @@ cache: cargo
 os: 
   - linux
 rust:
-- stable
-- beta
-- nightly
+  - stable
+  - beta
+  - nightly
+sudo: false
+matrix:
+  allow_failure:
+    - rust: nightly
 addons:
   apt:
     packages:
@@ -18,14 +22,12 @@ addons:
       - kalakris-cmake
 
 before_script:
-  - |
-      cargo install --force cargo-travis &&
-      export PATH=$HOME/.cargo/bin:$PATH
+  - cargo install --force cargo-travis
+  - export PATH=$HOME/.cargo/bin:$PATH
 script:
-  - |
-    cargo build --all --verbose &&
-    cargo test --all --verbose &&
-    cargo bench --all --verbose
+  - cargo build --verbose
+  - cargo test --verbose
+  - cargo bench --verbose
 
 after_success:
   - |
@@ -48,8 +50,3 @@ env:
     # override the default `--features unstable` used for the nightly branch (optional)
     - TRAVIS_CARGO_NIGHTLY_FEATURE=nightly
     - RUSTFLAGS="-C link-dead-code"
-
-sudo: false
-matrix:
-allow_failure:
-- rust: nightly
