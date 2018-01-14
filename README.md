@@ -14,6 +14,8 @@ Please note that this is a personal project (read not funded), in order to learn
 
 Right now, RuSh is definitely not useable. A couple little things have been done, but 99% (at _least_) have to be written.
 
+20180114: RuSh is (once again) stalled for a couple (more) months, due to moving to a new location.
+
 ## TODO:
 ### parser
 - [x] unquoted string suppport. (space character taken care of)
