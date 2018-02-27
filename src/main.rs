@@ -131,7 +131,7 @@ impl Default for RuSh {
                 Ok(input) => {
                     // TODO fix history management
                     rl.add_history_entry(&input);
-                    let pest = Script::parse_str(Rule::bla, &input).unwrap_or_else(|e| panic!("{}", e));
+                    let pest = Script::parse(Rule::bla, &input).unwrap_or_else(|e| panic!("{}", e));
                     for line in pest {
                         match line.as_rule() {
                             Rule::float => println!("float: {}", line.into_span().as_str()),

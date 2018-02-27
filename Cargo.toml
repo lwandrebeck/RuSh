@@ -2,7 +2,7 @@
 name = "RuSh"
 description = "RuSh aims to be a bash compatible shell (with more candies) written in rust."
 license = "GPL3"
-version = "0.0.1"
+version = "0.0.0-alpha.0"
 authors = [ "Laurent Wandrebeck <l.wandrebeck@quelquesmots.fr>",
             "Guillaume Gomez <guillaume1.gomez@gmail.com>" ]
 
@@ -22,9 +22,12 @@ chrono="^0.4"
 libc="^0.2"
 rand="^0.3"
 term="^0.4"
-pest = "^1.0.0-beta"
-pest_derive = "^1.0.0-beta"
+pest = "^1.0"
+pest_derive = "^1.0"
 seahash = "^3.0"
 structopt = "0.1.0"
 structopt-derive = "0.1.0"
 error-chain = "^0.11"
+
+[package.metadata.release]
+upload-doc = true
