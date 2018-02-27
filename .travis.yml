@@ -2,15 +2,18 @@ language: rust
 cache: cargo
 os:
   - linux
+
 rust:
   - stable
   - beta
   - nightly
-sudo: false
+
+sudo: required
+
 matrix:
   allow_failure:
     - rust: nightly
-    - rust: stable # 1.24.0 has a bug https://github.com/rust-lang/rust/issues/47309
+
 addons:
   apt:
     packages:
@@ -23,20 +26,17 @@ addons:
       - kalakris-cmake
 
 before_script:
-  - cargo install --force cargo-travis
-  - |
-      if [[ "$TRAVIS_RUST_VERSION" == "nightly" ]]; then
-        ( ( cargo install clippy && export CLIPPY=true ) || export CLIPPY=false );
-      fi
   - export PATH=$HOME/.cargo/bin:$PATH
+  - cargo install cargo-update || echo "cargo-update already installed"
+  - cargo install cargo-travis || echo "cargo-travis already installed"
+  - cargo install-update -a # update outdated cached binaries
+
 script:
-  - cargo build --verbose
-  - RUSTC_BACKTRACE=1 cargo test --verbose
-  - cargo bench --verbose
   - |
-      if [[ "$TRAVIS_RUST_VERSION" == "nightly" && $CLIPPY ]]; then
-        cargo clippy
-      fi
+      cargo build &&
+      cargo test &&
+      cargo bench &&
+      cargo doc
 
 after_success:
   - |
@@ -54,8 +54,8 @@ after_success:
     for file in target/debug/rush-*[^\.d]; do mkdir -p "target/cov/$(basename $file)"; ./kcov-build/usr/local/bin/kcov --exclude-pattern=/.cargo,/usr/lib --verify "target/cov/$(basename $file)" "$file"; done &&
     bash <(curl -s https://codecov.io/bash) &&
     echo "Uploaded code coverage"
+
 env:
   global:
     # override the default `--features unstable` used for the nightly branch (optional)
     - TRAVIS_CARGO_NIGHTLY_FEATURE=nightly
-    - RUSTFLAGS="-C link-dead-code"
