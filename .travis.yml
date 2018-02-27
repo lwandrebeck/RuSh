@@ -1,6 +1,6 @@
 language: rust
 cache: cargo
-os: 
+os:
   - linux
 rust:
   - stable
@@ -10,6 +10,7 @@ sudo: false
 matrix:
   allow_failure:
     - rust: nightly
+    - rust: stable # 1.24.0 has a bug https://github.com/rust-lang/rust/issues/47309
 addons:
   apt:
     packages:
@@ -30,7 +31,7 @@ before_script:
   - export PATH=$HOME/.cargo/bin:$PATH
 script:
   - cargo build --verbose
-  - cargo test --verbose
+  - RUSTC_BACKTRACE=1 cargo test --verbose
   - cargo bench --verbose
   - |
       if [[ "$TRAVIS_RUST_VERSION" == "nightly" && $CLIPPY ]]; then
