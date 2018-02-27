@@ -3,8 +3,6 @@
 [![codecov](https://codecov.io/gh/lwandrebeck/RuSh/branch/master/graph/badge.svg)](https://codecov.io/gh/lwandrebeck/RuSh)
 [![License: GPL v3](https://img.shields.io/badge/License-GPL%20v3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 
-though travis fails to build properly (SIGSEGV on cargo test part), it is an error on their side, works perfectly fine locally.
-
 # RuSh: A shell written in Rust
 
 ## Quick introduction
