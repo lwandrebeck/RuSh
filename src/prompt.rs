@@ -1,7 +1,7 @@
 //
 // prompt.rs
 //
-// Copyright 2015-2017 Laurent Wandrebeck <l.wandrebeck@quelquesmots.fr>
+// Copyright 2015-2018 Laurent Wandrebeck <l.wandrebeck@quelquesmots.fr>
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -38,20 +38,20 @@ pub struct Prompt {
 /// Methods for Prompt.
 impl Prompt {
     /// Get `Prompt` from `Variables`. Returns interpreted `Prompt`.
-	///
-	/// # Examples
-	/// ```rust
-	/// use prompt::Prompt;
-	/// use Variables;
-	/// use variables::{Variable, Value};
-	/// let mut vars = Variables::init_shell_vars();
-	/// let mut p = Prompt::get(&mut vars, "PS2");
-	/// assert_eq!(p.prompt, ">");
-	/// p = Prompt::get(&mut vars, "PS3");
-	/// assert_eq!(p.prompt, ">");
-	/// p = Prompt::get(&mut vars, "PS4");
-	/// assert_eq!(p.prompt, ">");
-	/// ```
+    ///
+    /// # Examples
+    /// ```rust
+    /// use prompt::Prompt;
+    /// use Variables;
+    /// use variables::{Variable, Value};
+    /// let mut vars = Variables::init_shell_vars();
+    /// let mut p = Prompt::get(&mut vars, "PS2");
+    /// assert_eq!(p.prompt, ">");
+    /// p = Prompt::get(&mut vars, "PS3");
+    /// assert_eq!(p.prompt, ">");
+    /// p = Prompt::get(&mut vars, "PS4");
+    /// assert_eq!(p.prompt, ">");
+    /// ```
     pub fn get(vars: &mut Variables, p: &str) -> Prompt {
         let mut aslash = false;
         let mut pt = String::new();
@@ -143,18 +143,18 @@ impl Prompt {
 
 #[cfg(test)]
 mod tests {
-	use prompt::Prompt;
-	use Variables;
-	use variables::{Variable, Value};
-	
-	#[test]
-	fn test_get() {
-		let mut vars = Variables::init_shell_vars();
-		let mut p = Prompt::get(&mut vars, "PS2");
-		assert_eq!(p.prompt, ">");
-		p = Prompt::get(&mut vars, "PS3");
-		assert_eq!(p.prompt, ">");
-		p = Prompt::get(&mut vars, "PS4");
-		assert_eq!(p.prompt, ">");
-	}
+    use prompt::Prompt;
+    use Variables;
+    use variables::{Variable, Value};
+
+    #[test]
+    fn test_get() {
+        let mut vars = Variables::init_shell_vars();
+        let mut p = Prompt::get(&mut vars, "PS2");
+        assert_eq!(p.prompt, ">");
+        p = Prompt::get(&mut vars, "PS3");
+        assert_eq!(p.prompt, ">");
+        p = Prompt::get(&mut vars, "PS4");
+        assert_eq!(p.prompt, ">");
+    }
 }

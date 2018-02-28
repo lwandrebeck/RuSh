@@ -1,7 +1,7 @@
 //
 // variables.rs
 //
-// Copyright 2015-2017 Laurent Wandrebeck <l.wandrebeck@quelquesmots.fr>
+// Copyright 2015-2018 Laurent Wandrebeck <l.wandrebeck@quelquesmots.fr>
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -61,7 +61,7 @@ pub enum Value {
 #[derive(Clone)]
 /// Variable Structure.
 pub struct Variable {
-	/// Variable value is stored as Value enum.
+    /// Variable value is stored as Value enum.
     pub value: Value,
     /// Is the variable rw (or ro if false).
     pub rw: bool
@@ -69,14 +69,14 @@ pub struct Variable {
 
 /// Methods for Variable structure.
 impl Variable {
-	/// Extract `i64` from Variable.value
-	///
-	/// # Examples
-	/// ```rust
-	/// use variables::{Variable, Value};
-	/// let var = Variable { value: Value::I(-42), rw: true };
-	/// assert_eq!(var.geti(), -42);
-	/// ```
+    /// Extract `i64` from Variable.value
+    ///
+    /// # Examples
+    /// ```rust
+    /// use variables::{Variable, Value};
+    /// let var = Variable { value: Value::I(-42), rw: true };
+    /// assert_eq!(var.geti(), -42);
+    /// ```
     pub fn geti(&self) -> i64 {
         match self.value {
             Value::I(i) => i,
@@ -84,14 +84,14 @@ impl Variable {
         }
     }
 
-	/// Extract `f64` from Variable.value
-	///
-	/// # Examples
-	/// ```rust
-	/// use variables::{Variable, Value};
-	/// let var = Variable { value: Value::F(-42.5), rw: true };
-	/// assert_eq!(var.getf(), -42.5);
-	/// ```
+    /// Extract `f64` from Variable.value
+    ///
+    /// # Examples
+    /// ```rust
+    /// use variables::{Variable, Value};
+    /// let var = Variable { value: Value::F(-42.5), rw: true };
+    /// assert_eq!(var.getf(), -42.5);
+    /// ```
     pub fn getf(&self) -> f64 {
         match self.value {
             Value::F(f) => f,
@@ -99,14 +99,14 @@ impl Variable {
         }
     }
 
-	/// Extract `String` from Variable.value
-	///
-	/// # Examples
-	/// ```rust
-	/// use variables::{Variable, Value};
-	/// let var = Variable { value: Value::S("Forty two"), rw: true };
-	/// assert_eq!(var.get(), "Forty two");
-	/// ```
+    /// Extract `String` from Variable.value
+    ///
+    /// # Examples
+    /// ```rust
+    /// use variables::{Variable, Value};
+    /// let var = Variable { value: Value::S("Forty two"), rw: true };
+    /// assert_eq!(var.get(), "Forty two");
+    /// ```
     pub fn gets(&self) -> String {
         match self.value {
             Value::S(ref s) => s.to_string(),
@@ -124,27 +124,27 @@ pub struct Variables {
 /// Methods for `Variables`.
 impl Variables {
     /// Get `Variable` from its name. Returns `Variable` as `Option`.
-	///
-	/// # Examples
-	/// ```rust
-	/// use Variables;
-	/// use variables::{Variable, Value};
-	/// 
-	///	let mut vars = Variables::init_shell_vars();
-	///	match vars.get("RUSH_COMMAND") {
-	///		Some(v) => assert_eq!(v.gets(), ""),
-	///		None => panic!("RUSH_COMMAND should be defined.")
-	///	}
-	///	match vars.get("HISTSIZE") {
-	///		Some(v) => assert_eq!(v.geti(), 1000),
-	///		None => panic!("HISTSIZE should be defined.")
-	///	}
-	///	vars.set(String::from("TEST"), Variable { value: Value::F(-49.3), rw: true });
-	///	match vars.get("TEST") {
-	///		Some(v) => assert_eq!(v.getf(), -49.3),
-	///		None => panic!("TEST variable should be defined.")
-	///	}
-	/// ```
+    ///
+    /// # Examples
+    /// ```rust
+    /// use Variables;
+    /// use variables::{Variable, Value};
+    ///
+    /// let mut vars = Variables::init_shell_vars();
+    /// match vars.get("RUSH_COMMAND") {
+    ///     Some(v) => assert_eq!(v.gets(), ""),
+    ///     None => panic!("RUSH_COMMAND should be defined.")
+    /// }
+    /// match vars.get("HISTSIZE") {
+    ///     Some(v) => assert_eq!(v.geti(), 1000),
+    ///     None => panic!("HISTSIZE should be defined.")
+    /// }
+    /// vars.set(String::from("TEST"), Variable { value: Value::F(-49.3), rw: true });
+    /// match vars.get("TEST") {
+    ///     Some(v) => assert_eq!(v.getf(), -49.3),
+    ///     None => panic!("TEST variable should be defined.")
+    /// }
+    /// ```
     pub fn get(&self, key: &str) -> Option<Variable> {
         match self.vars.get(key) {
             Some(val) => { let var = Variable { value: val.value.clone(), rw: val.rw }; Some(var) },
@@ -153,29 +153,29 @@ impl Variables {
     }
 
     /// Set a variable value for a given name. Variable is created if needed, otherwise value is updated if rw.
-	///
-	/// # Examples
-	/// ```rust
-	/// use Variables;
-	/// use variables::{Variable, Value};
-	/// 
-	/// let mut vars = Variables::init_shell_vars();
-	/// vars.set(String::from("TESTF"), Variable { value: Value::F(-49.3), rw: true });
-	/// match vars.get("TESTF") {
-	/// 	Some(v) => assert_eq!(v.getf(), -49.3),
-	/// 	None => panic!("TESTF should be defined.")
-	/// }
-	/// vars.set(String::from("TESTI"), Variable { value: Value::I(-42), rw: true });
-	/// match vars.get("TESTI") {
-	/// 	Some(v) => assert_eq!(v.geti(), -42),
-	/// 	None => panic!("TESTI should be defined.")
-	/// }
-	/// vars.set(String::from("TESTS"), Variable { value: Value::S(String::from("RuSh will rock (one day)")), rw: true });
-	/// match vars.get("TESTS") {
-	/// 	Some(v) => assert_eq!(v.gets(), "RuSh will rock (one day)"),
-	/// 	None => panic!("TESTS variable should be defined.")
-	/// }
-	/// ```
+    ///
+    /// # Examples
+    /// ```rust
+    /// use Variables;
+    /// use variables::{Variable, Value};
+    ///
+    /// let mut vars = Variables::init_shell_vars();
+    /// vars.set(String::from("TESTF"), Variable { value: Value::F(-49.3), rw: true });
+    /// match vars.get("TESTF") {
+    ///     Some(v) => assert_eq!(v.getf(), -49.3),
+    ///     None => panic!("TESTF should be defined.")
+    /// }
+    /// vars.set(String::from("TESTI"), Variable { value: Value::I(-42), rw: true });
+    /// match vars.get("TESTI") {
+    ///     Some(v) => assert_eq!(v.geti(), -42),
+    ///     None => panic!("TESTI should be defined.")
+    /// }
+    /// vars.set(String::from("TESTS"), Variable { value: Value::S(String::from("RuSh will rock (one day)")), rw: true });
+    /// match vars.get("TESTS") {
+    ///     Some(v) => assert_eq!(v.gets(), "RuSh will rock (one day)"),
+    ///     None => panic!("TESTS variable should be defined.")
+    /// }
+    /// ```
     pub fn set(&mut self, key: String, v: Variable) {
         /// does the var already exist ?
         match self.vars.entry(key) {
@@ -188,41 +188,41 @@ impl Variables {
     }
 
     /// Unset a variable name and its value. So is the associated environment variable and value.
-	///
-	/// # Examples
-	/// ```rust
-	/// use Variables;
-	/// use variables::{Variable, Value};
-	/// 
-	/// let mut vars = Variables::init_shell_vars();
-	/// match vars.get("RUSH_COMMAND") {
-	/// 	Some(v) => assert_eq!(v.gets(), ""),
-	/// 	None => panic!("RUSH_COMMAND should be defined.")
-	/// }
-	/// vars.unset(String::from("RUSH_COMMAND"));
-	/// match vars.get("RUSH_COMMAND") {
-	/// 	Some(v) => panic!("RUSH_COMMAND should have been unset."),
-	/// 	None => println!("RUSH_COMMAND is not set.")
-	/// }
-	/// ```
+    ///
+    /// # Examples
+    /// ```rust
+    /// use Variables;
+    /// use variables::{Variable, Value};
+    ///
+    /// let mut vars = Variables::init_shell_vars();
+    /// match vars.get("RUSH_COMMAND") {
+    ///     Some(v) => assert_eq!(v.gets(), ""),
+    ///     None => panic!("RUSH_COMMAND should be defined.")
+    /// }
+    /// vars.unset(String::from("RUSH_COMMAND"));
+    /// match vars.get("RUSH_COMMAND") {
+    ///     Some(v) => panic!("RUSH_COMMAND should have been unset."),
+    ///     None => println!("RUSH_COMMAND is not set.")
+    /// }
+    /// ```
     pub fn unset(&mut self, key: String) {
         self.vars.remove(&key);
         env::remove_var(key);
     }
 
     /// Default shell variables are set here, following the bash way.
-	///
-	/// # Examples
-	/// ```rust
-	/// use Variables;
-	/// use variables::{Variable, Value};
-	/// 
-	/// let mut vars = Variables::init_shell_vars();
-	/// match var.get("RUSH") {
-	///     Some(val) => println!("RUSH var value is: {}", val.gets());
-	///     None => println!("RUSH variable does not exist.");
-	/// }
-	/// ```
+    ///
+    /// # Examples
+    /// ```rust
+    /// use Variables;
+    /// use variables::{Variable, Value};
+    ///
+    /// let mut vars = Variables::init_shell_vars();
+    /// match var.get("RUSH") {
+    ///     Some(val) => println!("RUSH var value is: {}", val.gets());
+    ///     None => println!("RUSH variable does not exist.");
+    /// }
+    /// ```
     pub fn init_shell_vars() -> Variables {
         let mut vars = Variables { vars: HashMap::with_capacity_and_hasher(200, SeaRandomState) };
         // see man bash (Shell vars)
@@ -405,71 +405,71 @@ impl Variables {
 
 #[cfg(test)]
 mod tests {
-	use Variables;
-	use variables::{Variable, Value};
-	
-	#[test]
-	fn test_init_shell_vars() {
-		let mut vars = Variables::init_shell_vars();
-		match vars.get("RUSH_COMMAND") {
-			Some(v) => assert_eq!(v.gets(), ""),
-			None => panic!("RUSH_COMMAND should be defined.")
-		}
-		match vars.get("HISTSIZE") {
-			Some(v) => assert_eq!(v.geti(), 1000),
-			None => panic!("HISTSIZE should be defined.")
-		}
-	}
-	
-	#[test]
-	fn test_unset() {
-		let mut vars = Variables::init_shell_vars();
-		match vars.get("RUSH_COMMAND") {
-			Some(v) => assert_eq!(v.gets(), ""),
-			None => panic!("RUSH_COMMAND should be defined.")
-		}
-		vars.unset(String::from("RUSH_COMMAND"));
-		match vars.get("RUSH_COMMAND") {
-			Some(v) => panic!("RUSH_COMMAND should have been unset."),
-			None => println!("RUSH_COMMAND is not set.")
-		}	
-	}
+    use Variables;
+    use variables::{Variable, Value};
 
-	#[test]
-	fn test_get_and_getifs() {
-		let mut vars = Variables::init_shell_vars();
-		match vars.get("RUSH_COMMAND") {
-			Some(v) => assert_eq!(v.gets(), ""),
-			None => panic!("RUSH_COMMAND should be defined.")
-		}
-		match vars.get("HISTSIZE") {
-			Some(v) => assert_eq!(v.geti(), 1000),
-			None => panic!("HISTSIZE should be defined.")
-		}
-		vars.set(String::from("TEST"), Variable { value: Value::F(-49.3), rw: true });
-		match vars.get("TEST") {
-			Some(v) => assert_eq!(v.getf(), -49.3),
-			None => panic!("TEST variable should be defined.")
-		}
-	}
+    #[test]
+    fn test_init_shell_vars() {
+        let mut vars = Variables::init_shell_vars();
+        match vars.get("RUSH_COMMAND") {
+            Some(v) => assert_eq!(v.gets(), ""),
+            None => panic!("RUSH_COMMAND should be defined.")
+        }
+        match vars.get("HISTSIZE") {
+            Some(v) => assert_eq!(v.geti(), 1000),
+            None => panic!("HISTSIZE should be defined.")
+        }
+    }
 
-	#[test]
-	fn test_set() {
-		let mut vars = Variables::init_shell_vars();
-		vars.set(String::from("TESTF"), Variable { value: Value::F(-49.3), rw: true });
-		match vars.get("TESTF") {
-			Some(v) => assert_eq!(v.getf(), -49.3),
-			None => panic!("TESTF should be defined.")
-		}
-		vars.set(String::from("TESTI"), Variable { value: Value::I(-42), rw: true });
-		match vars.get("TESTI") {
-			Some(v) => assert_eq!(v.geti(), -42),
-			None => panic!("TESTI should be defined.")
-		}
-		vars.set(String::from("TESTS"), Variable { value: Value::S(String::from("RuSh will rock (one day)")), rw: true });
-		match vars.get("TESTS") {
-			Some(v) => assert_eq!(v.gets(), "RuSh will rock (one day)"),
-			None => panic!("TESTS variable should be defined.")
-		}
-	}
+    #[test]
+    fn test_unset() {
+        let mut vars = Variables::init_shell_vars();
+        match vars.get("RUSH_COMMAND") {
+            Some(v) => assert_eq!(v.gets(), ""),
+            None => panic!("RUSH_COMMAND should be defined.")
+        }
+        vars.unset(String::from("RUSH_COMMAND"));
+        match vars.get("RUSH_COMMAND") {
+            Some(v) => panic!("RUSH_COMMAND should have been unset."),
+            None => println!("RUSH_COMMAND is not set.")
+        }
+    }
+
+    #[test]
+    fn test_get_and_getifs() {
+        let mut vars = Variables::init_shell_vars();
+        match vars.get("RUSH_COMMAND") {
+            Some(v) => assert_eq!(v.gets(), ""),
+            None => panic!("RUSH_COMMAND should be defined.")
+        }
+        match vars.get("HISTSIZE") {
+            Some(v) => assert_eq!(v.geti(), 1000),
+            None => panic!("HISTSIZE should be defined.")
+        }
+        vars.set(String::from("TEST"), Variable { value: Value::F(-49.3), rw: true });
+        match vars.get("TEST") {
+            Some(v) => assert_eq!(v.getf(), -49.3),
+            None => panic!("TEST variable should be defined.")
+        }
+    }
+
+    #[test]
+    fn test_set() {
+        let mut vars = Variables::init_shell_vars();
+        vars.set(String::from("TESTF"), Variable { value: Value::F(-49.3), rw: true });
+        match vars.get("TESTF") {
+            Some(v) => assert_eq!(v.getf(), -49.3),
+            None => panic!("TESTF should be defined.")
+        }
+        vars.set(String::from("TESTI"), Variable { value: Value::I(-42), rw: true });
+        match vars.get("TESTI") {
+            Some(v) => assert_eq!(v.geti(), -42),
+            None => panic!("TESTI should be defined.")
+        }
+        vars.set(String::from("TESTS"), Variable { value: Value::S(String::from("RuSh will rock (one day)")), rw: true });
+        match vars.get("TESTS") {
+            Some(v) => assert_eq!(v.gets(), "RuSh will rock (one day)"),
+            None => panic!("TESTS variable should be defined.")
+        }
+    }
 }

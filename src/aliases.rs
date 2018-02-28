@@ -1,7 +1,7 @@
 //
 // aliases.rs
 //
-// Copyright 2015-2017 Laurent Wandrebeck <l.wandrebeck@quelquesmots.fr>
+// Copyright 2015-2018 Laurent Wandrebeck <l.wandrebeck@quelquesmots.fr>
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -33,23 +33,23 @@ use variables::SeaRandomState;
 
 /// Aliases structure is defined here to store aliases values
 pub struct Aliases {
-	/// aliases are stored as HashMap<String, String>.
+    /// aliases are stored as HashMap<String, String>.
     aliases: HashMap<String, String, SeaRandomState>
 }
 
 /// Needed methods for Aliases.
 impl Aliases {
     /// Get an alias from `Aliases`. Returns `Option<String>`
-	///
-	/// # Examples
-	/// ```rust
-	/// use Aliases;
-	/// let al = Aliases::init_aliases();
-	/// match al.get("egrep") {
-	/// 	Some(s) => assert_eq!(s, "egrep --color=auto"),
-	/// 	None => panic!("egrep alias should be defined")
-	/// }
-	/// ```
+    ///
+    /// # Examples
+    /// ```rust
+    /// use Aliases;
+    /// let al = Aliases::init_aliases();
+    /// match al.get("egrep") {
+    ///     Some(s) => assert_eq!(s, "egrep --color=auto"),
+    ///     None => panic!("egrep alias should be defined")
+    /// }
+    /// ```
     pub fn get(&self, key: &str) -> Option<String> {
         match self.aliases.get(key) {
             Some(val) => Some(val.to_string()),
@@ -58,17 +58,17 @@ impl Aliases {
     }
 
     /// Set an alias for a given name. Entry is created if needed, otherwise value is updated.
-	///
-	/// # Examples
-	/// ```rust
-	/// use Aliases;
-	/// let mut al = Aliases::init_aliases();
-	/// al.set(String::from("aliastest"), String::from("aliastest result"));
-	/// match al.get("aliastest") {
-	/// 	Some(s) => assert_eq!(s, "aliastest result"),
-	/// 	None => panic!("aliastest alias should be defined")
-	/// }
-	/// ```
+    ///
+    /// # Examples
+    /// ```rust
+    /// use Aliases;
+    /// let mut al = Aliases::init_aliases();
+    /// al.set(String::from("aliastest"), String::from("aliastest result"));
+    /// match al.get("aliastest") {
+    ///     Some(s) => assert_eq!(s, "aliastest result"),
+    ///     None => panic!("aliastest alias should be defined")
+    /// }
+    /// ```
     pub fn set(&mut self, key: String, value: String) {
         self.aliases.insert(key, value);
     }
@@ -95,33 +95,33 @@ impl Aliases {
 
 #[cfg(test)]
 mod tests {
-	use Aliases;
-	
-	#[test]
-	fn test_get() {
-		let al = Aliases::init_aliases();
-		match al.get("egrep") {
-			Some(s) => assert_eq!(s, "egrep --color=auto"),
-			None => panic!("egrep alias should be defined")
-		}
-	}
-	
-	#[test]
-	fn test_init_aliases() {
-		let al = Aliases::init_aliases();
-		match al.get("l.") {
-			Some(s) => assert_eq!(s, "ls -d .* --color=auto"),
-			None => panic!("l. alias should be defined")
-		}	
-	}
-	
-	#[test]
-	fn test_set() {
-		let mut al = Aliases::init_aliases();
-		al.set(String::from("aliastest"), String::from("aliastest result"));
-		match al.get("aliastest") {
-			Some(s) => assert_eq!(s, "aliastest result"),
-			None => panic!("aliastest alias should be defined")
-		}
-	}
+    use Aliases;
+
+    #[test]
+    fn test_get() {
+        let al = Aliases::init_aliases();
+        match al.get("egrep") {
+            Some(s) => assert_eq!(s, "egrep --color=auto"),
+            None => panic!("egrep alias should be defined")
+        }
+    }
+
+    #[test]
+    fn test_init_aliases() {
+        let al = Aliases::init_aliases();
+        match al.get("l.") {
+            Some(s) => assert_eq!(s, "ls -d .* --color=auto"),
+            None => panic!("l. alias should be defined")
+        }
+    }
+
+    #[test]
+    fn test_set() {
+        let mut al = Aliases::init_aliases();
+        al.set(String::from("aliastest"), String::from("aliastest result"));
+        match al.get("aliastest") {
+            Some(s) => assert_eq!(s, "aliastest result"),
+            None => panic!("aliastest alias should be defined")
+        }
+    }
 }

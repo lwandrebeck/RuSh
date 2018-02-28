@@ -1,7 +1,7 @@
 //
 // main.rs
 //
-// Copyright 2015-2017 Laurent Wandrebeck <l.wandrebeck@quelquesmots.fr>
+// Copyright 2015-2018 Laurent Wandrebeck <l.wandrebeck@quelquesmots.fr>
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -102,6 +102,7 @@ impl Default for RuSh {
             shell_vars: Variables::init_shell_vars(),
             // TODO set history size
             // rl.set_history_max_len(1000);
+            /// Manage commands history with rustyline crate.
             history: rustyline::history::History::new(),
             /// Variable line_case allows to know which PS[1234] variable to use to display prompt.
             line_case: 1,

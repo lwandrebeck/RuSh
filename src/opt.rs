@@ -1,7 +1,7 @@
 //
 // opt.rs
 //
-// Copyright 2015-2017 Laurent Wandrebeck <l.wandrebeck@quelquesmots.fr>
+// Copyright 2015-2018 Laurent Wandrebeck <l.wandrebeck@quelquesmots.fr>
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -54,17 +54,17 @@ pub struct Opt {
 /// Methods for Opt structure.
 impl Opt {
     /// Get an opt value from `Opt`. Returns value as Option<OptionRW>.
-	///
-	/// # Examples
-	/// ```rust
-	/// use Opt;
-	/// use opt::OptionRW;
-	/// let mut o = Opt::init_set_options();
-	/// match o.get("notify") {
-	/// 	Some(v) => { assert_eq!(v.set, false); assert_eq!(v.rw, true); },
-	/// 	None => panic!("notify set option should be defined.")
-	/// }
-	/// ```
+    ///
+    /// # Examples
+    /// ```rust
+    /// use Opt;
+    /// use opt::OptionRW;
+    /// let mut o = Opt::init_set_options();
+    /// match o.get("notify") {
+    ///     Some(v) => { assert_eq!(v.set, false); assert_eq!(v.rw, true); },
+    ///     None => panic!("notify set option should be defined.")
+    /// }
+    /// ```
     pub fn get(&self, key: &str) -> Option<OptionRW> {
         match self.opt.get(key) {
             Some(val) => { let var = OptionRW { set: val.set.clone(), rw: val.rw }; Some(var) },
@@ -73,19 +73,19 @@ impl Opt {
     }
 
     /// Set a opt for a given name. Opt is created if needed, otherwise value is updated.
-	///
-	/// # Examples
-	/// ```rust
-	/// use Opt;
-	/// use opt::OptionRW;
-	/// let mut o = Opt::init_shopt_options();
-	/// o.set(String::from("opttest"), OptionRW { set: false, rw: false });
-	/// match o.get("opttest") {
-	/// 	Some(v) => { assert_eq!(v.set, false); assert_eq!(v.rw, false); },
-	/// 	None => panic!("opttest shopt option should be defined.")
-	/// }
-	/// ```
-	pub fn set(&mut self, key: String, value: OptionRW) {
+    ///
+    /// # Examples
+    /// ```rust
+    /// use Opt;
+    /// use opt::OptionRW;
+    /// let mut o = Opt::init_shopt_options();
+    /// o.set(String::from("opttest"), OptionRW { set: false, rw: false });
+    /// match o.get("opttest") {
+    ///     Some(v) => { assert_eq!(v.set, false); assert_eq!(v.rw, false); },
+    ///     None => panic!("opttest shopt option should be defined.")
+    /// }
+    /// ```
+    pub fn set(&mut self, key: String, value: OptionRW) {
         self.opt.insert(key, value);
     }
 
@@ -234,43 +234,43 @@ impl Opt {
 
 #[cfg(test)]
 mod tests {
-	use Opt;
-	use opt::OptionRW;
-	
-	#[test]
-	fn test_opt_get() {
-		let mut o = Opt::init_set_options();
-		match o.get("notify") {
-			Some(v) => { assert_eq!(v.set, false); assert_eq!(v.rw, true); },
-			None => panic!("notify set option should be defined.")
-		}
-	}
-	
-	#[test]
-	fn test_opt_init_set_options() {
-		let mut o = Opt::init_set_options();
-		match o.get("xtrace") {
-			Some(v) => { assert_eq!(v.set, false); assert_eq!(v.rw, true); },
-			None => panic!("xtrace set option should be defined.")
-		}
-	}
+    use Opt;
+    use opt::OptionRW;
 
-	#[test]
-	fn test_opt_init_shopt_options() {
-		let mut o = Opt::init_shopt_options();
-		match o.get("histappend") {
-			Some(v) => { assert_eq!(v.set, true); assert_eq!(v.rw, true); },
-			None => panic!("histappend shopt option should be defined.")
-		}
-	}
+    #[test]
+    fn test_opt_get() {
+        let mut o = Opt::init_set_options();
+        match o.get("notify") {
+            Some(v) => { assert_eq!(v.set, false); assert_eq!(v.rw, true); },
+            None => panic!("notify set option should be defined.")
+        }
+    }
 
-	#[test]
-	fn test_opt_set() {
-		let mut o = Opt::init_shopt_options();
-		o.set(String::from("opttest"), OptionRW { set: false, rw: false });
-		match o.get("opttest") {
-			Some(v) => { assert_eq!(v.set, false); assert_eq!(v.rw, false); },
-			None => panic!("opttest shopt option should be defined.")
-		}
-	}
+    #[test]
+    fn test_opt_init_set_options() {
+        let mut o = Opt::init_set_options();
+        match o.get("xtrace") {
+            Some(v) => { assert_eq!(v.set, false); assert_eq!(v.rw, true); },
+            None => panic!("xtrace set option should be defined.")
+        }
+    }
+
+    #[test]
+    fn test_opt_init_shopt_options() {
+        let mut o = Opt::init_shopt_options();
+        match o.get("histappend") {
+            Some(v) => { assert_eq!(v.set, true); assert_eq!(v.rw, true); },
+            None => panic!("histappend shopt option should be defined.")
+        }
+    }
+
+    #[test]
+    fn test_opt_set() {
+        let mut o = Opt::init_shopt_options();
+        o.set(String::from("opttest"), OptionRW { set: false, rw: false });
+        match o.get("opttest") {
+            Some(v) => { assert_eq!(v.set, false); assert_eq!(v.rw, false); },
+            None => panic!("opttest shopt option should be defined.")
+        }
+    }
 }
