@@ -20,13 +20,13 @@ bench = true
 rustyline="^1.0"
 chrono="^0.4"
 libc="^0.2"
-rand="^0.3"
-term="^0.4"
+rand="^0.4"
+term="^0.5"
 pest = "^1.0"
 pest_derive = "^1.0"
 seahash = "^3.0"
-structopt = "0.1.0"
-structopt-derive = "0.1.0"
+structopt = "^0.2"
+structopt-derive = "^0.2"
 
 [package.metadata.release]
 upload-doc = true
