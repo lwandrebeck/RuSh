@@ -46,8 +46,6 @@ extern crate pest_derive;
 extern crate structopt;
 #[macro_use]
 extern crate structopt_derive;
-#[macro_use]
-extern crate error_chain;
 
 use structopt::StructOpt;
 //use std::{str, thread, time};
