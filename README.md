@@ -8,11 +8,9 @@
 ## Quick introduction
 
 RuSh aims to be (maybe one day) a POSIX Shell, Bash compatible (or close to) with candies. Source code is [GPL3](http://www.gnu.org/licenses/gpl-3.0.html).
-Please note that this is a personal project (read not funded), in order to learn Rust language (that does not mean feedback or patches are not welcome (Thanks [Guillaume](https://github.com/GuillaumeGomez) ) and [Mathieu](https://github.com/kali) :)).
+Please note that this is a personal project (read not funded), in order to learn Rust language (that does not mean feedback or patches are not welcome (Thanks [Guillaume](https://github.com/GuillaumeGomez) and [Mathieu](https://github.com/kali) :)).
 
 Right now, RuSh is definitely not useable. A couple little things have been done, but 99% (at _least_) have to be written.
-
-20180114: RuSh is (once again) stalled for a couple (more) months, due to moving to a new location.
 
 ## TODO:
 ### parser
@@ -27,13 +25,13 @@ Right now, RuSh is definitely not useable. A couple little things have been done
 - [x] (signed) float support (f64 by default). exponent correctly parsed.
 - [x] variable assignment. (type is autodetected)
 - [x] shebang (#!) and comments are correctly parsed.
-- [ ] : syntax
+- [x] : syntax
 - [ ] compgen builtin.
 - [ ] complete builtin.
 - [ ] compopt builtin.
 - [ ] fc builtin.
 - [ ] history builtin.
-- [ ] local builtin.
+- [x] local builtin.
 - [ ] mapfile builtin.
 - [ ] readarray builtin.
 - [ ] return builtin.
@@ -72,17 +70,17 @@ Right now, RuSh is definitely not useable. A couple little things have been done
 - [ ] [ ] expansion.
 - [ ] * ? etc expansion.
 - [ ] regexp support =~
-- [ ] POSIX characters classes [:alnum:] matches alphabetic or numeric characters. This is equivalent to A-Za-z0-9.
-- [ ] POSIX characters classes [:alpha:] matches alphabetic characters. This is equivalent to A-Za-z.
-- [ ] POSIX characters classes [:blank:] matches a space or a tab.
-- [ ] POSIX characters classes [:cntrl:] matches control characters.
-- [ ] POSIX characters classes [:digit:] matches (decimal) digits. This is equivalent to 0-9.
-- [ ] POSIX characters classes [:graph:] (graphic printable characters). Matches characters in the range of ASCII 33 - 126. This is the same as [:print:], below, but excluding the space character.
-- [ ] POSIX characters classes [:lower:] matches lowercase alphabetic characters. This is equivalent to a-z.
-- [ ] POSIX characters classes [:print:] (printable characters). Matches characters in the range of ASCII 32 - 126. This is the same as [:graph:], above, but adding the space character.
-- [ ] POSIX characters classes [:space:] matches whitespace characters (space and horizontal tab).
-- [ ] POSIX characters classes [:upper:] matches uppercase alphabetic characters. This is equivalent to A-Z.
-- [ ] POSIX characters classes [:xdigit:] matches hexadecimal digits. This is equivalent to 0-9A-Fa-f.
+- [x] POSIX characters classes [:alnum:] matches alphabetic or numeric characters. This is equivalent to A-Za-z0-9.
+- [x] POSIX characters classes [:alpha:] matches alphabetic characters. This is equivalent to A-Za-z.
+- [x] POSIX characters classes [:blank:] matches a space or a tab.
+- [x] POSIX characters classes [:cntrl:] matches control characters.
+- [x] POSIX characters classes [:digit:] matches (decimal) digits. This is equivalent to 0-9.
+- [x] POSIX characters classes [:graph:] (graphic printable characters). Matches characters in the range of ASCII 33 - 126. This is the same as [:print:], below, but excluding the space character.
+- [x] POSIX characters classes [:lower:] matches lowercase alphabetic characters. This is equivalent to a-z.
+- [x] POSIX characters classes [:print:] (printable characters). Matches characters in the range of ASCII 32 - 126. This is the same as [:graph:], above, but adding the space character.
+- [x] POSIX characters classes [:space:] matches whitespace characters (space and horizontal tab).
+- [x] POSIX characters classes [:upper:] matches uppercase alphabetic characters. This is equivalent to A-Z.
+- [x] POSIX characters classes [:xdigit:] matches hexadecimal digits. This is equivalent to 0-9A-Fa-f.
 - [ ] if elif else fi.
 - [ ] case "$var" in "value") command ;; "value2") command ;; esac.
 - [ ] for n in list do done { } may be used instead of do done
@@ -91,8 +89,8 @@ Right now, RuSh is definitely not useable. A couple little things have been done
 - [ ] while (( condition )) do done
 - [ ] until [condition] do done
 - [ ] do done
-- [ ] break
-- [ ] continue
+- [x] break
+- [x] continue
 - [ ] function function_name() { } and function() { }
 - [ ] select variable in list (optional in list) do command break done
 - [ ] command execution
@@ -100,7 +98,7 @@ Right now, RuSh is definitely not useable. A couple little things have been done
 - [ ] > < >> << 2>&1 etc redirections. don’t forget <<EOF kind.
 - [ ] <(command list) >(command list) process substitution.
 - [ ] || && operators
-- [ ] echo
+- [x] echo (basic support, no -n -e -E args for now, no echo "foo" bar, just echo "foo")
 - [ ] printf
 - [ ] read
 - [ ] cd
@@ -118,12 +116,12 @@ Right now, RuSh is definitely not useable. A couple little things have been done
 - [ ] readonly
 - [ ] getopts
 - [ ] source .
-- [ ] exit
+- [x] exit
 - [ ] exec
 - [ ] shopt
 - [ ] caller
-- [ ] true
-- [ ] false
+- [x] true
+- [x] false
 - [ ] type
 - [ ] hash
 - [ ] bind
@@ -134,7 +132,7 @@ Right now, RuSh is definitely not useable. A couple little things have been done
 - [ ] fg
 - [ ] wait
 - [ ] suspend
-- [ ] logout
+- [x] logout
 - [ ] times
 - [ ] kill
 - [ ] killall
@@ -142,10 +140,11 @@ Right now, RuSh is definitely not useable. A couple little things have been done
 - [ ] builtin
 - [ ] enable
 - [ ] autoload
+- [ ] .pest file will need a complete overhaul to be cleaner and better structured.
 
 ### core
 - [ ] Variables management (partly done, arrays still have to be taken care of).
-- [ ] Rewrite prompt routine once [pest](https://github.com/dragostis/pest) parser is done.
+- [ ] Rewrite prompt routine with [pest](https://github.com/dragostis/pest) parser.
 - [ ] Clean up code (commented tries here and there…)
 - [ ] Split up code (variables.rs prompt.rs etc. Partly done).
 - [ ] Write everything linked to builtins, pipes etc (yeah, that will be *very* long)

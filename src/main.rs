@@ -150,6 +150,45 @@ impl Default for RuSh {
                             Rule::hexvarassign => println!("hexvarassign: {}", line.into_span().as_str()),
                             Rule::octvarassign => println!("octvarassign: {}", line.into_span().as_str()),
                             Rule::stringvarassign => println!("stringvarassign: {}", line.into_span().as_str()),
+                            Rule::nop => println!("nop: {}", line.into_span().as_str()),
+                            Rule::localfloatvarassign => println!("localfloatvarassign: {}", line.into_span().as_str()),
+                            Rule::localbinvarassign => println!("localbinvarassign: {}", line.into_span().as_str()),
+                            Rule::localintvarassign => println!("localintvarassign: {}", line.into_span().as_str()),
+                            Rule::localhexvarassign => println!("localhexvarassign: {}", line.into_span().as_str()),
+                            Rule::localoctvarassign => println!("localoctvarassign: {}", line.into_span().as_str()),
+                            Rule::localstringvarassign => println!("localstringvarassign: {}", line.into_span().as_str()),
+                            Rule::alnum => println!("alnum: {}", line.into_span().as_str()),
+                            Rule::alph => println!("alph: {}", line.into_span().as_str()),
+                            Rule::blank => println!("blank: {}", line.into_span().as_str()),
+                            Rule::cntrl => println!("cntrl: {}", line.into_span().as_str()),
+                            Rule::digi => println!("digi: {}", line.into_span().as_str()),
+                            Rule::graph => println!("graph: {}", line.into_span().as_str()),
+                            Rule::lower => println!("lower: {}", line.into_span().as_str()),
+                            Rule::prin => println!("prin: {}", line.into_span().as_str()),
+                            Rule::space => println!("space: {}", line.into_span().as_str()),
+                            Rule::upper => println!("upper: {}", line.into_span().as_str()),
+                            Rule::xdigit => println!("xdigit: {}", line.into_span().as_str()),
+                            Rule::brea => println!("break: {}", line.into_span().as_str()),
+                            Rule::continu => println!("continue: {}", line.into_span().as_str()),
+                            //Rule::pwd => println!("pwd: {}", line.into_span().as_str()),
+                            Rule::exit => println!("exit: {}", line.into_span().as_str()),
+                            Rule::tru => println!("true: {}", line.into_span().as_str()),
+                            Rule::fals => println!("false: {}", line.into_span().as_str()),
+                            //Rule::help => println!("help: {}", line.into_span().as_str()),
+                            //Rule::bg => println!("bg: {}", line.into_span().as_str()),
+                            //Rule::fg => println!("fg: {}", line.into_span().as_str()),
+                            Rule::logout => println!("logout: {}", line.into_span().as_str()),
+                            Rule::echo => {
+                                for inner in line.into_inner() {
+                                    match inner.as_rule() {
+                                        Rule::dquoted => println!("echo dquoted:  {}", inner.into_span().as_str()),
+                                        Rule::squoted => println!("echo squoted:  {}", inner.into_span().as_str()),
+                                        Rule::btquoted => println!("echo btquoted:  {}", inner.into_span().as_str()),
+                                        Rule::nonquoted => println!("echo nonquoted:  {}", inner.into_span().as_str()),
+                                        _ => unreachable!()
+                                    };
+                                }
+                            },
                             _ => unreachable!() // ident rule is silent and cannot be reached
                         };
                     }

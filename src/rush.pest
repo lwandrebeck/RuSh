@@ -67,13 +67,13 @@ octdigit = { '0'..'7' }
 hexdigit = { '0'..'9' | 'a'..'f' | 'A'..'F' }
 int = @{ ("0" ~ eoi) | ("-"? ~ '1'..'9' ~ digit* ~ eoi) }
 exp = { ^"e" }
-float = @{ int ~ "." ~ digit* ~ ( exp ~ int)? ~ eoi }
+float = @{ int ~ "." ~ digit* ~ (exp ~ int)? ~ eoi }
 binnum = @{ "0b" ~ bindigit+ ~ eoi }
 octnum = @{ "0" ~ octdigit+ ~ eoi }
-hexnum = @{ "0x" ~ hexdigit+ ~eoi }
+hexnum = @{ "0x" ~ hexdigit+ ~ eoi }
 numbers = _{ float | hexnum | octnum | binnum | int }
 descape  = @{ "\\" ~ ("\"" | "\\" | "/" | "b" | "f" | "n" | "r" | "t" | unicode) }
-unicode = @{ "u" ~ hexdigit ~ hexdigit ~ hexdigit ~ hexdigit }
+unicode = @{ "u" ~ hexdigit{4} }
 dquoted = @{ "\"" ~ (descape | !("\"" | "\\") ~ any)* ~ "\"" }
 // string without quotes
 nonquoted = @{ (( descape | sescape | btescape) | !("\"" | "\\" | "\'" | "`") ~ any)* }
@@ -90,5 +90,40 @@ floatvarassign = @{ varname ~ "=" ~ float }
 binvarassign = @{ varname ~ "=" ~ binnum }
 octvarassign = @{ varname ~ "=" ~ octnum }
 hexvarassign = @{ varname ~ "=" ~ hexnum }
-stringvarassign = @{ varname ~ "=" ~ (dquoted | squoted | btquoted | nonquoted) }
-bla = _{ floatvarassign | octvarassign | hexvarassign | binvarassign | intvarassign | stringvarassign | numbers | dquoted |squoted | btquoted | comments | nonquoted }
+stringvarassign = @{ varname ~ "=" ~ (dquoted | squoted | btquoted | nonquoted) ~ eoi }
+echo = { "echo" ~ " "+ ~ (dquoted | squoted | btquoted | nonquoted) ~ eoi }
+localfloatvarassign = { "local" ~ " "+ ~ floatvarassign }
+localoctvarassign = { "local" ~ " "+ ~ octvarassign }
+localhexvarassign = { "local" ~ " "+ ~ hexvarassign }
+localbinvarassign = { "local" ~ " "+ ~ binvarassign }
+localintvarassign = { "local" ~ " "+ ~ intvarassign }
+localstringvarassign = { "local" ~ " "+ ~ stringvarassign }
+nop = @{ ":" }
+alnum = @{ "[:alnum:]" }
+alph = @{ "[:alpha:]" }
+blank = @{ "[:blank:]" }
+cntrl = @{ "[:cntrl:]" }
+digi = @{ "[:digit:]" }
+graph = @{ "[:graph:] "}
+lower = @{ "[:lower:]" }
+prin = @{ "[:print:]" }
+space = @{ "[:space:]" }
+upper = @{ "[:upper:]" }
+xdigit = @{ "[:xdigit:]" }
+brea = { "break" ~ int? }
+continu = { "continue" ~ int? }
+// potential argument has to be managed
+// pwd = @{ "pwd" }
+exit = { "exit" ~ int? }
+tru = @{ "true" }
+fals = @{ "false" }
+// potential argument has to be managed
+//help = { "help" }
+// potential argument has to be managed
+//bg = { "bg" }
+// potential argument has to be managed
+//fg = { "fg" }
+logout = { "logout" ~ int? }
+bla = _{ echo | localhexvarassign | localbinvarassign | localfloatvarassign | localintvarassign | localoctvarassign | localstringvarassign | alnum | alph | blank | cntrl | digi | graph | lower | prin | space | upper | xdigit | brea | continu | exit | tru | fals | logout | nop | floatvarassign | octvarassign | hexvarassign | binvarassign | intvarassign | stringvarassign | numbers | dquoted |squoted | btquoted | comments | nonquoted }
+
+
