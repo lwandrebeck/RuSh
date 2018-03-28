@@ -181,6 +181,11 @@ impl Default for RuSh {
                             Rule::echo => {
                                 for inner in line.into_inner() {
                                     match inner.as_rule() {
+                                        Rule::echooptne => println!("echooptne: {}", inner.into_span().as_str()),
+                                        Rule::echooptnE => println!("echooptnE: {}", inner.into_span().as_str()),
+                                        Rule::echoopte => println!("echoopte: {}", inner.into_span().as_str()),
+                                        Rule::echooptE => println!("echooptE: {}", inner.into_span().as_str()),
+                                        Rule::echooptn => println!("echooptn: {}", inner.into_span().as_str()),
                                         Rule::dquoted => println!("echo dquoted:  {}", inner.into_span().as_str()),
                                         Rule::squoted => println!("echo squoted:  {}", inner.into_span().as_str()),
                                         Rule::btquoted => println!("echo btquoted:  {}", inner.into_span().as_str()),

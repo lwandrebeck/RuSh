@@ -91,7 +91,12 @@ binvarassign = @{ varname ~ "=" ~ binnum }
 octvarassign = @{ varname ~ "=" ~ octnum }
 hexvarassign = @{ varname ~ "=" ~ hexnum }
 stringvarassign = @{ varname ~ "=" ~ (dquoted | squoted | btquoted | nonquoted) ~ eoi }
-echo = { "echo" ~ " "+ ~ (dquoted | squoted | btquoted | nonquoted) ~ eoi }
+echooptne = @{ "-ne" | "-en" }
+echooptnE = @{ "-nE" | "-En" }
+echoopte = @{ "-e" }
+echooptE = @{ "-E" }
+echooptn = @{ "-n" }
+echo = { "echo" ~ " "+ ~ (echooptne | echooptnE | echoopte | echooptE | echooptn)? ~ (dquoted | squoted | btquoted | nonquoted)* ~ eoi }
 localfloatvarassign = { "local" ~ " "+ ~ floatvarassign }
 localoctvarassign = { "local" ~ " "+ ~ octvarassign }
 localhexvarassign = { "local" ~ " "+ ~ hexvarassign }
