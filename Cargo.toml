@@ -17,16 +17,16 @@ test = true
 bench = true
 
 [dependencies]
-rustyline="^1.0"
-chrono="^0.4"
-libc="^0.2"
-rand="^0.5"
-term="^0.5"
+rustyline= { git = 'https://github.com/gwenn/rustyline.git', branch='master' }
+chrono="0.4"
+libc="0.2"
+rand="0.5"
+term="0.5"
 pest = { git = 'https://github.com/pest-parser/pest.git', branch='master' }
 pest_derive = { git = 'https://github.com/pest-parser/pest.git', branch='master' }
-seahash = "^3.0"
-structopt = "^0.2"
-structopt-derive = "^0.2"
+seahash = "3.0"
+structopt = "0.2"
+structopt-derive = "0.2"
 
 [package.metadata.release]
 upload-doc = true
