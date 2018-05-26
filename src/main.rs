@@ -122,10 +122,10 @@ impl Default for RuSh {
               //~ }
           //~ }
         //~ });
-        /// main loop. display prompt, wait for input, parse, etc.
+        // main loop. display prompt, wait for input, parse, etc.
         loop {
             let line = rl.readline(&shell.prompt.prompt);
-            /// (very) Basic parsing for now. To be moved in parser.rs later on.
+            // (very) Basic parsing for now. To be moved in parser.rs later on.
             match line {
                 Ok(input) => {
                     // TODO fix history management
@@ -201,7 +201,7 @@ impl Default for RuSh {
                     },
                 Err(_) => { break }
             }
-            /// Use correct variable to define next prompt display.
+            // Use correct variable to define next prompt display.
             match shell.line_case {
                 1 => shell.prompt = prompt::Prompt::get(&mut shell.shell_vars, "PS1"),
                 2 => shell.prompt = prompt::Prompt::get(&mut shell.shell_vars, "PS2"),

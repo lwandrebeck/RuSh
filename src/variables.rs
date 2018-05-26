@@ -177,7 +177,7 @@ impl Variables {
     /// }
     /// ```
     pub fn set(&mut self, key: String, v: Variable) {
-        /// does the var already exist ?
+        // does the var already exist ?
         match self.vars.entry(key) {
             Occupied(mut entry) => {
                 let contents = entry.get_mut();
