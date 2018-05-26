@@ -22,8 +22,8 @@ chrono="^0.4"
 libc="^0.2"
 rand="^0.4"
 term="^0.5"
-pest = "^1.0"
-pest_derive = "^1.0"
+pest = { git = 'https://github.com/pest-parser/pest.git', branch='master' }
+pest_derive = { git = 'https://github.com/pest-parser/pest.git', branch='master' }
 seahash = "^3.0"
 structopt = "^0.2"
 structopt-derive = "^0.2"
