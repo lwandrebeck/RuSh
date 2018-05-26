@@ -20,7 +20,7 @@ bench = true
 rustyline="^1.0"
 chrono="^0.4"
 libc="^0.2"
-rand="^0.4"
+rand="^0.5"
 term="^0.5"
 pest = { git = 'https://github.com/pest-parser/pest.git', branch='master' }
 pest_derive = { git = 'https://github.com/pest-parser/pest.git', branch='master' }
