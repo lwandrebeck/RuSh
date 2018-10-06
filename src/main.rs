@@ -60,8 +60,6 @@ pub use opt::Opt;
 pub use aliases::Aliases;
 
 /// pest grammar inclusion. dummy const so that .pest file changes are taken care of.
-const _GRAMMAR: &'static str = include_str!("rush.pest"); // relative to src path
-
 #[derive(Parser)]
 #[grammar = "rush.pest"]
 struct Script;
