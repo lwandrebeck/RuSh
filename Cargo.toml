@@ -5,6 +5,7 @@ license = "GPL3"
 version = "0.0.0-alpha.0"
 authors = [ "Laurent Wandrebeck <l.wandrebeck@quelquesmots.fr>",
             "Guillaume Gomez <guillaume1.gomez@gmail.com>" ]
+edition = "2018"
 
 [features]
 nightly = []
@@ -17,10 +18,10 @@ test = true
 bench = true
 
 [dependencies]
-rustyline="2.1"
+rustyline="3.0"
 chrono="0.4"
 libc="0.2"
-rand="0.5"
+rand="0.6"
 term="0.5"
 pest="2.0"
 pest_derive="2.0"

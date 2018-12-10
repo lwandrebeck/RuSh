@@ -27,7 +27,7 @@ extern crate chrono;
 extern crate rand;
 
 use self::chrono::*;
-use variables::{Variable, Variables, Value};
+use crate::variables::{Variable, Variables, Value};
 
 /// Public structure Prompt
 pub struct Prompt {

@@ -27,7 +27,7 @@
 extern crate seahash;
 
 use std::collections::HashMap;
-use variables::SeaRandomState;
+use crate::variables::SeaRandomState;
 
 /// OptionRW structure, allows to store values for a given option.
 pub struct OptionRW {

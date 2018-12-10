@@ -55,9 +55,9 @@ use std::collections::HashMap;
 use pest::Parser;
 //use variables::{Variables, Variable, Value};
 // pub for use is there so doc is generated.
-pub use variables::Variables;
-pub use opt::Opt;
-pub use aliases::Aliases;
+pub use crate::variables::Variables;
+pub use crate::opt::Opt;
+pub use crate::aliases::Aliases;
 
 /// pest grammar inclusion. dummy const so that .pest file changes are taken care of.
 #[derive(Parser)]

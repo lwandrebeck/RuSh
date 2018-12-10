@@ -29,7 +29,7 @@ extern crate seahash;
 use std::collections::HashMap;
 //use std::hash::BuildHasher;
 //use variables::{Variable, Variables, Value, SeaRandomState};
-use variables::SeaRandomState;
+use crate::variables::SeaRandomState;
 
 /// Aliases structure is defined here to store aliases values
 pub struct Aliases {
