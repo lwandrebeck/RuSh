@@ -159,7 +159,7 @@ Right now, RuSh is definitely not useable. A couple little things have been done
 
 ## Building
 
-You need Rust 1.23.0 or newer. I do use latest stable versions.
+You need Rust 1.31.0 or newer. I do use latest stable versions and 2018 edition.
 
 It’s as simple as:
 
