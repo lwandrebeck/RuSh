@@ -405,8 +405,8 @@ impl Variables {
 
 #[cfg(test)]
 mod tests {
-    use Variables;
-    use variables::{Variable, Value};
+    use crate::variables::Variables;
+    use crate::variables::{Variable, Value};
 
     #[test]
     fn test_init_shell_vars() {

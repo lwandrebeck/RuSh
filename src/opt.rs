@@ -234,8 +234,8 @@ impl Opt {
 
 #[cfg(test)]
 mod tests {
-    use Opt;
-    use opt::OptionRW;
+    use crate::opt::Opt;
+    use crate::opt::OptionRW;
 
     #[test]
     fn test_opt_get() {

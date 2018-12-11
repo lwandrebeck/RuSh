@@ -95,7 +95,7 @@ impl Aliases {
 
 #[cfg(test)]
 mod tests {
-    use Aliases;
+    use crate::aliases::Aliases;
 
     #[test]
     fn test_get() {

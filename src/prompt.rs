@@ -143,9 +143,9 @@ impl Prompt {
 
 #[cfg(test)]
 mod tests {
-    use prompt::Prompt;
-    use Variables;
-    use variables::{Variable, Value};
+    use crate::prompt::Prompt;
+    use crate::variables::Variables;
+    use crate::variables::{Variable, Value};
 
     #[test]
     fn test_get() {
