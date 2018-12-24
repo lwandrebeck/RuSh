@@ -67,7 +67,7 @@ impl Opt {
     /// ```
     pub fn get(&self, key: &str) -> Option<OptionRW> {
         match self.opt.get(key) {
-            Some(val) => { let var = OptionRW { set: val.set.clone(), rw: val.rw }; Some(var) },
+            Some(val) => { let var = OptionRW { set: val.set, rw: val.rw }; Some(var) },
             None => None
         }
     }
@@ -239,7 +239,7 @@ mod tests {
 
     #[test]
     fn test_opt_get() {
-        let mut o = Opt::init_set_options();
+        let o = Opt::init_set_options();
         match o.get("notify") {
             Some(v) => { assert_eq!(v.set, false); assert_eq!(v.rw, true); },
             None => panic!("notify set option should be defined.")
@@ -248,7 +248,7 @@ mod tests {
 
     #[test]
     fn test_opt_init_set_options() {
-        let mut o = Opt::init_set_options();
+        let o = Opt::init_set_options();
         match o.get("xtrace") {
             Some(v) => { assert_eq!(v.set, false); assert_eq!(v.rw, true); },
             None => panic!("xtrace set option should be defined.")
@@ -257,7 +257,7 @@ mod tests {
 
     #[test]
     fn test_opt_init_shopt_options() {
-        let mut o = Opt::init_shopt_options();
+        let o = Opt::init_shopt_options();
         match o.get("histappend") {
             Some(v) => { assert_eq!(v.set, true); assert_eq!(v.rw, true); },
             None => panic!("histappend shopt option should be defined.")

@@ -44,13 +44,12 @@ extern crate pest;
 #[macro_use]
 extern crate pest_derive;
 extern crate structopt;
-#[macro_use]
 extern crate structopt_derive;
 
-use structopt::StructOpt;
+//use structopt::StructOpt;
 //use std::{str, thread, time};
 use std::str;
-use std::collections::HashMap;
+//use std::collections::HashMap;
 //use std::collections::hash_map::Entry::{Occupied, Vacant};
 use pest::Parser;
 //use variables::{Variables, Variable, Value};

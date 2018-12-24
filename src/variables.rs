@@ -236,7 +236,7 @@ impl Variables {
         // Expands to the process ID of the current rush process. This differs from $$ under certain circumstances, such as subshells that do not require rush to be re-initialized.
         unsafe {
             let pid = getpid();
-            vars.set(String::from("RUSHPID"), Variable { value: Value::I(pid as i64), rw: true });
+            vars.set(String::from("RUSHPID"), Variable { value: Value::I(i64::from(pid)), rw: true });
         }
         // An associative array variable whose members correspond to the internal list of aliases as maintained by the alias builtin. Elements added to this array appear in the alias list; unsetting array elements cause aliases to be removed from the alias list.
         // TODO RUSH_ALIASES
@@ -267,7 +267,7 @@ impl Variables {
         // RUSH_VERSINFO[5]        The value of MACHTYPE.
         // TODO RUSH_VERSINFO -> need MACHTYPE, which needs HOSTTYPE, VENDOR, OSTYPE
         // Expands to a string describing the version of this instance of bash
-        let versinfo = vec!["0", "0", "1", "1", "alpha0", "TODO"]; // FIXME -> use some global var.
+        let _versinfo = vec!["0", "0", "1", "1", "alpha0", "TODO"]; // FIXME -> use some global var.
         vars.set(String::from("RUSH_VERSION"), Variable { value: Value::S(String::from("0.0.1-alpha0")), rw: true }); // FIXME -> use some global var.
         // An index into ${COMP_WORDS} of the word containing the current cursor position. This variable is available only in shell functions invoked by the programmable completion facilities.
         // TODO COMP_CWORD
@@ -290,7 +290,7 @@ impl Variables {
         // Expands to the effective user ID of the current user, initialized at shell startup. This variable is readonly.
         unsafe {
             let euid = geteuid();
-            vars.set(String::from("EUID"), Variable { value: Value::I(euid as i64), rw: false });
+            vars.set(String::from("EUID"), Variable { value: Value::I(i64::from(euid)), rw: false });
         }
         // An array variable containing the names of all shell functions currently in the execution call stack.  The element with index 0 is the name of any currently-executing shell function.  The bottom-most element (the one with the highest index) is "main".  This variable exists only when a shell function is executing.  Assignments to FUNCNAME have no effect and return an error status. If FUNCNAME is unset, it loses its special properties, even if it is subsequently reset.
         // TODO FUNCNAME
@@ -306,7 +306,7 @@ impl Variables {
         unsafe {
             gethostname(bufc.as_mut_ptr() as *mut c_char, 40);
         };
-        vars.set(String::from("HOSTNAME"), Variable { value: Value::S(String::from_utf8(bufc.split(|x| *x == 0).next().unwrap().to_vec()).unwrap_or(String::from("wtf"))), rw: true });
+        vars.set(String::from("HOSTNAME"), Variable { value: Value::S(String::from_utf8(bufc.split(|x| *x == 0).next().unwrap().to_vec()).unwrap_or_else(|_| String::from("wtf"))), rw: true });
         // Automatically set to a string that uniquely describes the type of machine on which rush is executing.  The default is system-dependent.
         // TODO HOSTTYPE
         // Each time this parameter is referenced, the shell substitutes a decimal number representing the current sequential line number (starting with 1) within a script or function. When not in a script or function, the value substituted is not guaranteed to be meaningful. If LINENO is unset, it loses its special properties, even if it is subsequently reset.
@@ -328,18 +328,18 @@ impl Variables {
         // The process ID of the shell's parent.  This variable is readonly.
         unsafe {
             let ppid = getppid();
-            vars.set(String::from("PPID"), Variable { value: Value::I(ppid as i64), rw: false });
+            vars.set(String::from("PPID"), Variable { value: Value::I(i64::from(ppid)), rw: false });
         }
         // The current working directory as set by the cd command.
         let pwd = match env::current_dir() {
             Ok(path) => String::from(path.to_str().unwrap_or("/")),
-            Err(e) => String::from("/")
+            Err(_e) => String::from("/")
         };
         vars.set(String::from("PWD"), Variable { value: Value::S(pwd), rw: true });
         // Each time this parameter is referenced, a random integer between 0 and 32767 is generated. The sequence of random numbers may be initialized by assigning a value to RANDOM. If RANDOM is unset, it loses its special properties, even if it is subsequently reset.
         let mut rng = rand::thread_rng();
         if rng.gen() {
-            vars.set(String::from("RANDOM"), Variable { value: Value::I(rng.gen::<i16>() as i64), rw: true });
+            vars.set(String::from("RANDOM"), Variable { value: Value::I(i64::from(rng.gen::<i16>())), rw: true });
         }
         // The contents of the readline line buffer, for use with "bind -x".
         // TODO READLINE_LINE
@@ -353,34 +353,29 @@ impl Variables {
         let cexe = match env::current_exe() {
             Ok(ce) => String::from(ce.to_str().unwrap_or("/")),
             // FIXME - should be current user’s login shell.
-            Err(e) => String::from("/"),
+            Err(_e) => String::from("/"),
         };
         vars.set(String::from("SHELL"), Variable { value: Value::S(cexe), rw: true });
         // A colon-separated list of enabled shell options. Each word in the list is a valid argument for the -o option to the set builtin command. The options appearing in SHELLOPTS are those reported as  on by set -o. If this variable is in the environment when rush starts up, each shell option in the list will be enabled before reading any startup files. This variable is read-only.
         // TODO SHELLOPTS
         // Incremented by one each time an instance of rush is started.
         match vars.get(&String::from("SHLVL")) {
-            Some(lvl) => {
-                match lvl {
-                    Variable { value: Value::I(mut val), rw: true } => { val+=1; vars.set(String::from("SHLVL"), Variable { value: Value::I(val), rw: true }); },
-                    _ => ()
-                }},
-                //let mut level:i64 = lvl { Value::I }; level +=1; vars.set(String::from("SHLVL"), Variable { value: Value::I(level), rw: true }); },
+            Some(lvl) => { if let Variable { value: Value::I(mut val), rw: true } = lvl { val+=1; vars.set(String::from("SHLVL"), Variable { value: Value::I(val), rw: true }); }},
             None => vars.set(String::from("SHLVL"), Variable { value: Value::I(1), rw: true })
         };
         // Expands to the user ID of the current user, initialized at shell startup. This variable is readonly.
         unsafe {
             let id = getuid();
-            vars.set(String::from("UID"), Variable { value: Value::I(id as i64), rw: false });
+            vars.set(String::from("UID"), Variable { value: Value::I(i64::from(id)), rw: false });
         }
         // TODO vars used by the shell, see man bash.
         unsafe {
             let id = getgid();
-            vars.set(String::from("GID"), Variable { value: Value::I(id as i64), rw: false });
+            vars.set(String::from("GID"), Variable { value: Value::I(i64::from(id)), rw: false });
         }
         unsafe {
             let log = getlogin();
-            vars.set(String::from("USERNAME"), Variable { value: Value::S(String::from_utf8(CStr::from_ptr(log).to_bytes().to_owned()).unwrap_or("no login".to_owned())), rw: false });
+            vars.set(String::from("USERNAME"), Variable { value: Value::S(String::from_utf8(CStr::from_ptr(log).to_bytes().to_owned()).unwrap_or_else(|_| "no login".to_owned())), rw: false });
         }
         vars.set(String::from("HISTSIZE"), Variable { value: Value::I(1000), rw: true });
         vars
@@ -410,7 +405,7 @@ mod tests {
 
     #[test]
     fn test_init_shell_vars() {
-        let mut vars = Variables::init_shell_vars();
+        let vars = Variables::init_shell_vars();
         match vars.get("RUSH_COMMAND") {
             Some(v) => assert_eq!(v.gets(), ""),
             None => panic!("RUSH_COMMAND should be defined.")
@@ -430,7 +425,7 @@ mod tests {
         }
         vars.unset(String::from("RUSH_COMMAND"));
         match vars.get("RUSH_COMMAND") {
-            Some(v) => panic!("RUSH_COMMAND should have been unset."),
+            Some(_v) => panic!("RUSH_COMMAND should have been unset."),
             None => println!("RUSH_COMMAND is not set.")
         }
     }

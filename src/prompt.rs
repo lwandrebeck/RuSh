@@ -100,44 +100,43 @@ impl Prompt {
                 aslash = false;
                 match i {
                     // See http://ss64.com/bash/syntax-prompt.html
-                    (index, 'd') => { let dt = Local::now(); pt.push_str(&dt.format("%a %b %e").to_string()); },
+                    (_index, 'd') => { let dt = Local::now(); pt.push_str(&dt.format("%a %b %e").to_string()); },
                     // TODO fix 'h' (short hostname must be returned)
-                    (index, 'h') => pt.push_str(&vars.get("HOSTNAME").unwrap().gets()),
-                    (index, 'H') => pt.push_str(&vars.get("HOSTNAME").unwrap().gets()),
-                    (index, 'j') => unimplemented!(),
-                    (index, 'l') => pt.push_str(&vars.get("TERM").unwrap().gets()),
-                    (index, 's') => pt.push_str(&vars.get("0").unwrap().gets()),
-                    (index, 't') => { let dt = Local::now(); pt.push_str(&dt.format("%H:%M:%S").to_string()); },
-                    (index, 'T') => { let dt = Local::now(); pt.push_str(&dt.format("%I:%M:%S").to_string()); },
-                    (index, '@') => { let dt = Local::now(); pt.push_str(&dt.format("%I:%M:%S%P").to_string()); },
-                    (index, 'u') => pt.push_str(&vars.get("USERNAME").unwrap().gets()),
-                    (index, 'v') => pt.push_str("0.0.1"), // FIXME
-                    (index, 'V') => pt.push_str("0.0.1"), // FIXME
-                    (index, 'w') => pt.push_str(&vars.get("PWD").unwrap().gets()),
-                    (index, 'W') => pt.push_str(&vars.get("PWD").unwrap().gets()),
-                    (index, '!') => unimplemented!(),
-                    (index, '#') => unimplemented!(),
-                    (index, '$') => { match vars.get("UID").unwrap().geti() {
+                    (_index, 'h') => pt.push_str(&vars.get("HOSTNAME").unwrap().gets()),
+                    (_index, 'H') => pt.push_str(&vars.get("HOSTNAME").unwrap().gets()),
+                    (_index, 'j') => unimplemented!(),
+                    (_index, 'l') => pt.push_str(&vars.get("TERM").unwrap().gets()),
+                    (_index, 's') => pt.push_str(&vars.get("0").unwrap().gets()),
+                    (_index, 't') => { let dt = Local::now(); pt.push_str(&dt.format("%H:%M:%S").to_string()); },
+                    (_index, 'T') => { let dt = Local::now(); pt.push_str(&dt.format("%I:%M:%S").to_string()); },
+                    (_index, '@') => { let dt = Local::now(); pt.push_str(&dt.format("%I:%M:%S%P").to_string()); },
+                    (_index, 'u') => pt.push_str(&vars.get("USERNAME").unwrap().gets()),
+                    (_index, 'v') => pt.push_str("0.0.1"), // FIXME
+                    (_index, 'V') => pt.push_str("0.0.1"), // FIXME
+                    (_index, 'w') => pt.push_str(&vars.get("PWD").unwrap().gets()),
+                    (_index, 'W') => pt.push_str(&vars.get("PWD").unwrap().gets()),
+                    (_index, '!') => unimplemented!(),
+                    (_index, '#') => unimplemented!(),
+                    (_index, '$') => { match vars.get("UID").unwrap().geti() {
                                         0 => pt.push_str("#"),
                                         _ => pt.push_str("$")
                                       }
                                     }
-                    (index, '0'...'8') => unimplemented!(),
-                    (index, 'n') => pt.push_str("\n"),
-                    (index, 'r') => pt.push_str("\r"),
-                    (index, 'e') => unimplemented!(),
-                    (index, 'a') => unimplemented!(),
-                    (index, '\\') => pt.push_str("\\"),
-                    (index, '[') => unimplemented!(),
-                    (index, ']') => unimplemented!(),
+                    (_index, '0'...'8') => unimplemented!(),
+                    (_index, 'n') => pt.push_str("\n"),
+                    (_index, 'r') => pt.push_str("\r"),
+                    (_index, 'e') => unimplemented!(),
+                    (_index, 'a') => unimplemented!(),
+                    (_index, '\\') => pt.push_str("\\"),
+                    (_index, '[') => unimplemented!(),
+                    (_index, ']') => unimplemented!(),
                     (_, _) => continue,
                 }
             } else {
               pt.push(i.1);
             }
         }
-        let prompt = Prompt { prompt: pt };
-        prompt
+        Prompt { prompt: pt }
     }
 }
 
@@ -145,7 +144,7 @@ impl Prompt {
 mod tests {
     use crate::prompt::Prompt;
     use crate::variables::Variables;
-    use crate::variables::{Variable, Value};
+    //use crate::variables::{Variable, Value};
 
     #[test]
     fn test_get() {
