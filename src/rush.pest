@@ -55,25 +55,15 @@
 // Metacharacters (when unquoted)
 // blank, |, &, ;, (, ), <, >.
 
-alpha = { 'a'..'z' | 'A'..'Z' }
-minalpha = { 'a'..'z' }
-capalpha = { 'A'..'Z' }
-digit = { '0'..'9' }
-alphanum = { alpha | digit }
-minalphanum = { minalpha | digit }
-capalphanum = { capalpha | digit }
-bindigit = { '0'..'1' }
-octdigit = { '0'..'7' }
-hexdigit = { '0'..'9' | 'a'..'f' | 'A'..'F' }
-int = @{ ("0" ~ EOI) | ("-"? ~ '1'..'9' ~ digit* ~ EOI) }
+int = @{ ("0" ~ EOI) | ("-"? ~ '1'..'9' ~ ASCII_DIGIT* ~ EOI) }
 exp = { ^"e" }
-float = @{ int ~ "." ~ digit* ~ (exp ~ int)? ~ EOI }
-binnum = @{ "0b" ~ bindigit+ ~ EOI }
-octnum = @{ "0" ~ octdigit+ ~ EOI }
-hexnum = @{ "0x" ~ hexdigit+ ~ EOI }
+float = @{ int ~ "." ~ ASCII_DIGIT* ~ (exp ~ int)? ~ EOI }
+binnum = @{ "0b" ~ ASCII_BIN_DIGIT+ ~ EOI }
+octnum = @{ "0" ~ ASCII_OCT_DIGIT+ ~ EOI }
+hexnum = @{ "0x" ~ ASCII_HEX_DIGIT+ ~ EOI }
 numbers = _{ float | hexnum | octnum | binnum | int }
 descape  = @{ "\\" ~ ("\"" | "\\" | "/" | "b" | "f" | "n" | "r" | "t" | unicode) }
-unicode = @{ "u" ~ hexdigit{4} }
+unicode = @{ "u" ~ ASCII_HEX_DIGIT{4} }
 dquoted = @{ "\"" ~ (descape | !("\"" | "\\") ~ ANY)* ~ "\"" }
 // string without quotes
 nonquoted = @{ (( descape | sescape | btescape) | !("\"" | "\\" | "\'" | "`") ~ ANY)* }
@@ -84,7 +74,7 @@ btquoted = @{ "`" ~ (btescape | !("`" | "\\") ~ ANY)* ~ "`" }
 shebang = { "#!" ~ ANY* }
 comment = { "#" ~ ANY* }
 comments = _{ shebang | comment }
-varname = @{ (alpha | "_") ~ (alphanum | "_")* }
+varname = @{ (ASCII_ALPHA | "_") ~ (ASCII_ALPHANUMERIC | "_")* }
 intvarassign = @{ varname ~ "=" ~ int }
 floatvarassign = @{ varname ~ "=" ~ float }
 binvarassign = @{ varname ~ "=" ~ binnum }
@@ -146,29 +136,56 @@ bla = _{ echo | localhexvarassign | localbinvarassign | localfloatvarassign | lo
 data_to_execute = { ANY* ~ !( "\\" ~ "\n") ~ "\n" }
 
 // prompt parsing
-prompt_date = { "\\d" }
-prompt_host = { "\\h" }
-prompt_hostname = { "\\H" }
-prompt_jobs = { "\\j" }
-prompt_term_dev_basename = { "\\l" }
-prompt_shellname = { "\\s" }
-prompt_time_s24 = { "\\t" }
-prompt_time_s12 = { "\\T" }
-prompt_time_12 = { "\\@" }
-prompt_username = { "\\u" }
-prompt_version = { "\\v" }
-prompt_version_patch = { "\\V" }
-prompt_pwd = { "\\w" }
-prompt_pwd_basename = { "\\W" }
-prompt_history_command_number = { "\\!" }
-prompt_command_number = { "\\#" }
-prompt_is_root = { "\\$" }
-prompt_octal = { "\\" ~ octdigit{3} }
-prompt_newline = { "\\n" }
-prompt_car_ret = { "\\r" }
-prompt_esc = { "\\e" }
-prompt_bell = { "\\a" }
+aslash_prompt = { prompt_backslash ~ aslash_elmnts }
+aslash_elmnts = { prompt_date |
+				  prompt_host |
+				  prompt_hostname |
+				  prompt_jobs |
+				  prompt_term_dev_basename |
+				  prompt_shellname |
+				  prompt_time_s24 |
+				  prompt_time_s12 |
+				  prompt_time_12 |
+				  prompt_username |
+				  prompt_version |
+				  prompt_version_patch |
+				  prompt_pwd |
+				  prompt_pwd_basename |
+				  prompt_history_command_number |
+				  prompt_command_number |
+				  prompt_is_root |
+				  prompt_newline |
+				  prompt_car_ret |
+				  prompt_esc |
+				  prompt_bell |
+				  prompt_non_print |
+				  prompt_end_non_print |
+				  prompt_octal |
+				  prompt_backslash
+				}
+prompt_date = { "d" }
+prompt_host = { "h" }
+prompt_hostname = { "H" }
+prompt_jobs = { "j" }
+prompt_term_dev_basename = { "l" }
+prompt_shellname = { "s" }
+prompt_time_s24 = { "t" }
+prompt_time_s12 = { "T" }
+prompt_time_12 = { "@" }
+prompt_username = { "u" }
+prompt_version = { "v" }
+prompt_version_patch = { "V" }
+prompt_pwd = { "w" }
+prompt_pwd_basename = { "W" }
+prompt_history_command_number = { "!" }
+prompt_command_number = { "#" }
+prompt_is_root = { "$" }
+prompt_octal = { ASCII_OCT_DIGIT{3} }
+prompt_newline = { "n" }
+prompt_car_ret = { "r" }
+prompt_esc = { "e" }
+prompt_bell = { "a" }
 prompt_backslash = { "\\" }
-prompt_non_print = { "\\[" }
-prompt_end_non_print = { "\\]" }
+prompt_non_print = { "[" }
+prompt_end_non_print = { "]" }
 
