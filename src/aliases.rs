@@ -23,7 +23,6 @@
 ///
 /// aliases.rs contains aliases structure and affiliated methods.
 /// aliases (un)setting, update methods.
-
 extern crate seahash;
 
 use std::collections::HashMap;
@@ -34,7 +33,7 @@ use crate::variables::SeaRandomState;
 /// Aliases structure is defined here to store aliases values
 pub struct Aliases {
     /// aliases are stored as HashMap<String, String>.
-    aliases: HashMap<String, String, SeaRandomState>
+    aliases: HashMap<String, String, SeaRandomState>,
 }
 
 /// Needed methods for Aliases.
@@ -53,7 +52,7 @@ impl Aliases {
     pub fn get(&self, key: &str) -> Option<String> {
         match self.aliases.get(key) {
             Some(val) => Some(val.to_string()),
-            None => None
+            None => None,
         }
     }
 
@@ -74,15 +73,20 @@ impl Aliases {
     }
 
     /// Defines a couple default aliases.
-    pub fn init_aliases () -> Aliases {
-        let mut aliases = Aliases { aliases: HashMap::with_capacity_and_hasher(30, SeaRandomState) };
+    pub fn init_aliases() -> Aliases {
+        let mut aliases = Aliases {
+            aliases: HashMap::with_capacity_and_hasher(30, SeaRandomState),
+        };
         aliases.set("egrep".to_string(), "egrep --color=auto".to_string());
         aliases.set("fgrep".to_string(), "fgrep --color=auto".to_string());
         aliases.set("grep".to_string(), "grep --color=auto".to_string());
         aliases.set("l.".to_string(), "ls -d .* --color=auto".to_string());
         aliases.set("ll".to_string(), "ls -l --color=auto".to_string());
         aliases.set("ls".to_string(), "ls --color=auto".to_string());
-        aliases.set("which".to_string(), "alias | /usr/bin/which --tty-only --read-alias --show-dot --show-tilde".to_string());
+        aliases.set(
+            "which".to_string(),
+            "alias | /usr/bin/which --tty-only --read-alias --show-dot --show-tilde".to_string(),
+        );
         aliases.set("xzegrep".to_string(), "xzegrep --color=auto".to_string());
         aliases.set("xzfgrep".to_string(), "xzfgrep --color=auto".to_string());
         aliases.set("xzgrep".to_string(), "xzgrep --color=auto".to_string());
@@ -102,7 +106,7 @@ mod tests {
         let al = Aliases::init_aliases();
         match al.get("egrep") {
             Some(s) => assert_eq!(s, "egrep --color=auto"),
-            None => panic!("egrep alias should be defined")
+            None => panic!("egrep alias should be defined"),
         }
     }
 
@@ -111,7 +115,7 @@ mod tests {
         let al = Aliases::init_aliases();
         match al.get("l.") {
             Some(s) => assert_eq!(s, "ls -d .* --color=auto"),
-            None => panic!("l. alias should be defined")
+            None => panic!("l. alias should be defined"),
         }
     }
 
@@ -121,7 +125,7 @@ mod tests {
         al.set(String::from("aliastest"), String::from("aliastest result"));
         match al.get("aliastest") {
             Some(s) => assert_eq!(s, "aliastest result"),
-            None => panic!("aliastest alias should be defined")
+            None => panic!("aliastest alias should be defined"),
         }
     }
 }

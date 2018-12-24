@@ -27,12 +27,12 @@ extern crate chrono;
 extern crate rand;
 
 use self::chrono::*;
-use crate::variables::{Variable, Variables, Value};
+use crate::variables::{Value, Variable, Variables};
 
 /// Public structure Prompt
 pub struct Prompt {
     /// prompt is stored in a String.
-    pub prompt: String
+    pub prompt: String,
 }
 
 /// Methods for Prompt.
@@ -56,39 +56,89 @@ impl Prompt {
         let mut aslash = false;
         let mut pt = String::new();
         let ps: String = match p {
-            "PS1" => { match vars.get(p) {
-                Some(ps1) => { match ps1 {
-                                    Variable { value: Value::S(s), rw: true } => s,
-                                    _ => String::from("")
-                               }
-                             }
-                None => { let ps1 = "\\u@\\h \\W\\$ ".to_string(); vars.set(String::from("PS1"), Variable { value: Value::S(ps1), rw:true }); "\\u@\\h \\W\\$ ".to_string() }
-                } },
-            "PS2" => { match vars.get(p) {
-                Some(ps2) => { match ps2 {
-                                    Variable { value: Value::S(s), rw: true } => s,
-                                    _ => String::from("")
-                               }
-                             }
-                None => { let ps2 = ">".to_string(); vars.set(String::from("PS2"), Variable { value: Value::S(ps2), rw:true }); ">".to_string() }
-                } },
-            "PS3" => { match vars.get(p) {
-                Some(ps3) => { match ps3 {
-                                    Variable { value: Value::S(s), rw: true } => s,
-                                    _ => String::from("")
-                               }
-                             }
-                None => { let ps3 = ">".to_string(); vars.set(String::from("PS3"), Variable { value: Value::S(ps3), rw:true }); ">".to_string() }
-                } },
-            "PS4" => { match vars.get(p) {
-                Some(ps4) => { match ps4 {
-                                    Variable { value: Value::S(s), rw: true } => s,
-                                    _ => String::from("")
-                               }
-                             }
-                None => { let ps4 = ">".to_string(); vars.set(String::from("PS4"), Variable { value: Value::S(ps4), rw:true }); ">".to_string() }
-                } },
-            _     => { panic!("prompt env var should not have that value !"); },
+            "PS1" => match vars.get(p) {
+                Some(ps1) => match ps1 {
+                    Variable {
+                        value: Value::S(s),
+                        rw: true,
+                    } => s,
+                    _ => String::from(""),
+                },
+                None => {
+                    let ps1 = "\\u@\\h \\W\\$ ".to_string();
+                    vars.set(
+                        String::from("PS1"),
+                        Variable {
+                            value: Value::S(ps1),
+                            rw: true,
+                        },
+                    );
+                    "\\u@\\h \\W\\$ ".to_string()
+                }
+            },
+            "PS2" => match vars.get(p) {
+                Some(ps2) => match ps2 {
+                    Variable {
+                        value: Value::S(s),
+                        rw: true,
+                    } => s,
+                    _ => String::from(""),
+                },
+                None => {
+                    let ps2 = ">".to_string();
+                    vars.set(
+                        String::from("PS2"),
+                        Variable {
+                            value: Value::S(ps2),
+                            rw: true,
+                        },
+                    );
+                    ">".to_string()
+                }
+            },
+            "PS3" => match vars.get(p) {
+                Some(ps3) => match ps3 {
+                    Variable {
+                        value: Value::S(s),
+                        rw: true,
+                    } => s,
+                    _ => String::from(""),
+                },
+                None => {
+                    let ps3 = ">".to_string();
+                    vars.set(
+                        String::from("PS3"),
+                        Variable {
+                            value: Value::S(ps3),
+                            rw: true,
+                        },
+                    );
+                    ">".to_string()
+                }
+            },
+            "PS4" => match vars.get(p) {
+                Some(ps4) => match ps4 {
+                    Variable {
+                        value: Value::S(s),
+                        rw: true,
+                    } => s,
+                    _ => String::from(""),
+                },
+                None => {
+                    let ps4 = ">".to_string();
+                    vars.set(
+                        String::from("PS4"),
+                        Variable {
+                            value: Value::S(ps4),
+                            rw: true,
+                        },
+                    );
+                    ">".to_string()
+                }
+            },
+            _ => {
+                panic!("prompt env var should not have that value !");
+            }
         };
         let pr: Vec<(usize, char)> = ps.char_indices().collect();
         for i in pr {
@@ -100,16 +150,28 @@ impl Prompt {
                 aslash = false;
                 match i {
                     // See http://ss64.com/bash/syntax-prompt.html
-                    (_index, 'd') => { let dt = Local::now(); pt.push_str(&dt.format("%a %b %e").to_string()); },
+                    (_index, 'd') => {
+                        let dt = Local::now();
+                        pt.push_str(&dt.format("%a %b %e").to_string());
+                    }
                     // TODO fix 'h' (short hostname must be returned)
                     (_index, 'h') => pt.push_str(&vars.get("HOSTNAME").unwrap().gets()),
                     (_index, 'H') => pt.push_str(&vars.get("HOSTNAME").unwrap().gets()),
                     (_index, 'j') => unimplemented!(),
                     (_index, 'l') => pt.push_str(&vars.get("TERM").unwrap().gets()),
                     (_index, 's') => pt.push_str(&vars.get("0").unwrap().gets()),
-                    (_index, 't') => { let dt = Local::now(); pt.push_str(&dt.format("%H:%M:%S").to_string()); },
-                    (_index, 'T') => { let dt = Local::now(); pt.push_str(&dt.format("%I:%M:%S").to_string()); },
-                    (_index, '@') => { let dt = Local::now(); pt.push_str(&dt.format("%I:%M:%S%P").to_string()); },
+                    (_index, 't') => {
+                        let dt = Local::now();
+                        pt.push_str(&dt.format("%H:%M:%S").to_string());
+                    }
+                    (_index, 'T') => {
+                        let dt = Local::now();
+                        pt.push_str(&dt.format("%I:%M:%S").to_string());
+                    }
+                    (_index, '@') => {
+                        let dt = Local::now();
+                        pt.push_str(&dt.format("%I:%M:%S%P").to_string());
+                    }
                     (_index, 'u') => pt.push_str(&vars.get("USERNAME").unwrap().gets()),
                     (_index, 'v') => pt.push_str("0.0.1"), // FIXME
                     (_index, 'V') => pt.push_str("0.0.1"), // FIXME
@@ -117,11 +179,10 @@ impl Prompt {
                     (_index, 'W') => pt.push_str(&vars.get("PWD").unwrap().gets()),
                     (_index, '!') => unimplemented!(),
                     (_index, '#') => unimplemented!(),
-                    (_index, '$') => { match vars.get("UID").unwrap().geti() {
-                                        0 => pt.push_str("#"),
-                                        _ => pt.push_str("$")
-                                      }
-                                    }
+                    (_index, '$') => match vars.get("UID").unwrap().geti() {
+                        0 => pt.push_str("#"),
+                        _ => pt.push_str("$"),
+                    },
                     (_index, '0'...'8') => unimplemented!(),
                     (_index, 'n') => pt.push_str("\n"),
                     (_index, 'r') => pt.push_str("\r"),
@@ -133,7 +194,7 @@ impl Prompt {
                     (_, _) => continue,
                 }
             } else {
-              pt.push(i.1);
+                pt.push(i.1);
             }
         }
         Prompt { prompt: pt }
