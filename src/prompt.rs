@@ -59,7 +59,6 @@ impl Prompt {
     /// assert_eq!(p.prompt, ">");
     /// ```
     pub fn get(vars: &mut Variables, p: &str) -> Prompt {
-        let mut aslash = false;
         let mut pt = String::new();
         let ps: String = match p {
             "PS1" => match vars.get(p) {
@@ -148,50 +147,50 @@ impl Prompt {
         };
         let pest = Script::parse(Rule::prompt, &ps).unwrap_or_else(|e| panic!("{}", e));
         for element in pest {
-			match element.as_rule() {
-				Rule::normal_prompt => pt.push_str(element.as_span().as_str()),
-				Rule::prompt_date => {
-                        let dt = Local::now();
-                        pt.push_str(&dt.format("%a %b %e").to_string());
-                    },
-				Rule::prompt_host => pt.push_str(&vars.get("HOSTNAME").unwrap().gets()), //FIXME
-				Rule::prompt_hostname => pt.push_str(&vars.get("HOSTNAME").unwrap().gets()),
-				Rule::prompt_jobs => unimplemented!(),
-				Rule::prompt_term_dev_basename => pt.push_str(&vars.get("TERM").unwrap().gets()),
-				Rule::prompt_time_s24 => {
-                        let dt = Local::now();
-                        pt.push_str(&dt.format("%H:%M:%S").to_string());
-                    },
-				Rule::prompt_time_s12 => {
-                        let dt = Local::now();
-                        pt.push_str(&dt.format("%I:%M:%S").to_string());
-                    },
-				Rule::prompt_time_12 => {
-                        let dt = Local::now();
-                        pt.push_str(&dt.format("%I:%M:%S%P").to_string());
-                    },
-				Rule::prompt_username => pt.push_str(&vars.get("USERNAME").unwrap().gets()),
-				Rule::prompt_version => pt.push_str("0.0.1"), // FIXME
-				Rule::prompt_version_patch => pt.push_str("0.0.1"), // FIXME
-				Rule::prompt_pwd => pt.push_str(&vars.get("PWD").unwrap().gets()),
-				Rule::prompt_pwd_basename => pt.push_str(&vars.get("PWD").unwrap().gets()), //FIXME
-				Rule::prompt_history_command_number => unimplemented!(),
-				Rule::prompt_command_number => unimplemented!(),
-				Rule::prompt_is_root => match vars.get("UID").unwrap().geti() {
-                        0 => pt.push_str("#"),
-                        _ => pt.push_str("$"),
-                    },
-				Rule::prompt_octal => unimplemented!(),
-				Rule::prompt_newline => pt.push_str("\n"),
-				Rule::prompt_car_ret => pt.push_str("\r"),
-				Rule::prompt_esc => unimplemented!(),
-				Rule::prompt_bell => unimplemented!(),
-				Rule::prompt_backslash => pt.push_str("\\"),
-				Rule::prompt_non_print => unimplemented!(),
-				Rule::prompt_end_non_print => unimplemented!(),
-				_ => panic!(),
-			};
-		};
+            match element.as_rule() {
+                Rule::normal_prompt => pt.push_str(element.as_span().as_str()),
+                Rule::prompt_date => {
+                    let dt = Local::now();
+                    pt.push_str(&dt.format("%a %b %e").to_string());
+                }
+                Rule::prompt_host => pt.push_str(&vars.get("HOSTNAME").unwrap().gets()), //FIXME
+                Rule::prompt_hostname => pt.push_str(&vars.get("HOSTNAME").unwrap().gets()),
+                Rule::prompt_jobs => unimplemented!(),
+                Rule::prompt_term_dev_basename => pt.push_str(&vars.get("TERM").unwrap().gets()),
+                Rule::prompt_time_s24 => {
+                    let dt = Local::now();
+                    pt.push_str(&dt.format("%H:%M:%S").to_string());
+                }
+                Rule::prompt_time_s12 => {
+                    let dt = Local::now();
+                    pt.push_str(&dt.format("%I:%M:%S").to_string());
+                }
+                Rule::prompt_time_12 => {
+                    let dt = Local::now();
+                    pt.push_str(&dt.format("%I:%M:%S%P").to_string());
+                }
+                Rule::prompt_username => pt.push_str(&vars.get("USERNAME").unwrap().gets()),
+                Rule::prompt_version => pt.push_str("0.0.1"), // FIXME
+                Rule::prompt_version_patch => pt.push_str("0.0.1"), // FIXME
+                Rule::prompt_pwd => pt.push_str(&vars.get("PWD").unwrap().gets()),
+                Rule::prompt_pwd_basename => pt.push_str(&vars.get("PWD").unwrap().gets()), //FIXME
+                Rule::prompt_history_command_number => unimplemented!(),
+                Rule::prompt_command_number => unimplemented!(),
+                Rule::prompt_is_root => match vars.get("UID").unwrap().geti() {
+                    0 => pt.push_str("#"),
+                    _ => pt.push_str("$"),
+                },
+                Rule::prompt_octal => unimplemented!(),
+                Rule::prompt_newline => pt.push_str("\n"),
+                Rule::prompt_car_ret => pt.push_str("\r"),
+                Rule::prompt_esc => unimplemented!(),
+                Rule::prompt_bell => unimplemented!(),
+                Rule::prompt_backslash => pt.push_str("\\"),
+                Rule::prompt_non_print => unimplemented!(),
+                Rule::prompt_end_non_print => unimplemented!(),
+                _ => panic!(),
+            };
+        }
         Prompt { prompt: pt }
     }
 }
