@@ -28,6 +28,12 @@ extern crate rand;
 
 use self::chrono::*;
 use crate::variables::{Value, Variable, Variables};
+use pest::Parser;
+
+/// pest grammar inclusion. dummy const so that .pest file changes are taken care of.
+#[derive(Parser)]
+#[grammar = "prompt.pest"]
+struct Script;
 
 /// Public structure Prompt
 pub struct Prompt {
@@ -140,63 +146,52 @@ impl Prompt {
                 panic!("prompt env var should not have that value !");
             }
         };
-        let pr: Vec<(usize, char)> = ps.char_indices().collect();
-        for i in pr {
-            if i.1 == '\\' {
-                aslash = true;
-                continue;
-            }
-            if aslash {
-                aslash = false;
-                match i {
-                    // See http://ss64.com/bash/syntax-prompt.html
-                    (_index, 'd') => {
+        let pest = Script::parse(Rule::prompt, &ps).unwrap_or_else(|e| panic!("{}", e));
+        for element in pest {
+			match element.as_rule() {
+				Rule::normal_prompt => pt.push_str(element.as_span().as_str()),
+				Rule::prompt_date => {
                         let dt = Local::now();
                         pt.push_str(&dt.format("%a %b %e").to_string());
-                    }
-                    // TODO fix 'h' (short hostname must be returned)
-                    (_index, 'h') => pt.push_str(&vars.get("HOSTNAME").unwrap().gets()),
-                    (_index, 'H') => pt.push_str(&vars.get("HOSTNAME").unwrap().gets()),
-                    (_index, 'j') => unimplemented!(),
-                    (_index, 'l') => pt.push_str(&vars.get("TERM").unwrap().gets()),
-                    (_index, 's') => pt.push_str(&vars.get("0").unwrap().gets()),
-                    (_index, 't') => {
+                    },
+				Rule::prompt_host => pt.push_str(&vars.get("HOSTNAME").unwrap().gets()), //FIXME
+				Rule::prompt_hostname => pt.push_str(&vars.get("HOSTNAME").unwrap().gets()),
+				Rule::prompt_jobs => unimplemented!(),
+				Rule::prompt_term_dev_basename => pt.push_str(&vars.get("TERM").unwrap().gets()),
+				Rule::prompt_time_s24 => {
                         let dt = Local::now();
                         pt.push_str(&dt.format("%H:%M:%S").to_string());
-                    }
-                    (_index, 'T') => {
+                    },
+				Rule::prompt_time_s12 => {
                         let dt = Local::now();
                         pt.push_str(&dt.format("%I:%M:%S").to_string());
-                    }
-                    (_index, '@') => {
+                    },
+				Rule::prompt_time_12 => {
                         let dt = Local::now();
                         pt.push_str(&dt.format("%I:%M:%S%P").to_string());
-                    }
-                    (_index, 'u') => pt.push_str(&vars.get("USERNAME").unwrap().gets()),
-                    (_index, 'v') => pt.push_str("0.0.1"), // FIXME
-                    (_index, 'V') => pt.push_str("0.0.1"), // FIXME
-                    (_index, 'w') => pt.push_str(&vars.get("PWD").unwrap().gets()),
-                    (_index, 'W') => pt.push_str(&vars.get("PWD").unwrap().gets()),
-                    (_index, '!') => unimplemented!(),
-                    (_index, '#') => unimplemented!(),
-                    (_index, '$') => match vars.get("UID").unwrap().geti() {
+                    },
+				Rule::prompt_username => pt.push_str(&vars.get("USERNAME").unwrap().gets()),
+				Rule::prompt_version => pt.push_str("0.0.1"), // FIXME
+				Rule::prompt_version_patch => pt.push_str("0.0.1"), // FIXME
+				Rule::prompt_pwd => pt.push_str(&vars.get("PWD").unwrap().gets()),
+				Rule::prompt_pwd_basename => pt.push_str(&vars.get("PWD").unwrap().gets()), //FIXME
+				Rule::prompt_history_command_number => unimplemented!(),
+				Rule::prompt_command_number => unimplemented!(),
+				Rule::prompt_is_root => match vars.get("UID").unwrap().geti() {
                         0 => pt.push_str("#"),
                         _ => pt.push_str("$"),
                     },
-                    (_index, '0'...'8') => unimplemented!(),
-                    (_index, 'n') => pt.push_str("\n"),
-                    (_index, 'r') => pt.push_str("\r"),
-                    (_index, 'e') => unimplemented!(),
-                    (_index, 'a') => unimplemented!(),
-                    (_index, '\\') => pt.push_str("\\"),
-                    (_index, '[') => unimplemented!(),
-                    (_index, ']') => unimplemented!(),
-                    (_, _) => continue,
-                }
-            } else {
-                pt.push(i.1);
-            }
-        }
+				Rule::prompt_octal => unimplemented!(),
+				Rule::prompt_newline => pt.push_str("\n"),
+				Rule::prompt_car_ret => pt.push_str("\r"),
+				Rule::prompt_esc => unimplemented!(),
+				Rule::prompt_bell => unimplemented!(),
+				Rule::prompt_backslash => pt.push_str("\\"),
+				Rule::prompt_non_print => unimplemented!(),
+				Rule::prompt_end_non_print => unimplemented!(),
+				_ => panic!(),
+			};
+		};
         Prompt { prompt: pt }
     }
 }
