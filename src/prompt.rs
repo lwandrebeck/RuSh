@@ -70,7 +70,7 @@ impl Prompt {
                     _ => String::from(""),
                 },
                 None => {
-                    let ps1 = "\\u@\\h \\W\\$ ".to_string();
+                    let ps1 = "[\\u@\\h \\W]$ ".to_string();
                     vars.set(
                         String::from("PS1"),
                         Variable {
@@ -78,7 +78,7 @@ impl Prompt {
                             rw: true,
                         },
                     );
-                    "\\u@\\h \\W\\$ ".to_string()
+                    "[\\u@\\h \\W]$ ".to_string()
                 }
             },
             "PS2" => match vars.get(p) {
@@ -153,7 +153,11 @@ impl Prompt {
                     let dt = Local::now();
                     pt.push_str(&dt.format("%a %b %e").to_string());
                 }
-                Rule::prompt_host => pt.push_str(&vars.get("HOSTNAME").unwrap().gets()), //FIXME
+                Rule::prompt_host => {
+                    let host = &vars.get("HOSTNAME").unwrap().gets();
+                    let pos = host.find('.').unwrap_or(host.len());
+                    pt.push_str(&host[..pos]);
+                }
                 Rule::prompt_hostname => pt.push_str(&vars.get("HOSTNAME").unwrap().gets()),
                 Rule::prompt_jobs => unimplemented!(),
                 Rule::prompt_term_dev_basename => pt.push_str(&vars.get("TERM").unwrap().gets()),
@@ -173,7 +177,15 @@ impl Prompt {
                 Rule::prompt_version => pt.push_str("0.0.1"), // FIXME
                 Rule::prompt_version_patch => pt.push_str("0.0.1"), // FIXME
                 Rule::prompt_pwd => pt.push_str(&vars.get("PWD").unwrap().gets()),
-                Rule::prompt_pwd_basename => pt.push_str(&vars.get("PWD").unwrap().gets()), //FIXME
+                Rule::prompt_pwd_basename => {
+                    let path = &vars.get("PWD").unwrap().gets();
+                    let pos = path.rfind('/').unwrap_or(0);
+                    if pos == 0 {
+                        pt.push_str(&path[pos..]);
+                    } else {
+                        pt.push_str(&path[pos + 1..]);
+                    }
+                }
                 Rule::prompt_history_command_number => unimplemented!(),
                 Rule::prompt_command_number => unimplemented!(),
                 Rule::prompt_is_root => match vars.get("UID").unwrap().geti() {
