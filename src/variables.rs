@@ -307,7 +307,7 @@ impl Variables {
             String::from("RUSH_VERSION"),
             Variable {
                 value: Value::S(String::from("0.0.1-alpha0")),
-                rw: true,
+                rw: false,
             },
         ); // FIXME -> use some global var.
            // An index into ${COMP_WORDS} of the word containing the current cursor position. This variable is available only in shell functions invoked by the programmable completion facilities.
@@ -545,8 +545,8 @@ impl Variables {
 
 #[cfg(test)]
 mod tests {
-    use crate::variables::Variables;
-    use crate::variables::{Value, Variable};
+    //use crate::variables::Variables;
+    use crate::variables::{Value, Variable, Variables};
 
     #[test]
     fn test_init_shell_vars() {

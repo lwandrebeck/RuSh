@@ -41,7 +41,7 @@ Right now, RuSh is definitely not useable. A couple little things have been done
 - [ ] ulimit builtin.
 - [ ] umask builtin.
 - [ ] unalias builtin.
-- [x] use [pest](https://github.com/pest-parser/pest) to parse prompt (\\ is still buggy)
+- [x] use [pest](https://github.com/pest-parser/pest) to parse prompt (\\\\ is still buggy)
 - [ ] arrays support.
 - [ ] $variable, ${variable} and parameter ($1 etc) expansion.
 - [ ] ${parameter-default} ${parameter:-default} If parameter not set, use default.
@@ -144,7 +144,7 @@ Right now, RuSh is definitely not useable. A couple little things have been done
 
 ### core
 - [ ] Variables management (partly done, arrays still have to be taken care of).
-- [ ] Rewrite prompt routine with [pest](https://github.com/dragostis/pest) parser.
+- [ ] Complete prompt codes support (partly done)
 - [ ] Clean up code (commented tries here and there…)
 - [ ] Split up code (variables.rs prompt.rs etc. Partly done).
 - [ ] Write everything linked to builtins, pipes etc (yeah, that will be *very* long)
@@ -168,3 +168,5 @@ It’s as simple as:
 ## Running
     cargo run
 
+## To quit
+    ctrl+d
