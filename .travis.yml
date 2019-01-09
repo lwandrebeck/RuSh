@@ -40,10 +40,10 @@ script:
 
 after_success:
   - |
+    bash <(curl -s https://codecov.io/bash) &&
     cargo coveralls --verbose &&
     bash <(curl https://raw.githubusercontent.com/xd009642/tarpaulin/master/travis-install.sh) &&
-    cargo tarpaulin --out Xml &&
-    bash <(curl -s https://codecov.io/bash)
+    cargo tarpaulin --out Xml
 
 env:
   global:
