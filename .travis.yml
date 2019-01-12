@@ -29,7 +29,7 @@ before_script:
   - export PATH=$HOME/.cargo/bin:$PATH
   - cargo install cargo-update || echo "cargo-update already installed"
   - cargo install cargo-travis || echo "cargo-travis already installed"
-  - cargo install cargo-tarpaulin --version 0.6.10 || true
+  - cargo install cargo-tarpaulin || true
   - cargo install-update -a # update outdated cached binaries
 
 script:
@@ -41,7 +41,7 @@ script:
 
 after_success:
   - |
-    cargo tarpaulin --verbose --skip-clean --out Xml &&
+    cargo +nightly tarpaulin --verbose --skip-clean --out Xml &&
     bash <(curl -s https://codecov.io/bash) &&
     cargo coveralls --verbose
 
