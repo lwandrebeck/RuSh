@@ -44,7 +44,7 @@ script:
 
 after_success:
   - |
-    cargo +nightly tarpaulin --verbose --skip-clean --out Xml &&
+    cargo +nightly tarpaulin --verbose --out Xml &&
     bash <(curl -s https://codecov.io/bash) &&
     cargo coveralls --verbose
 
