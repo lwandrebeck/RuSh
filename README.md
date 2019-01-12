@@ -2,6 +2,7 @@
 [![Coverage Status](https://coveralls.io/repos/github/lwandrebeck/RuSh/badge.svg?branch=master)](https://coveralls.io/github/lwandrebeck/RuSh?branch=master)
 [![codecov](https://codecov.io/gh/lwandrebeck/RuSh/branch/master/graph/badge.svg)](https://codecov.io/gh/lwandrebeck/RuSh)
 [![License: GPL v3](https://img.shields.io/badge/License-GPL%20v3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
+[![Minimum rustc version](https://img.shields.io/badge/rustc-1.31+-blue.svg)](#rust-version-requirements)
 
 # RuSh: A shell written in Rust
 
