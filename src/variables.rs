@@ -302,11 +302,11 @@ impl Variables {
         // RUSH_VERSINFO[5]        The value of MACHTYPE.
         // TODO RUSH_VERSINFO -> need MACHTYPE, which needs HOSTTYPE, VENDOR, OSTYPE
         // Expands to a string describing the version of this instance of bash
-        let _versinfo = vec!["0", "0", "1", "1", "alpha0", "TODO"]; // FIXME -> use some global var.
+        let _versinfo = vec!["0", "0", "0", "0", "alpha0", "x86_64-redhat-linux-gnu"]; // FIXME -> needs internal array support which is not yet implemented
         vars.set(
             String::from("RUSH_VERSION"),
             Variable {
-                value: Value::S(String::from("0.0.1-alpha0")),
+                value: Value::S(String::from("0.0.0.0-alpha0-x86_64-redhat-linux-gnu")),
                 rw: false,
             },
         ); // FIXME -> use some global var.

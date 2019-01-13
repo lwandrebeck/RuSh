@@ -49,6 +49,8 @@ pub struct RuSh {
     pub cmd_nb: u64,
     /// prompt contents. Stored as Prompt { prompt: String }
     pub prompt: Prompt,
+    /// information about RuSh version: major minor patch build release MACHTYPE
+    pub versinfo: (u8, u8, u8, u8, String, String),
 }
 
 /// Default method for RuSh
@@ -75,6 +77,8 @@ impl Default for RuSh {
             prompt: Prompt {
                 prompt: String::from(""),
             },
+            /// actual RuSh version informations
+            versinfo: (0, 0, 0, 0, "alpha0".to_string(), "x86_64-redhat-linux-gnu".to_string()), //FIXME MACHTYPE
         };
         shell
     }

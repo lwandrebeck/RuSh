@@ -182,8 +182,8 @@ impl Prompt {
                 Rule::prompt_username => {
                     pt.push_str(&rush.shell_vars.get("USERNAME").unwrap().gets())
                 }
-                Rule::prompt_version => pt.push_str("0.0.1"), // FIXME
-                Rule::prompt_version_patch => pt.push_str("0.0.1"), // FIXME
+                Rule::prompt_version => pt.push_str("0.0.0.0-alpha0-x86_64-redhat-linux-gnu"), // FIXME
+                Rule::prompt_version_patch => pt.push_str("0.0.0.0-alpha0-x86_64-redhat-linux-gnu"), // FIXME
                 Rule::prompt_pwd => pt.push_str(&rush.shell_vars.get("PWD").unwrap().gets()),
                 Rule::prompt_pwd_basename => {
                     let path = &rush.shell_vars.get("PWD").unwrap().gets();
