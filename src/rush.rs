@@ -56,7 +56,7 @@ pub struct RuSh {
 /// Default method for RuSh
 impl Default for RuSh {
     fn default() -> RuSh {
-        let mut shell = RuSh {
+        RuSh {
             /// 15 aliases are defined by default in Fedora 26, so let’s allocate twice that.
             aliases: Aliases::init_aliases(),
             /// 46 shopt options by default, so let’s have a big enough HashMap to store these.
@@ -78,8 +78,14 @@ impl Default for RuSh {
                 prompt: String::from(""),
             },
             /// actual RuSh version informations
-            versinfo: (0, 0, 0, 0, "alpha0".to_string(), "x86_64-redhat-linux-gnu".to_string()), //FIXME MACHTYPE
-        };
-        shell
+            versinfo: (
+                0,
+                0,
+                0,
+                0,
+                "alpha0".to_string(),
+                "x86_64-redhat-linux-gnu".to_string(),
+            ), //FIXME MACHTYPE
+        }
     }
 }

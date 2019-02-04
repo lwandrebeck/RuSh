@@ -43,7 +43,7 @@ Right now, RuSh is definitely not useable. A couple little things have been done
 - [ ] umask builtin.
 - [ ] unalias builtin.
 - [x] use [pest](https://github.com/pest-parser/pest) to parse prompt (\\\\ is still buggy)
-- [ ] arrays support.
+- [x] arrays support (single dimension, can be both associative and indexed, and store int, float or string.
 - [ ] $variable, ${variable} and parameter ($1 etc) expansion.
 - [ ] ${parameter-default} ${parameter:-default} If parameter not set, use default.
 - [ ] ${parameter=default}, ${parameter:=default} If parameter not set, set it to default.
@@ -144,7 +144,7 @@ Right now, RuSh is definitely not useable. A couple little things have been done
 - [ ] .pest file will need a complete overhaul to be cleaner and better structured.
 
 ### core
-- [ ] Variables management (partly done, arrays still have to be taken care of).
+- [x] Variables management (simple variables, aliases and single dimension arrays. Aliases must be changed to use RUSH_ALIASES associative array instead of its own structure).
 - [ ] Complete prompt codes support (partly done)
 - [ ] Clean up code (commented tries here and there…)
 - [ ] Split up code (variables.rs prompt.rs etc. Partly done).
@@ -157,6 +157,9 @@ Right now, RuSh is definitely not useable. A couple little things have been done
 - [ ] Deprecate several bashy thing (older versions compatibility etc, bash is so much of a noodles plate now due to history that I won’t be able to cover every point so I’ll have to focus).
 - [x] Use [seahash](https://crates.io/crates/seahash) instead of fnv (Kind of done, variables management needs work now, see above).
 - [ ] So many other things. multidimensionnal arrays ? Use of clippy, rustfmt, error-chain, tarpaulin, some fuzzer ?
+
+### doc
+- [ ] Array documentation has to be fixed (contains copied content for other functions)
 
 ## Building
 

@@ -23,7 +23,7 @@
 ///
 /// variables.rs contains variables structures and affiliated methods.
 /// `Variable` and `Variables` are defined here.
-/// variables (un)setting, update methods for both classical variables and arrays.
+/// variables (un)setting, update methods for classical variables.
 extern crate rand;
 extern crate seahash;
 
@@ -47,6 +47,13 @@ impl BuildHasher for SeaRandomState {
     }
 }
 
+/// Access can be ReadWrite or ReadOnly
+#[derive(Clone, Eq, Hash, PartialEq)]
+pub enum Access {
+    ReadWrite,
+    ReadOnly,
+}
+
 /// Value contains variable value, be it a i64, f64 or String, defined as an enum.
 #[allow(dead_code)]
 #[derive(Clone, Debug)]
@@ -62,8 +69,8 @@ pub enum Value {
 pub struct Variable {
     /// Variable value is stored as Value enum.
     pub value: Value,
-    /// Is the variable rw (or ro if false).
-    pub rw: bool,
+    /// Is the variable rw or ro.
+    pub access: Access,
 }
 
 /// Methods for Variable structure.
@@ -104,7 +111,7 @@ impl Variable {
     /// ```rust
     /// use variables::{Variable, Value};
     /// let var = Variable { value: Value::S("Forty two"), rw: true };
-    /// assert_eq!(var.get(), "Forty two");
+    /// assert_eq!(var.gets(), "Forty two");
     /// ```
     pub fn gets(&self) -> String {
         match self.value {
@@ -114,7 +121,7 @@ impl Variable {
     }
 }
 
-/// Public structure `Variables`.
+/// Public structure for `Variables` management.
 pub struct Variables {
     /// variables are stored in a HashMap<String, `Variable`>. First String being the variable name (key), the second the value and rw state.
     vars: HashMap<String, Variable, SeaRandomState>,
@@ -149,7 +156,7 @@ impl Variables {
             Some(val) => {
                 let var = Variable {
                     value: val.value.clone(),
-                    rw: val.rw,
+                    access: val.access.clone(),
                 };
                 Some(var)
             }
@@ -186,8 +193,9 @@ impl Variables {
         match self.vars.entry(key) {
             Occupied(mut entry) => {
                 let contents = entry.get_mut();
-                if contents.rw {
-                    *contents = v
+                match contents.access {
+                    Access::ReadWrite => *contents = v,
+                    Access::ReadOnly => println!("readonly variable"),
                 }
             }
             Vacant(entry) => {
@@ -243,7 +251,7 @@ impl Variables {
                 String::from("RUSH"),
                 Variable {
                     value: Value::S(ce.into_os_string().into_string().unwrap()),
-                    rw: true,
+                    access: Access::ReadWrite,
                 },
             ),
             Err(e) => panic!("Unable to get current_exe ! {}", e),
@@ -257,7 +265,7 @@ impl Variables {
                 String::from("RUSHPID"),
                 Variable {
                     value: Value::I(i64::from(pid)),
-                    rw: true,
+                    access: Access::ReadWrite,
                 },
             );
         }
@@ -274,7 +282,7 @@ impl Variables {
             String::from("RUSH_COMMAND"),
             Variable {
                 value: Value::S(String::from("")),
-                rw: true,
+                access: Access::ReadWrite,
             },
         );
         // The command argument to the -c invocation option.
@@ -290,7 +298,7 @@ impl Variables {
             String::from("RUSH_SUBSHELL"),
             Variable {
                 value: Value::I(0),
-                rw: true,
+                access: Access::ReadWrite,
             },
         );
         // A readonly array variable whose members hold version information for this instance of rush.  The values assigned to the array members are as follows:
@@ -307,7 +315,7 @@ impl Variables {
             String::from("RUSH_VERSION"),
             Variable {
                 value: Value::S(String::from("0.0.0.0-alpha0-x86_64-redhat-linux-gnu")),
-                rw: false,
+                access: Access::ReadOnly,
             },
         ); // FIXME -> use some global var.
            // An index into ${COMP_WORDS} of the word containing the current cursor position. This variable is available only in shell functions invoked by the programmable completion facilities.
@@ -335,7 +343,7 @@ impl Variables {
                 String::from("EUID"),
                 Variable {
                     value: Value::I(i64::from(euid)),
-                    rw: false,
+                    access: Access::ReadOnly,
                 },
             );
         }
@@ -360,7 +368,7 @@ impl Variables {
                     String::from_utf8(bufc.split(|x| *x == 0).next().unwrap().to_vec())
                         .unwrap_or_else(|_| String::from("wtf")),
                 ),
-                rw: true,
+                access: Access::ReadWrite,
             },
         );
         // Automatically set to a string that uniquely describes the type of machine on which rush is executing.  The default is system-dependent.
@@ -370,7 +378,7 @@ impl Variables {
             String::from("LINENO"),
             Variable {
                 value: Value::I(1),
-                rw: true,
+                access: Access::ReadWrite,
             },
         );
         // Automatically set to a string that fully describes the system type on which rush is executing, in the standard GNU cpu-company-system format. The default is system-dependent.
@@ -382,7 +390,7 @@ impl Variables {
             String::from("OLDPWD"),
             Variable {
                 value: Value::S(String::from(".")),
-                rw: true,
+                access: Access::ReadWrite,
             },
         );
         // The value of the last option argument processed by the getopts builtin command.
@@ -400,7 +408,7 @@ impl Variables {
                 String::from("PPID"),
                 Variable {
                     value: Value::I(i64::from(ppid)),
-                    rw: false,
+                    access: Access::ReadOnly,
                 },
             );
         }
@@ -413,7 +421,7 @@ impl Variables {
             String::from("PWD"),
             Variable {
                 value: Value::S(pwd),
-                rw: true,
+                access: Access::ReadWrite,
             },
         );
         // Each time this parameter is referenced, a random integer between 0 and 32767 is generated. The sequence of random numbers may be initialized by assigning a value to RANDOM. If RANDOM is unset, it loses its special properties, even if it is subsequently reset.
@@ -423,7 +431,7 @@ impl Variables {
                 String::from("RANDOM"),
                 Variable {
                     value: Value::I(i64::from(rng.gen::<i16>())),
-                    rw: true,
+                    access: Access::ReadWrite,
                 },
             );
         }
@@ -438,7 +446,7 @@ impl Variables {
             String::from("SECONDS"),
             Variable {
                 value: Value::I(0),
-                rw: true,
+                access: Access::ReadWrite,
             },
         );
         // The full pathname to the shell is kept in this environment variable.  If it is not set when the shell starts, rush assigns to it the full pathname of the current user's login shell.
@@ -451,7 +459,7 @@ impl Variables {
             String::from("SHELL"),
             Variable {
                 value: Value::S(cexe),
-                rw: true,
+                access: Access::ReadWrite,
             },
         );
         // A colon-separated list of enabled shell options. Each word in the list is a valid argument for the -o option to the set builtin command. The options appearing in SHELLOPTS are those reported as  on by set -o. If this variable is in the environment when rush starts up, each shell option in the list will be enabled before reading any startup files. This variable is read-only.
@@ -461,7 +469,7 @@ impl Variables {
             Some(lvl) => {
                 if let Variable {
                     value: Value::I(mut val),
-                    rw: true,
+                    access: Access::ReadWrite,
                 } = lvl
                 {
                     val += 1;
@@ -469,7 +477,7 @@ impl Variables {
                         String::from("SHLVL"),
                         Variable {
                             value: Value::I(val),
-                            rw: true,
+                            access: Access::ReadWrite,
                         },
                     );
                 }
@@ -478,7 +486,7 @@ impl Variables {
                 String::from("SHLVL"),
                 Variable {
                     value: Value::I(1),
-                    rw: true,
+                    access: Access::ReadWrite,
                 },
             ),
         };
@@ -489,7 +497,7 @@ impl Variables {
                 String::from("UID"),
                 Variable {
                     value: Value::I(i64::from(id)),
-                    rw: false,
+                    access: Access::ReadOnly,
                 },
             );
         }
@@ -500,7 +508,7 @@ impl Variables {
                 String::from("GID"),
                 Variable {
                     value: Value::I(i64::from(id)),
-                    rw: false,
+                    access: Access::ReadOnly,
                 },
             );
         }
@@ -513,7 +521,7 @@ impl Variables {
                         String::from_utf8(CStr::from_ptr(log).to_bytes().to_owned())
                             .unwrap_or_else(|_| "no login".to_owned()),
                     ),
-                    rw: false,
+                    access: Access::ReadOnly,
                 },
             );
         }
@@ -521,32 +529,17 @@ impl Variables {
             String::from("HISTSIZE"),
             Variable {
                 value: Value::I(1000),
-                rw: true,
+                access: Access::ReadWrite,
             },
         );
         vars
     }
 }
 
-//TODO
-//~ pub struct Arrays {
-//~ arrays: Vec<String>
-//~ }
-
-//~ impl Default for Arrays {
-//~ fn default() -> Arrays {
-//~ Arrays { arrays: Vec::new() }
-//~ }
-//~ }
-
-//~ impl Arrays {
-
-//~ }
-
 #[cfg(test)]
 mod tests {
     //use crate::variables::Variables;
-    use crate::variables::{Value, Variable, Variables};
+    use crate::variables::{Access, Value, Variable, Variables};
 
     #[test]
     fn test_init_shell_vars() {
@@ -590,7 +583,7 @@ mod tests {
             String::from("TEST"),
             Variable {
                 value: Value::F(-49.3),
-                rw: true,
+                access: Access::ReadWrite,
             },
         );
         match vars.get("TEST") {
@@ -606,7 +599,7 @@ mod tests {
             String::from("TESTF"),
             Variable {
                 value: Value::F(-49.3),
-                rw: true,
+                access: Access::ReadWrite,
             },
         );
         match vars.get("TESTF") {
@@ -617,7 +610,7 @@ mod tests {
             String::from("TESTI"),
             Variable {
                 value: Value::I(-42),
-                rw: true,
+                access: Access::ReadWrite,
             },
         );
         match vars.get("TESTI") {
@@ -628,7 +621,7 @@ mod tests {
             String::from("TESTS"),
             Variable {
                 value: Value::S(String::from("RuSh will rock (one day)")),
-                rw: true,
+                access: Access::ReadWrite,
             },
         );
         match vars.get("TESTS") {

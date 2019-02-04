@@ -28,7 +28,7 @@ extern crate rand;
 
 use self::chrono::*;
 use crate::rush;
-use crate::variables::{Value, Variable};
+use crate::variables::{Access, Value, Variable};
 use pest::Parser;
 
 /// pest grammar inclusion. dummy const so that .pest file changes are taken care of.
@@ -66,7 +66,7 @@ impl Prompt {
                 Some(ps1) => match ps1 {
                     Variable {
                         value: Value::S(s),
-                        rw: true,
+                        access: Access::ReadWrite,
                     } => s,
                     _ => String::from(""),
                 },
@@ -76,7 +76,7 @@ impl Prompt {
                         String::from("PS1"),
                         Variable {
                             value: Value::S(ps1),
-                            rw: true,
+                            access: Access::ReadWrite,
                         },
                     );
                     "[\\u@\\h \\W]$ ".to_string()
@@ -86,7 +86,7 @@ impl Prompt {
                 Some(ps2) => match ps2 {
                     Variable {
                         value: Value::S(s),
-                        rw: true,
+                        access: Access::ReadWrite,
                     } => s,
                     _ => String::from(""),
                 },
@@ -96,7 +96,7 @@ impl Prompt {
                         String::from("PS2"),
                         Variable {
                             value: Value::S(ps2),
-                            rw: true,
+                            access: Access::ReadWrite,
                         },
                     );
                     ">".to_string()
@@ -106,7 +106,7 @@ impl Prompt {
                 Some(ps3) => match ps3 {
                     Variable {
                         value: Value::S(s),
-                        rw: true,
+                        access: Access::ReadWrite,
                     } => s,
                     _ => String::from(""),
                 },
@@ -116,7 +116,7 @@ impl Prompt {
                         String::from("PS3"),
                         Variable {
                             value: Value::S(ps3),
-                            rw: true,
+                            access: Access::ReadWrite,
                         },
                     );
                     ">".to_string()
@@ -126,7 +126,7 @@ impl Prompt {
                 Some(ps4) => match ps4 {
                     Variable {
                         value: Value::S(s),
-                        rw: true,
+                        access: Access::ReadWrite,
                     } => s,
                     _ => String::from(""),
                 },
@@ -136,7 +136,7 @@ impl Prompt {
                         String::from("PS4"),
                         Variable {
                             value: Value::S(ps4),
-                            rw: true,
+                            access: Access::ReadWrite,
                         },
                     );
                     ">".to_string()
