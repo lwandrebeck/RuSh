@@ -19,8 +19,6 @@
 // MA 02110-1301, USA.
 //
 
-/// Include aliases management (alias, unalias)
-mod aliases;
 /// Include arrays management.
 mod arrays;
 /// Include options management (shopt, set)
@@ -52,7 +50,6 @@ extern crate structopt_derive;
 
 use pest::Parser;
 // pub for use is there so doc is generated.
-pub use crate::aliases::Aliases;
 pub use crate::arrays::ArrayVariables;
 pub use crate::opt::Opt;
 pub use crate::prompt::Prompt;
@@ -67,7 +64,6 @@ struct Script;
 /// This is the main function. Initializes RuSh structure and starts the shell.
 fn main() {
     let mut rush = RuSh::default();
-    let mut _bla = ArrayVariables::init_shell_array_vars();
     //rush.prompt = Prompt::get(&mut rush.shell_vars, "PS1");
     rush.prompt = Prompt::get(&mut rush, "PS1");
     //let mut stdin = io::stdin();

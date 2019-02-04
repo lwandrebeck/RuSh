@@ -19,7 +19,7 @@
 // MA 02110-1301, USA.
 //
 
-pub use crate::aliases::Aliases;
+pub use crate::arrays::ArrayVariables;
 pub use crate::opt::Opt;
 pub use crate::prompt::Prompt;
 pub use crate::variables::Variables;
@@ -33,14 +33,14 @@ struct Script;
 
 /// Core structure containing everything needed for RuSh
 pub struct RuSh {
-    /// aliases: Stored as Aliases { aliases: HashMap<String, String> }
-    pub aliases: Aliases,
     /// shopt_options: autocd, etc. See man bash, shopt options. Stored as Opt { opt: HashMap<String, <set: bool, rw: bool>> }
     pub shopt_options: Opt,
     /// set_options: allexport, braceexpand, etc. See man bash, set command. Stored as HashMap<String, <bool, bool>>
     pub set_options: Opt,
     /// shell_vars: RUSH, RUSHPID, etc. See man bash, shell variables. Stored as HashMap<String, <i64 or f64 or String, bool>>
     pub shell_vars: Variables,
+    /// shell_array_vars: RUSH_VERSINFO, RUSH_ALIASES and other shell variables defined as array
+    pub shell_array_vars: ArrayVariables,
     /// Command history. Stored as History from rustyline
     pub history: rustyline::history::History,
     /// line case, needed for prompt management
@@ -57,14 +57,14 @@ pub struct RuSh {
 impl Default for RuSh {
     fn default() -> RuSh {
         RuSh {
-            /// 15 aliases are defined by default in Fedora 26, so let’s allocate twice that.
-            aliases: Aliases::init_aliases(),
             /// 46 shopt options by default, so let’s have a big enough HashMap to store these.
             shopt_options: Opt::init_shopt_options(),
             /// 27 set options by default, so let’s have a big enough HashMap to store these.
             set_options: Opt::init_set_options(),
             /// 100 or so shell vars are defined upon startup. Allocate twice that.
             shell_vars: Variables::init_shell_vars(),
+            /// initialize array variables.
+            shell_array_vars: ArrayVariables::init_shell_array_vars(),
             // TODO set history size
             // rl.set_history_max_len(1000);
             /// Manage commands history with rustyline crate.

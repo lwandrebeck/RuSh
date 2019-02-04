@@ -296,6 +296,75 @@ impl ArrayVariables {
         //~ // see man bash (Shell vars)
         //~ // An associative array variable whose members correspond to the internal list of aliases as maintained by the alias builtin. Elements added to this array appear in the alias list; unsetting array elements cause aliases to be removed from the alias list.
         //~ // TODO RUSH_ALIASES
+        arrayvars.set(
+            "RUSH_ALIASES",
+            Index::A("egrep".to_string()),
+            Value::S("egrep --color=auto".to_string()),
+        );
+        arrayvars.set(
+            "RUSH_ALIASES",
+            Index::A("fgrep".to_string()),
+            Value::S("fgrep --color=auto".to_string()),
+        );
+        arrayvars.set(
+            "RUSH_ALIASES",
+            Index::A("grep".to_string()),
+            Value::S("grep --color=auto".to_string()),
+        );
+        arrayvars.set(
+            "RUSH_ALIASES",
+            Index::A("l.".to_string()),
+            Value::S("ls -d .* --color=auto".to_string()),
+        );
+        arrayvars.set(
+            "RUSH_ALIASES",
+            Index::A("ll".to_string()),
+            Value::S("ls -l --color=auto".to_string()),
+        );
+        arrayvars.set(
+            "RUSH_ALIASES",
+            Index::A("ls".to_string()),
+            Value::S("ls --color=auto".to_string()),
+        );
+        arrayvars.set(
+            "RUSH_ALIASES",
+            Index::A("which".to_string()),
+            Value::S(
+                "alias | /usr/bin/which --tty-only --read-alias --show-dot --show-tilde"
+                    .to_string(),
+            ),
+        );
+        arrayvars.set(
+            "RUSH_ALIASES",
+            Index::A("xzegrep".to_string()),
+            Value::S("xzegrep --color=auto".to_string()),
+        );
+        arrayvars.set(
+            "RUSH_ALIASES",
+            Index::A("xzfgrep".to_string()),
+            Value::S("xzfgrep --color=auto".to_string()),
+        );
+        arrayvars.set(
+            "RUSH_ALIASES",
+            Index::A("xzgrep".to_string()),
+            Value::S("xzgrep --color=auto".to_string()),
+        );
+        arrayvars.set(
+            "RUSH_ALIASES",
+            Index::A("zegrep".to_string()),
+            Value::S("zegrep --color=auto".to_string()),
+        );
+        arrayvars.set(
+            "RUSH_ALIASES",
+            Index::A("zfgrep".to_string()),
+            Value::S("zfgrep --color=auto".to_string()),
+        );
+        arrayvars.set(
+            "RUSH_ALIASES",
+            Index::A("zgrep".to_string()),
+            Value::S("zgrep --color=auto".to_string()),
+        );
+
         //~ // An array variable whose values are the number of parameters in each frame of the current bash execution call stack. The number of parameters to the current subroutine (shell function or script  executed with . or source) is at the top of the stack. When a subroutine is executed, the number of parameters passed is pushed onto RUSH_ARGC. The shell sets RUSH_ARGC only when in extended debugging mode (see the description of the extdebug option to the shopt builtin)
         //~ // TODO RUSH_ARGC
         //~ // An array variable containing all of the parameters in the current rush execution call stack. The final parameter of the last subroutine call is at the top of the stack; the first parameter of the  initial call is at the bottom. When a subroutine is executed, the parameters supplied are pushed onto RUSH_ARGV. The shell sets RUSH_ARGV only when in extended debugging mode (see the description of the extdebug option to the shopt builtin)

@@ -144,7 +144,7 @@ Right now, RuSh is definitely not useable. A couple little things have been done
 - [ ] .pest file will need a complete overhaul to be cleaner and better structured.
 
 ### core
-- [x] Variables management (simple variables, aliases and single dimension arrays. Aliases must be changed to use RUSH_ALIASES associative array instead of its own structure).
+- [x] Variables management (simple variables, aliases and single dimension arrays).
 - [ ] Complete prompt codes support (partly done)
 - [ ] Clean up code (commented tries here and there…)
 - [ ] Split up code (variables.rs prompt.rs etc. Partly done).
