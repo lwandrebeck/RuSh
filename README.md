@@ -158,9 +158,6 @@ Right now, RuSh is definitely not useable. A couple little things have been done
 - [x] Use [seahash](https://crates.io/crates/seahash) instead of fnv (Kind of done, variables management needs work now, see above).
 - [ ] So many other things. multidimensionnal arrays ? Use of clippy, rustfmt, error-chain, tarpaulin, some fuzzer ?
 
-### doc
-- [ ] Array documentation has to be fixed (contains copied content for other functions)
-
 ## Building
 
 You need Rust 1.31.0 or newer. I do use latest stable versions and 2018 edition.

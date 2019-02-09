@@ -97,8 +97,7 @@ impl ArrayVariables {
     /// # Examples
     /// ```rust
     /// use crate::variables::{Access, Value};
-    /// use crate::arrays::ArrayVariables;
-    /// use crate::arrays::Index;
+    /// use crate::arrays::{ArrayVariables, Index};
     ///
     /// let mut arrayvars = ArrayVariables;
     /// arraysvars.set(Array { name: "ARRAYVARNAME", access: Access::ReadWrite } , Index::A("INDEX"), Value::I(42));
@@ -150,12 +149,11 @@ impl ArrayVariables {
     /// # Examples
     /// ```rust
     /// use crate::variables::{Access, Value};
-    /// use crate::arrays::ArrayVariables;
-    /// use crate::arrays::Index;
+    /// use crate::arrays::{ArrayVariables, Index};
     ///
     /// let mut arrayvars = ArrayVariables;
-    /// arrayvars.set(Array { name: "ARRAYVARNAME", access: Access::ReadWrite } , Index::A("INDEX"), Value::I(42));
-    /// assert_eq!(arrayvars.get_access("ARRAYVARNAME"), Some(Access:ReadWrite));
+    /// arrayvars.set(Array { name: "ARRAYVARNAME", access: Access::ReadWrite }, Index::A("INDEX"), Value::I(42));
+    /// assert_eq!(arrayvars.get_access("ARRAYVARNAME"), Some(Access::ReadWrite));
     pub fn get_access(&mut self, key: &str) -> Option<Access> {
         match self.arrayvars.entry(Array {
             name: key.to_string(),
@@ -171,24 +169,23 @@ impl ArrayVariables {
     /// # Examples
     /// ```rust
     /// use crate::variables::{Access, Value};
-    /// use crate::arrays::ArrayVariables;
-    /// use crate::arrays::Index;
+    /// use crate::arrays::{ArrayVariables, Index};
     ///
     /// let mut arrayvars = ArrayVariables;
-    /// arrayvars.set(String::from("TESTF"), String::from("BLA", ArrayValue::F(0) { value: Value::F(-49.3), rw: true });
-    /// match vars.get("TESTF") {
-    ///     Some(v) => assert_eq!(v.getf(), -49.3),
-    ///     None => panic!("TESTF should be defined.")
+    /// arrayvars.set(Array { name: "TESTF", access: Access::ReadWrite }, Index::A("BLA"), Value::F(-49.3));
+    /// match arrayvars.get("TESTF", Index::A("BLA") {
+    ///     Some(v) => assert_eq!(v::F, -49.3),
+    ///     None => panic!("TESTF[\"BLA\"] should be defined.")
     /// }
-    /// vars.set(String::from("TESTI"), Variable { value: Value::I(-42), rw: true });
-    /// match vars.get("TESTI") {
-    ///     Some(v) => assert_eq!(v.geti(), -42),
-    ///     None => panic!("TESTI should be defined.")
+    /// arrayvars.set(Array { name: "TESTI", access: Access::ReadWrite }, Index::I(19), Value::I(-42));
+    /// match arrayvars.get("TESTI", Index::I(19)) {
+    ///     Some(v) => assert_eq!(v::F, -42),
+    ///     None => panic!("TESTI[19] should be defined.")
     /// }
-    /// vars.set(String::from("TESTS"), Variable { value: Value::S(String::from("RuSh will rock (one day)")), rw: true });
-    /// match vars.get("TESTS") {
-    ///     Some(v) => assert_eq!(v.gets(), "RuSh will rock (one day)"),
-    ///     None => panic!("TESTS variable should be defined.")
+    /// arrayvars.set(Array { name: "TESTS", access: Access::ReadWrite }, Index::A("TEST"), Value::S("RuSh will rock (one day)"));
+    /// match arrayvars.get("TESTS", Index::A("TEST")) {
+    ///     Some(v) => assert_eq!(v::S, "RuSh will rock (one day)"),
+    ///     None => panic!("TESTS[\"TEST\"] variable should be defined.")
     /// }
     /// ```
     pub fn set(&mut self, key: &str, index: Index, v: Value) {
@@ -237,18 +234,17 @@ impl ArrayVariables {
     /// # Examples
     /// ```rust
     /// use crate::variables::{Access, Value};
-    /// use crate::arrays::ArrayVariables;
-    /// use crate::arrays::Index;
+    /// use crate::arrays::{ArrayVariables, Index};
     ///
-    /// let mut vars = Variables::init_shell_vars();
-    /// match vars.get("RUSH_COMMAND") {
-    ///     Some(v) => assert_eq!(v.gets(), ""),
-    ///     None => panic!("RUSH_COMMAND should be defined.")
+    /// let mut arrayvars = ArrayVariables::init_shell_array_vars();
+    /// match arrayvars.get("RUSH_ALIASES", Index::A("egrep") {
+    ///     Some(v) => assert_eq!(v, "egrep --color=auto"),
+    ///     None => panic!("RUSH_ALIASES["egrep"] should be defined.")
     /// }
-    /// vars.unset(String::from("RUSH_COMMAND"));
-    /// match vars.get("RUSH_COMMAND") {
-    ///     Some(v) => panic!("RUSH_COMMAND should have been unset."),
-    ///     None => println!("RUSH_COMMAND is not set.")
+    /// arrayvars.unset("RUSH_ALIASES", Index::A("egrep"));
+    /// match arrayvars.get("RUSH_ALIASES", Index::A("egrep") {
+    ///     Some(v) => panic!("RUSH_ALIASES[\"egrep\"] should have been unset."),
+    ///     None => println!("RUSH_ALIASES[\"egrep\"] is not set.")
     /// }
     /// ```
     pub fn unset(&mut self, key: &str, index: &Index) {
@@ -280,13 +276,12 @@ impl ArrayVariables {
     /// # Examples
     /// ```rust
     /// use crate::variables::{Access, Value};
-    /// use crate::arrays::ArrayVariables;
-    /// use crate::arrays::Index;
+    /// use crate::arrays::{ArrayVariables, Index};
     ///
-    /// let mut vars = Variables::init_shell_vars();
-    /// match var.get("RUSH") {
-    ///     Some(val) => println!("RUSH var value is: {}", val.gets());
-    ///     None => println!("RUSH variable does not exist.");
+    /// let mut arrayvars = ArrayVariables::init_shell_array_vars();
+    /// match arrayvars.get("RUSH_ALIASES", Index::A("grep") {
+    ///     Some(v) => println!("RUSH_ALIASES[\"grep\"] var value is: {}", v::S()),
+    ///     None => println!("RUSH_ALIASES[\"grep\"] variable does not exist.")
     /// }
     /// ```
     pub fn init_shell_array_vars() -> ArrayVariables {
