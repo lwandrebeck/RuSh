@@ -48,7 +48,7 @@ impl BuildHasher for SeaRandomState {
 }
 
 /// Access can be ReadWrite or ReadOnly
-#[derive(Clone, Eq, Hash, PartialEq)]
+#[derive(Clone, Debug, Eq, Hash, PartialEq)]
 pub enum Access {
     ReadWrite,
     ReadOnly,
@@ -80,7 +80,7 @@ impl Variable {
     /// # Examples
     /// ```rust
     /// use variables::{Variable, Value};
-    /// let var = Variable { value: Value::I(-42), rw: true };
+    /// let var = Variable { value: Value::I(-42), access: ReadWrite };
     /// assert_eq!(var.geti(), -42);
     /// ```
     pub fn geti(&self) -> i64 {
@@ -95,7 +95,7 @@ impl Variable {
     /// # Examples
     /// ```rust
     /// use variables::{Variable, Value};
-    /// let var = Variable { value: Value::F(-42.5), rw: true };
+    /// let var = Variable { value: Value::F(-42.5), access: ReadWrite };
     /// assert_eq!(var.getf(), -42.5);
     /// ```
     pub fn getf(&self) -> f64 {
@@ -110,7 +110,7 @@ impl Variable {
     /// # Examples
     /// ```rust
     /// use variables::{Variable, Value};
-    /// let var = Variable { value: Value::S("Forty two"), rw: true };
+    /// let var = Variable { value: Value::S("Forty two"), access: ReadWrite };
     /// assert_eq!(var.gets(), "Forty two");
     /// ```
     pub fn gets(&self) -> String {
@@ -145,7 +145,7 @@ impl Variables {
     ///     Some(v) => assert_eq!(v.geti(), 1000),
     ///     None => panic!("HISTSIZE should be defined.")
     /// }
-    /// vars.set(String::from("TEST"), Variable { value: Value::F(-49.3), rw: true });
+    /// vars.set(String::from("TEST"), Variable { value: Value::F(-49.3), access: Access::ReadWrite });
     /// match vars.get("TEST") {
     ///     Some(v) => assert_eq!(v.getf(), -49.3),
     ///     None => panic!("TEST variable should be defined.")
@@ -164,6 +164,34 @@ impl Variables {
         }
     }
 
+    /// Get Access from Variable
+    ///
+    /// # Examples
+    /// ```rust
+    /// use Variables;
+    /// use variables::{Variable, Value};
+    ///
+    /// let mut vars = Variables::init_shell_vars();
+    /// match vars.get_access("RUSH_COMMAND") {
+    ///     Some(v) => assert_eq!(v, Access::ReadWrite),
+    ///     None => panic!("RUSH_COMMAND should be defined and Access::ReadWrite.")
+    /// }
+    /// match vars.get("EUID") {
+    ///     Some(v) => assert_eq!(v, Access::ReadOnly),
+    ///     None => panic!("EUID should be defined and Access::ReadOnly.")
+    /// }
+    /// match vars.get("nonexistingvar") {
+    ///     Some(v) => panic!("nonexistantvar should not give back {}", v),
+    ///     None => assert_eq!(v, None),
+    /// }
+    /// ```
+    pub fn get_access(&self, key: &str) -> Option<Access> {
+        match self.vars.get(key) {
+            Some(val) => Some(val.access.clone()),
+            None => None,
+        }
+    }
+
     /// Set a variable value for a given name. Variable is created if needed, otherwise value is updated if rw.
     ///
     /// # Examples
@@ -172,17 +200,17 @@ impl Variables {
     /// use variables::{Variable, Value};
     ///
     /// let mut vars = Variables::init_shell_vars();
-    /// vars.set(String::from("TESTF"), Variable { value: Value::F(-49.3), rw: true });
+    /// vars.set(String::from("TESTF"), Variable { value: Value::F(-49.3), access: Access::ReadWrite });
     /// match vars.get("TESTF") {
     ///     Some(v) => assert_eq!(v.getf(), -49.3),
     ///     None => panic!("TESTF should be defined.")
     /// }
-    /// vars.set(String::from("TESTI"), Variable { value: Value::I(-42), rw: true });
+    /// vars.set(String::from("TESTI"), Variable { value: Value::I(-42), access: Access::ReadWrite });
     /// match vars.get("TESTI") {
     ///     Some(v) => assert_eq!(v.geti(), -42),
     ///     None => panic!("TESTI should be defined.")
     /// }
-    /// vars.set(String::from("TESTS"), Variable { value: Value::S(String::from("RuSh will rock (one day)")), rw: true });
+    /// vars.set(String::from("TESTS"), Variable { value: Value::S(String::from("RuSh will rock (one day)")), access: Access::ReadWrite });
     /// match vars.get("TESTS") {
     ///     Some(v) => assert_eq!(v.gets(), "RuSh will rock (one day)"),
     ///     None => panic!("TESTS variable should be defined.")
@@ -200,6 +228,47 @@ impl Variables {
             }
             Vacant(entry) => {
                 entry.insert(v);
+            }
+        }
+    }
+    /// Set variable access status. If variable does not exist, it is created as Value::S("")
+    ///
+    /// # Examples
+    /// ```rust
+    /// use Variables;
+    /// use variables::{Variable, Value};
+    ///
+    /// let mut vars = Variables::init_shell_vars();
+    /// vars.set_access("TEST", Access::ReadWrite));
+    /// match vars.get_access("TEST") {
+    ///     Some(v) => assert_eq!(v, Access::ReadWrite),
+    ///     None => panic!("TEST should be defined."),
+    /// }
+    /// vars.set_access("TEST", Access::ReadOnly);
+    /// match vars.get_access("TEST") {
+    ///     Some(v) => assert_eq!(v, Access::ReadOnly),
+    ///     None => panic!("TEST should be defined."),
+    /// }
+    /// match vars.set_access("doesnotexist", Access::ReadWrite) {
+    ///     Some(v) => assert_eq!(v, Access::ReadWrite),
+    ///     None => panic!("doesnotexist variable should be defined and Access::ReadWrite"),
+    /// }
+    /// match vars.set_access("doesnotexist2", Access::ReadOnly) {
+    ///     Some(v) => assert_eq!(v, Access::ReadOnly),
+    ///     None => panic!("doesnotexist variable should be defined and Access::ReadOnly"),
+    /// }
+    pub fn set_access(&mut self, key: String, v: Access) {
+        // does the var already exist ?
+        match self.vars.entry(key) {
+            Occupied(mut entry) => {
+                let contents = entry.get_mut();
+                contents.access = v;
+            }
+            Vacant(entry) => {
+                entry.insert(Variable {
+                    value: Value::S("".to_string()),
+                    access: v,
+                });
             }
         }
     }
@@ -627,6 +696,48 @@ mod tests {
         match vars.get("TESTS") {
             Some(v) => assert_eq!(v.gets(), "RuSh will rock (one day)"),
             None => panic!("TESTS variable should be defined."),
+        }
+    }
+
+    #[test]
+    fn test_get_access() {
+        let mut vars = Variables::init_shell_vars();
+        match vars.get_access("RUSH_COMMAND") {
+            Some(v) => assert_eq!(v, Access::ReadWrite),
+            None => panic!("RUSH_COMMAND should be defined and Access::ReadWrite."),
+        }
+        match vars.get_access("EUID") {
+            Some(v) => assert_eq!(v, Access::ReadOnly),
+            None => panic!("EUID should be defined and Access::ReadOnly."),
+        }
+        match vars.get_access("nonexistingvar") {
+            Some(v) => panic!("nonexistingvar should not give back {:?}", v),
+            None => assert!(true),
+        }
+    }
+
+    #[test]
+    fn test_set_access() {
+        let mut vars = Variables::init_shell_vars();
+        vars.set_access("TEST".to_string(), Access::ReadWrite);
+        match vars.get_access("TEST") {
+            Some(v) => assert_eq!(v, Access::ReadWrite),
+            None => panic!("TEST should be defined."),
+        }
+        vars.set_access("TEST".to_string(), Access::ReadOnly);
+        match vars.get_access("TEST") {
+            Some(v) => assert_eq!(v, Access::ReadOnly),
+            None => panic!("TEST should be defined."),
+        }
+        vars.set_access("doesnotexist".to_string(), Access::ReadWrite);
+        match vars.get_access("doesnotexist") {
+            Some(v) => assert_eq!(v, Access::ReadWrite),
+            None => panic!("doesnotexist variable should be defined and Access::ReadWrite"),
+        }
+        vars.set_access("doesnotexist2".to_string(), Access::ReadOnly);
+        match vars.get_access("doesnotexist2") {
+            Some(v) => assert_eq!(v, Access::ReadOnly),
+            None => panic!("doesnotexist variable should be defined and Access::ReadOnly"),
         }
     }
 }
