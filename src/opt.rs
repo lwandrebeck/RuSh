@@ -25,8 +25,8 @@
 /// opt (un)setting, update methods for both shopt and options.
 extern crate seahash;
 
-use crate::variables::SeaRandomState;
 use crate::variables::Access;
+use crate::variables::SeaRandomState;
 use std::collections::HashMap;
 
 /// OptionRW structure, allows to store values for a given option.

@@ -19,7 +19,7 @@
 // MA 02110-1301, USA.
 //
 
-pub use crate::arrays::ArrayVariables;
+pub use crate::arrays::Array;
 pub use crate::opt::Opt;
 pub use crate::prompt::Prompt;
 pub use crate::variables::Variables;
@@ -40,7 +40,7 @@ pub struct RuSh {
     /// shell_vars: RUSH, RUSHPID, etc. See man bash, shell variables. Stored as HashMap<String, <i64 or f64 or String, bool>>
     pub shell_vars: Variables,
     /// shell_array_vars: RUSH_VERSINFO, RUSH_ALIASES and other shell variables defined as array
-    pub shell_array_vars: ArrayVariables,
+    pub shell_array_vars: Array,
     /// Command history. Stored as History from rustyline
     pub history: rustyline::history::History,
     /// line case, needed for prompt management
@@ -64,7 +64,7 @@ impl Default for RuSh {
             /// 100 or so shell vars are defined upon startup. Allocate twice that.
             shell_vars: Variables::init_shell_vars(),
             /// initialize array variables.
-            shell_array_vars: ArrayVariables::init_shell_array_vars(),
+            shell_array_vars: Array::init_shell_array_vars(),
             // TODO set history size
             // rl.set_history_max_len(1000);
             /// Manage commands history with rustyline crate.

@@ -50,7 +50,7 @@ extern crate structopt_derive;
 
 use pest::Parser;
 // pub for use is there so doc is generated.
-pub use crate::arrays::ArrayVariables;
+pub use crate::arrays::Array;
 pub use crate::opt::Opt;
 pub use crate::prompt::Prompt;
 pub use crate::rush::RuSh;

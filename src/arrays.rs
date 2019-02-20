@@ -22,15 +22,14 @@
 /// RuSh indexed and associative arrays management is located in this module.
 ///
 /// arrays.rs contains arrays structures and affiliated methods.
-/// `AArrayVariables` and `IArrayVariables` are defined here.
+/// `Array` is defined here.
 /// arrays (un)setting, and update methods for arrays.
 extern crate rand;
 extern crate seahash;
 
 use crate::variables::{Access, Value};
-use std::collections::hash_map::Entry::{Occupied, Vacant};
 use std::collections::HashMap;
-use std::hash::{BuildHasher, Hash, Hasher};
+use std::hash::BuildHasher;
 use std::str;
 
 /// For seahash maps.
@@ -58,49 +57,24 @@ pub enum Index {
 
 /// An array can be read only.
 pub struct Array {
-    /// Array name
-    name: String,
-    /// Is the array rw or ro
-    access: Access,
-}
-
-/// Hash Trait for Array, as only name is important
-impl Hash for Array {
-    fn hash<H: Hasher>(&self, state: &mut H) {
-        self.name.hash(state);
-    }
-}
-
-/// PartialEq Trait for Array, as only name is important
-impl PartialEq for Array {
-    fn eq(&self, other: &Self) -> bool {
-        self.name == other.name
-    }
-}
-
-/// Eq Trait for Array
-impl Eq for Array {}
-
-/// Public structure for `ArrayVariables` management.
-pub struct ArrayVariables {
-    /// Variables are stored in a HashMap<Array,  HashMap<Index, Value, SeaRandomState>, SeaRandomState>.
-    /// `Array` used as key from main `HashMap` being the array name and its rw state
+    /// String is array name, tuple contains access state, plus a HashMap to store indexes and values
+    /// `Access` is rw/ro state of a given array.
     /// `Index` of the 2nd HashMap is the array index.
     /// `Value` is the value stored at Array[Index] in shell notation.
-    arrayvars: HashMap<Array, HashMap<Index, Value, SeaRandomState>, SeaRandomState>,
+    arrayvars: HashMap<String, (Access, HashMap<Index, Value, SeaRandomState>), SeaRandomState>,
 }
 
-/// Methods for `ArrayVariables`.
-impl ArrayVariables {
+/// Methods for `Array`.
+impl Array {
     /// Get `Value` from its array name and index position. Returns `Value` as `Option`.
     ///
     /// # Examples
     /// ```rust
     /// use crate::variables::{Access, Value};
-    /// use crate::arrays::{ArrayVariables, Index};
+    /// use crate::arrays::{Array, Index};
     ///
-    /// let mut arrayvars = ArrayVariables;
-    /// arraysvars.set(Array { name: "ARRAYVARNAME", access: Access::ReadWrite } , Index::A("INDEX"), Value::I(42));
+    /// let mut array = Array;
+    /// array.set(ARRAYVARNAME, (Access::ReadWrite, Index::A("INDEX"), Value::I(42));
     /// match arrayvars.get(Array { "ARRAYVARNAME", Index::A("INDEX") }) {
     ///     Some(v) => assert_eq!(v::I, 42),
     ///     None => panic!("ARRAYVARNAME[\"INDEX\"] should be defined.")
@@ -122,19 +96,16 @@ impl ArrayVariables {
     /// ```
     pub fn get(&self, key: &str, index: &Index) -> Option<Value> {
         //~ self.arrayvars.get(&Array { name: key.to_string(), access: Access::ReadWrite }).and_then(|val| val.get(index::A).or(val.get(index::I)))
-        match self.arrayvars.get(&Array {
-            name: key.to_string(),
-            access: Access::ReadWrite,
-        }) {
+        match self.arrayvars.get(key) {
             // if variable has been defined
-            Some(val) => {
+            Some((_access, hm)) => {
                 // associative or indexed array
                 match index {
-                    Index::A(value) => match val.get(&Index::A(value.to_string())) {
+                    Index::A(value) => match hm.get(&Index::A(value.to_string())) {
                         Some(varval) => Some(varval.clone()),
                         None => None,
                     },
-                    Index::I(value) => match val.get(&Index::I(*value)) {
+                    Index::I(value) => match hm.get(&Index::I(*value)) {
                         Some(varval) => Some(varval.clone()),
                         None => None,
                     },
@@ -149,18 +120,15 @@ impl ArrayVariables {
     /// # Examples
     /// ```rust
     /// use crate::variables::{Access, Value};
-    /// use crate::arrays::{ArrayVariables, Index};
+    /// use crate::arrays::{Array, Index};
     ///
-    /// let mut arrayvars = ArrayVariables;
+    /// let mut arrayvars = Array;
     /// arrayvars.set(Array { name: "ARRAYVARNAME", access: Access::ReadWrite }, Index::A("INDEX"), Value::I(42));
     /// assert_eq!(arrayvars.get_access("ARRAYVARNAME"), Some(Access::ReadWrite));
     pub fn get_access(&mut self, key: &str) -> Option<Access> {
-        match self.arrayvars.entry(Array {
-            name: key.to_string(),
-            access: Access::ReadOnly,
-        }) {
-            Occupied(entry) => Some(entry.key().access.clone()),
-            Vacant(_entry) => None,
+        match self.arrayvars.get(key) {
+            Some((access, _hm)) => Some(access.clone()),
+            None => None,
         }
     }
 
@@ -169,9 +137,9 @@ impl ArrayVariables {
     /// # Examples
     /// ```rust
     /// use crate::variables::{Access, Value};
-    /// use crate::arrays::{ArrayVariables, Index};
+    /// use crate::arrays::{Array, Index};
     ///
-    /// let mut arrayvars = ArrayVariables;
+    /// let mut arrayvars = Array;
     /// arrayvars.set(Array { name: "TESTF", access: Access::ReadWrite }, Index::A("BLA"), Value::F(-49.3));
     /// match arrayvars.get("TESTF", Index::A("BLA") {
     ///     Some(v) => assert_eq!(v::F, -49.3),
@@ -192,39 +160,24 @@ impl ArrayVariables {
         match self.get_access(key) {
             Some(a) => match a {
                 Access::ReadWrite => {
-                    match self.arrayvars.entry(Array {
-                        name: key.to_string(),
-                        access: Access::ReadWrite,
-                    }) {
-                        // if array exists
-                        Occupied(mut entry) => {
-                            entry.get_mut().insert(index, v);
+                    match self.arrayvars.get_mut(key) {
+                        Some((_access, hm)) => {
+                            hm.insert(index, v);
                         }
-                        Vacant(_entry) => {
-                            let mut val = HashMap::with_capacity_and_hasher(20, SeaRandomState);
-                            val.insert(index, v);
-                            let _bla = self.arrayvars.insert(
-                                Array {
-                                    name: key.to_string(),
-                                    access: Access::ReadWrite,
-                                },
-                                val,
-                            );
+                        None => {
+                            let mut hm = HashMap::with_capacity_and_hasher(20, SeaRandomState);
+                            hm.insert(index, v);
+                            self.arrayvars.insert(key.to_string(), (a, hm));
                         }
                     };
                 }
                 Access::ReadOnly => (),
             },
             None => {
-                let mut val = HashMap::with_capacity_and_hasher(20, SeaRandomState);
-                val.insert(index, v);
-                let _bla = self.arrayvars.insert(
-                    Array {
-                        name: key.to_string(),
-                        access: Access::ReadWrite,
-                    },
-                    val,
-                );
+                let mut hm = HashMap::with_capacity_and_hasher(20, SeaRandomState);
+                hm.insert(index, v);
+                self.arrayvars
+                    .insert(key.to_string(), (Access::ReadWrite, hm));
             }
         };
     }
@@ -234,9 +187,9 @@ impl ArrayVariables {
     /// # Examples
     /// ```rust
     /// use crate::variables::{Access, Value};
-    /// use crate::arrays::{ArrayVariables, Index};
+    /// use crate::arrays::{Array, Index};
     ///
-    /// let mut arrayvars = ArrayVariables;
+    /// let mut arrayvars = Array;
     /// arrayvars.set(Array { name: "TESTF", access: Access::ReadWrite }, Index::A("BLA"), Value::F(-49.3));
     /// arrayvars.set_access("TESTF", Access::ReadOnly);
     /// assert_eq!(arrayvars.get_access("TESTF"), Some(Access::ReadOnly));
@@ -248,29 +201,13 @@ impl ArrayVariables {
     /// assert_eq!(arrayvars.get_access("TESTF"), Some(Access::ReadWrite));
     /// ```
     pub fn set_access(&mut self, key: &str, a: Access) {
-        // do not forget hash is only on name, so Access status is not taken care of.
-        match self.arrayvars.remove_entry(&Array {
-            name: key.to_string(),
-            access: Access::ReadOnly,
-        }) {
-            Some((oldkey, oldval)) => {
-                self.arrayvars.insert(
-                    Array {
-                        name: oldkey.name.to_string(),
-                        access: a,
-                    },
-                    oldval,
-                );
+        match self.arrayvars.get_mut(key) {
+            Some(arr) => {
+                arr.0 = a;
             }
             None => {
-                let val = HashMap::with_capacity_and_hasher(20, SeaRandomState);
-                self.arrayvars.insert(
-                    Array {
-                        name: key.to_string(),
-                        access: a,
-                    },
-                    val,
-                );
+                let hm = HashMap::with_capacity_and_hasher(20, SeaRandomState);
+                self.arrayvars.insert(key.to_string(), (a, hm));
             }
         }
     }
@@ -280,9 +217,9 @@ impl ArrayVariables {
     /// # Examples
     /// ```rust
     /// use crate::variables::{Access, Value};
-    /// use crate::arrays::{ArrayVariables, Index};
+    /// use crate::arrays::{Array, Index};
     ///
-    /// let mut arrayvars = ArrayVariables::init_shell_array_vars();
+    /// let mut arrayvars = Array::init_shell_array_vars();
     /// match arrayvars.get("RUSH_ALIASES", Index::A("egrep") {
     ///     Some(v) => assert_eq!(v, "egrep --color=auto"),
     ///     None => panic!("RUSH_ALIASES["egrep"] should be defined.")
@@ -294,23 +231,20 @@ impl ArrayVariables {
     /// }
     /// ```
     pub fn unset(&mut self, key: &str, index: &Index) {
-        if let Some(a) = self.get_access(key) {
-            match a {
-                Access::ReadWrite => {
-                    match self.arrayvars.get_mut(&Array {
-                        name: key.to_string(),
-                        access: Access::ReadWrite,
-                    }) {
-                        // if variable has been defined
-                        Some(val) => {
-                            // associative or indexed array
-                            match index {
-                                Index::A(value) => val.remove(&Index::A(value.to_string())),
-                                Index::I(value) => val.remove(&Index::I(*value)),
-                            }
+        if let Some((acc, hm)) = self.arrayvars.get_mut(key) {
+            // if variable has been defined
+            match acc {
+                Access::ReadWrite =>
+                // associative or indexed array
+                {
+                    match index {
+                        Index::A(value) => {
+                            hm.remove(&Index::A(value.to_string()));
                         }
-                        None => None,
-                    };
+                        Index::I(value) => {
+                            hm.remove(&Index::I(*value));
+                        }
+                    }
                 }
                 Access::ReadOnly => (),
             };
@@ -322,16 +256,16 @@ impl ArrayVariables {
     /// # Examples
     /// ```rust
     /// use crate::variables::{Access, Value};
-    /// use crate::arrays::{ArrayVariables, Index};
+    /// use crate::arrays::{Array, Index};
     ///
-    /// let mut arrayvars = ArrayVariables::init_shell_array_vars();
+    /// let mut arrayvars = Array::init_shell_array_vars();
     /// match arrayvars.get("RUSH_ALIASES", Index::A("grep") {
     ///     Some(v) => println!("RUSH_ALIASES[\"grep\"] var value is: {}", v::S()),
     ///     None => println!("RUSH_ALIASES[\"grep\"] variable does not exist.")
     /// }
     /// ```
-    pub fn init_shell_array_vars() -> ArrayVariables {
-        let mut arrayvars = ArrayVariables {
+    pub fn init_shell_array_vars() -> Array {
+        let mut arrayvars = Array {
             arrayvars: HashMap::with_capacity_and_hasher(200, SeaRandomState),
         };
         //~ // see man bash (Shell vars)
@@ -684,12 +618,12 @@ impl ArrayVariables {
 
 #[cfg(test)]
 mod tests {
-    use crate::arrays::{ArrayVariables, Index};
+    use crate::arrays::{Array, Index};
     use crate::variables::{Access, Value};
 
     #[test]
     fn test_init_shell_array_vars() {
-        let array = ArrayVariables::init_shell_array_vars();
+        let array = Array::init_shell_array_vars();
         match array.get("RUSH_VERSINFO", &Index::I(1)) {
             // RUSH_VERSINFO[1]=0
             Some(v) => match v {
@@ -709,7 +643,7 @@ mod tests {
 
     #[test]
     fn test_unset() {
-        let mut array = ArrayVariables::init_shell_array_vars();
+        let mut array = Array::init_shell_array_vars();
         match array.get("RUSH_VERSINFO", &Index::I(1)) {
             Some(v) => match v {
                 Value::I(i) => assert_eq!(i, 0),
@@ -726,7 +660,7 @@ mod tests {
 
     #[test]
     fn test_get_and_getifs() {
-        let mut array = ArrayVariables::init_shell_array_vars();
+        let mut array = Array::init_shell_array_vars();
         match array.get("RUSH_VERSINFO", &Index::I(4)) {
             Some(v) => match v {
                 Value::S(s) => assert_eq!(s, "alpha0"),
@@ -761,7 +695,7 @@ mod tests {
 
     #[test]
     fn test_set_access() {
-        let mut array = ArrayVariables::init_shell_array_vars();
+        let mut array = Array::init_shell_array_vars();
         array.set("TESTF", Index::A("BLA".to_string()), Value::F(-49.3));
         array.set_access("TESTF", Access::ReadOnly);
         assert_eq!(array.get_access("TESTF"), Some(Access::ReadOnly));
@@ -793,7 +727,7 @@ mod tests {
 
     #[test]
     fn test_set() {
-        let mut array = ArrayVariables::init_shell_array_vars();
+        let mut array = Array::init_shell_array_vars();
         array.set("TESTF", Index::A("A".to_string()), Value::F(-49.3));
         match array.get("TESTF", &Index::A("A".to_string())) {
             Some(v) => match v {

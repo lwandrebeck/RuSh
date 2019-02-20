@@ -701,7 +701,7 @@ mod tests {
 
     #[test]
     fn test_get_access() {
-        let mut vars = Variables::init_shell_vars();
+        let vars = Variables::init_shell_vars();
         match vars.get_access("RUSH_COMMAND") {
             Some(v) => assert_eq!(v, Access::ReadWrite),
             None => panic!("RUSH_COMMAND should be defined and Access::ReadWrite."),
