@@ -229,6 +229,52 @@ impl ArrayVariables {
         };
     }
 
+    /// Set an array access state for a given name. Array is created if needed, otherwise access state is updated
+    ///
+    /// # Examples
+    /// ```rust
+    /// use crate::variables::{Access, Value};
+    /// use crate::arrays::{ArrayVariables, Index};
+    ///
+    /// let mut arrayvars = ArrayVariables;
+    /// arrayvars.set(Array { name: "TESTF", access: Access::ReadWrite }, Index::A("BLA"), Value::F(-49.3));
+    /// arrayvars.set_access("TESTF", Access::ReadOnly);
+    /// assert_eq!(arrayvars.get_access("TESTF"), Some(Access::ReadOnly));
+    /// arrayvars.set_access("TESTF", Access::ReadWrite);
+    /// assert_eq!(arrayvars.get_access("TESTF"), Some(Access::ReadWrite));
+    /// arrayvars.set_access("nonexistingentry", Access::ReadOnly);
+    /// assert_eq!(arrayvars.get_access("TESTF"), Some(Access::ReadOnly));
+    /// arrayvars.set_access("nonexistingentry2", Access::ReadWrite);
+    /// assert_eq!(arrayvars.get_access("TESTF"), Some(Access::ReadWrite));
+    /// ```
+    pub fn set_access(&mut self, key: &str, a: Access) {
+        // do not forget hash is only on name, so Access status is not taken care of.
+        match self.arrayvars.remove_entry(&Array {
+            name: key.to_string(),
+            access: Access::ReadOnly,
+        }) {
+            Some((oldkey, oldval)) => {
+                self.arrayvars.insert(
+                    Array {
+                        name: oldkey.name.to_string(),
+                        access: a,
+                    },
+                    oldval,
+                );
+            }
+            None => {
+                let val = HashMap::with_capacity_and_hasher(20, SeaRandomState);
+                self.arrayvars.insert(
+                    Array {
+                        name: key.to_string(),
+                        access: a,
+                    },
+                    val,
+                );
+            }
+        }
+    }
+
     /// Unset a variable name and its value. So is the associated environment variable and value.
     ///
     /// # Examples
@@ -638,8 +684,7 @@ impl ArrayVariables {
 
 #[cfg(test)]
 mod tests {
-    use crate::arrays::ArrayVariables;
-    use crate::arrays::Index;
+    use crate::arrays::{ArrayVariables, Index};
     use crate::variables::{Access, Value};
 
     #[test]
@@ -711,6 +756,38 @@ mod tests {
                 _ => panic!("TEST[0] should be Value::F."),
             },
             None => panic!("TEST[0] variable should be defined."),
+        }
+    }
+
+    #[test]
+    fn test_set_access() {
+        let mut array = ArrayVariables::init_shell_array_vars();
+        array.set("TESTF", Index::A("BLA".to_string()), Value::F(-49.3));
+        array.set_access("TESTF", Access::ReadOnly);
+        assert_eq!(array.get_access("TESTF"), Some(Access::ReadOnly));
+        array.set_access("TESTF", Access::ReadWrite);
+        assert_eq!(array.get_access("TESTF"), Some(Access::ReadWrite));
+        match array.get("TESTF", &Index::A("BLA".to_string())) {
+            Some(f) => match f {
+                Value::F(f) => assert_eq!(f, -49.3),
+                _ => panic!("TESTF[\"BLA\"] should be Value::F."),
+            },
+            None => panic!("TESTF[\"BLA\"] variable should be defined."),
+        }
+        array.set_access("nonexistingentry", Access::ReadOnly);
+        assert_eq!(array.get_access("nonexistingentry"), Some(Access::ReadOnly));
+        array.set_access("nonexistingentry2", Access::ReadWrite);
+        assert_eq!(
+            array.get_access("nonexistingentry2"),
+            Some(Access::ReadWrite)
+        );
+        array.set("nonexistingentry2", Index::I(0), Value::I(1));
+        match array.get("nonexistingentry2", &Index::I(0)) {
+            Some(i) => match i {
+                Value::I(i) => assert_eq!(i, 1),
+                _ => panic!("nonexistingentry2[0] should be Value::I."),
+            },
+            None => panic!("nonexistingentry2[0] should be defined and Value::I."),
         }
     }
 

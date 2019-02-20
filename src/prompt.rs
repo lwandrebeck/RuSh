@@ -228,7 +228,6 @@ impl Prompt {
 mod tests {
     use crate::prompt::Prompt;
     use crate::rush::RuSh;
-    use crate::variables::Variables;
 
     #[test]
     fn test_get() {
