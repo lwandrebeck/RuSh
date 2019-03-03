@@ -19,6 +19,14 @@
 // MA 02110-1301, USA.
 //
 
+//! # RuSh
+//!
+//! `RuSh` is a shell written in Rust
+//! RuSh aims to be (maybe one day) a POSIX Shell, Bash compatible (or close to) with candies.
+//! Source code is GPL3. Please note that this is a personal project (read not funded), in order to learn Rust language.
+//! That does not mean feedback or patches are not welcome.
+//! Right now, RuSh is definitely not useable. A couple little things have been done, but 99% (at least) have to be written.
+
 /// Include arrays management.
 mod arrays;
 /// Include options management (shopt, set)
@@ -27,12 +35,6 @@ mod opt;
 mod prompt;
 /// Include rush core.
 mod rush;
-/// RuSh begins here.
-///
-/// main.rs contains the very beginning of RuSh.
-/// Shell structure is defined and initialized here.
-/// Main loop of the program.
-
 /// Include variables management.
 mod variables;
 

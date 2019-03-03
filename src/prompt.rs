@@ -71,7 +71,7 @@ impl Prompt {
                     _ => String::from(""),
                 },
                 None => {
-                    let ps1 = "[\\u@\\h \\W]$ ".to_string();
+                    let ps1 = "[\\u@\\h \\W]\\$ ".to_string();
                     rush.shell_vars.set(
                         String::from("PS1"),
                         Variable {

@@ -144,6 +144,8 @@ Right now, RuSh is definitely not useable. A couple little things have been done
 - [ ] .pest file will need a complete overhaul to be cleaner and better structured.
 
 ### core
+- [ ] Make simple variables and arrays methods prototypes more similar (get rid of geti, gets… ?).
+- [ ] Add some kind of Error return type for methods so we can follow properly the way things run.
 - [x] Variables management (simple variables, aliases and single dimension arrays).
 - [ ] Complete prompt codes support (partly done)
 - [ ] Clean up code (commented tries here and there…)
@@ -155,8 +157,13 @@ Right now, RuSh is definitely not useable. A couple little things have been done
 - [ ] Think of ways to get speed with RuSh (read: be faster than Bash). JIT ? Some kind of « parsed script ready to be executed » ?
 - [ ] Support float processing. (kind of done, see variable management above)
 - [ ] Deprecate several bashy thing (older versions compatibility etc, bash is so much of a noodles plate now due to history that I won’t be able to cover every point so I’ll have to focus).
-- [x] Use [seahash](https://crates.io/crates/seahash) instead of fnv (Kind of done, variables management needs work now, see above).
-- [ ] So many other things. multidimensionnal arrays ? Use of clippy, rustfmt, error-chain, tarpaulin, some fuzzer ?
+- [x] Use [seahash](https://crates.io/crates/seahash) instead of fnv.
+- [ ] Use [hashbrown](https://github.com/Amanieu/hashbrown) instead of [seahash](https://crates.io/crates/seahash) ? Soon to be used by default in std it [seems](https://github.com/rust-lang/rust/pull/58623).
+- [x] Use of cargo clippy.
+- [x] Use of cargo fmt.
+- [x] Use of tarpaulin.
+- [ ] Use of error-chain, some fuzzer ?
+- [ ] So many other things. multidimensionnal arrays ?
 
 ## Building
 

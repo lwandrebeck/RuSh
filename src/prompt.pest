@@ -3,31 +3,31 @@ prompt = _{ (normal_prompt | aslash_prompt)* }
 normal_prompt = { !prompt_backslash ~ ANY }
 aslash_prompt = _{ prompt_backslash ~ aslash_elmnts }
 aslash_elmnts = _{ prompt_date |
-				  prompt_host |
-				  prompt_hostname |
-				  prompt_jobs |
-				  prompt_term_dev_basename |
-				  prompt_shellname |
-				  prompt_time_s24 |
-				  prompt_time_s12 |
-				  prompt_time_12 |
-				  prompt_username |
-				  prompt_version |
-				  prompt_version_patch |
-				  prompt_pwd |
-				  prompt_pwd_basename |
-				  prompt_history_command_number |
-				  prompt_command_number |
-				  prompt_is_root |
-				  prompt_newline |
-				  prompt_car_ret |
-				  prompt_esc |
-				  prompt_bell |
-				  prompt_non_print |
-				  prompt_end_non_print |
-				  prompt_octal |
-				  prompt_backslash
-				}
+                  prompt_host |
+                  prompt_hostname |
+                  prompt_jobs |
+                  prompt_term_dev_basename |
+                  prompt_shellname |
+                  prompt_time_s24 |
+                  prompt_time_s12 |
+                  prompt_time_12 |
+                  prompt_username |
+                  prompt_version |
+                  prompt_version_patch |
+                  prompt_pwd |
+                  prompt_pwd_basename |
+                  prompt_history_command_number |
+                  prompt_command_number |
+                  prompt_is_root |
+                  prompt_newline |
+                  prompt_car_ret |
+                  prompt_esc |
+                  prompt_bell |
+                  prompt_non_print |
+                  prompt_end_non_print |
+                  prompt_octal |
+                  prompt_backslash
+                }
 prompt_date = { "d" }
 prompt_host = { "h" }
 prompt_hostname = { "H" }
