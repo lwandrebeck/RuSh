@@ -19,12 +19,14 @@
 // MA 02110-1301, USA.
 //
 
+extern crate pest;
+
 pub use crate::arrays::Array;
 pub use crate::opt::Opt;
 pub use crate::prompt::Prompt;
 pub use crate::variables::Variables;
 #[allow(unused_imports)]
-use pest::Parser;
+use pest_derive::Parser;
 /// pest grammar inclusion. dummy const so that .pest file changes are taken care of.
 #[derive(Parser)]
 #[grammar = "rush.pest"]

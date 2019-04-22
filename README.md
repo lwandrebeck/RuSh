@@ -83,7 +83,7 @@ Right now, RuSh is definitely not useable. A couple little things have been done
 - [x] POSIX characters classes [:upper:] matches uppercase alphabetic characters. This is equivalent to A-Z.
 - [x] POSIX characters classes [:xdigit:] matches hexadecimal digits. This is equivalent to 0-9A-Fa-f.
 - [ ] if elif else fi.
-- [ ] case "$var" in "value") command ;; "value2") command ;; esac.
+- [ ] case "$var" in "value") command ;; "value2") command ;; esac
 - [ ] for n in list do done { } may be used instead of do done
 - [ ] for ((a=1; a<bla; a++)) do done { } may be used instead of do done
 - [ ] while [condition] do done (optional brackets)
@@ -147,21 +147,23 @@ Right now, RuSh is definitely not useable. A couple little things have been done
 - [ ] Make simple variables and arrays methods prototypes more similar (get rid of geti, gets… ?).
 - [ ] Add some kind of Error return type for methods so we can follow properly the way things run.
 - [x] Variables management (simple variables, aliases and single dimension arrays).
-- [ ] Complete prompt codes support (partly done)
-- [ ] Clean up code (commented tries here and there…)
+- [ ] Complete prompt codes support (partly done).
+- [ ] Clean up code (commented tries here and there…).
 - [ ] Split up code (variables.rs prompt.rs etc. Partly done).
-- [ ] Write everything linked to builtins, pipes etc (yeah, that will be *very* long)
+- [ ] Write everything linked to builtins, pipes etc (yeah, that will be *very* long).
 - [ ] Have a 100% code coverage when it comes to documentation *and* testing.
-- [ ] Multi-lingual support (i18n ? l20n.rs ?)
-- [ ] Proper color management (using [term](https://crates.io/crates/term) crate maybe ?)
+- [ ] Multi-lingual support (i18n ? l20n.rs ?).
+- [ ] Proper color management (using [term](https://crates.io/crates/term) crate maybe ?).
 - [ ] Think of ways to get speed with RuSh (read: be faster than Bash). JIT ? Some kind of « parsed script ready to be executed » ?
-- [ ] Support float processing. (kind of done, see variable management above)
+- [ ] Support float processing. (kind of done, see variable management above).
 - [ ] Deprecate several bashy thing (older versions compatibility etc, bash is so much of a noodles plate now due to history that I won’t be able to cover every point so I’ll have to focus).
 - [x] Use [seahash](https://crates.io/crates/seahash) instead of fnv.
 - [ ] Use [hashbrown](https://github.com/Amanieu/hashbrown) instead of [seahash](https://crates.io/crates/seahash) ? Soon to be used by default in std it [seems](https://github.com/rust-lang/rust/pull/58623).
 - [x] Use of cargo clippy.
 - [x] Use of cargo fmt.
 - [x] Use of tarpaulin.
+- [ ] Use of criterion for benchmarking.
+- [ ] Put tests and benches in their own directories.
 - [ ] Use of error-chain, some fuzzer ?
 - [ ] So many other things. multidimensionnal arrays ?
 

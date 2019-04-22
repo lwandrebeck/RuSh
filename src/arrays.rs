@@ -61,7 +61,7 @@ pub struct Array {
     /// `Access` is rw/ro state of a given array.
     /// `Index` of the 2nd HashMap is the array index.
     /// `Value` is the value stored at Array[Index] in shell notation.
-    arrayvars: HashMap<String, (Access, HashMap<Index, Value, SeaRandomState>), SeaRandomState>,
+    pub arrayvars: HashMap<String, (Access, HashMap<Index, Value, SeaRandomState>), SeaRandomState>,
 }
 
 /// Methods for `Array`.
@@ -70,27 +70,40 @@ impl Array {
     ///
     /// # Examples
     /// ```rust
-    /// use crate::variables::{Access, Value};
-    /// use crate::arrays::{Array, Index};
+    /// use std::collections::HashMap;
+    /// use std::hash::BuildHasher;
+    /// use RuSh::variables::{Access, Value};
+    /// use RuSh::arrays::{Array, Index, SeaRandomState};
     ///
-    /// let mut array = Array;
-    /// array.set(ARRAYVARNAME, (Access::ReadWrite, Index::A("INDEX"), Value::I(42));
-    /// match arrayvars.get(Array { "ARRAYVARNAME", Index::A("INDEX") }) {
-    ///     Some(v) => assert_eq!(v::I, 42),
+    /// let mut arrayvars = Array {
+    ///     arrayvars: HashMap::with_capacity_and_hasher(200, SeaRandomState),
+    /// };
+    /// arrayvars.set("ARRAYVARNAME", Index::A("INDEX".to_string()), Value::I(42));
+    /// match arrayvars.get("ARRAYVARNAME", &Index::A("INDEX".to_string())) {
+    ///     Some(v) => match v {
+    ///             Value::I(val) => assert_eq!(val, 42),
+    ///             _ => panic!("ARRAYVARNAME[\"INDEX\"] should be Value::I.")
+    ///         },
     ///     None => panic!("ARRAYVARNAME[\"INDEX\"] should be defined.")
     /// }
-    /// arraysvars.set(Array { name: "FLOAT", access: Access::ReadWrite } , Index::I(3), Value::F(1415.9265));
-    /// match arrayvars.get("FLOAT", Index::I(3)) {
-    ///     Some(v) => assert_eq!(v::F, 1415.9265),
+    /// arrayvars.set("FLOAT", Index::I(3), Value::F(1415.9265));
+    /// match arrayvars.get("FLOAT", &Index::I(3)) {
+    ///     Some(v) => match v {
+    ///             Value::F(val) => assert_eq!(val, 1415.9265),
+    ///             _ => panic!("FLOAT[3] should be Value::F.")
+    ///         },
     ///     None => panic!("FLOAT[3] should be defined.")
     /// }
-    /// match arrayvars.get(Array { "HISTSIZE", Access::ReadWrite }, Index::A("WHATEVER")) {
+    /// match arrayvars.get("HISTSIZE", &Index::A("WHATEVER".to_string())) {
     ///     Some(v) => panic!("HISTSIZE[\"WHATEVER\"] should not be defined, it is a simple variable."),
-    ///     None => println!("OK")
+    ///     None => assert!(true)
     /// }
-    /// arrayvars.set(Array { String::from("TEST"), Access::ReadWrite }, Index::A(String::from("TESTINDEX")), Value::F(-49.3));
-    /// match arrayvars.get(Array { "TEST", Access::ReadWrite }, Index::A("TESTINDEX")) {
-    ///     Some(v) => assert_eq!(v::F, -49.3),
+    /// arrayvars.set("TEST", Index::A(String::from("TESTINDEX")), Value::F(-49.3));
+    /// match arrayvars.get("TEST", &Index::A("TESTINDEX".to_string())) {
+    ///     Some(v) => match v {
+    ///             Value::F(val) => assert_eq!(val, -49.3),
+    ///             _ => panic!("TEST[\"TESTINDEX\"] should be Value::F")
+    ///         },
     ///     None => panic!("TEST[\"TESTINDEX\"] array Value should be defined at index \"TESTINDEX\".")
     /// }
     /// ```
@@ -118,11 +131,15 @@ impl Array {
     /// Get `Access` from its array name. Returns `Access` as `Option`.
     ///
     /// # Examples
-    /// ```rust
-    /// use crate::variables::{Access, Value};
-    /// use crate::arrays::{Array, Index};
+    /// ```rustç
+    /// use std::collections::HashMap;
+    /// use std::hash::BuildHasher;
+    /// use RuSh::variables::{Access, Value};
+    /// use RuSh::arrays::{Array, Index};
     ///
-    /// let mut arrayvars = Array;
+    /// let mut arrayvars = Array {
+    ///     arrayvars: HashMap::with_capacity_and_hasher(200, SeaRandomState),
+    /// };
     /// arrayvars.set(Array { name: "ARRAYVARNAME", access: Access::ReadWrite }, Index::A("INDEX"), Value::I(42));
     /// assert_eq!(arrayvars.get_access("ARRAYVARNAME"), Some(Access::ReadWrite));
     pub fn get_access(&mut self, key: &str) -> Option<Access> {
@@ -136,23 +153,36 @@ impl Array {
     ///
     /// # Examples
     /// ```rust
-    /// use crate::variables::{Access, Value};
-    /// use crate::arrays::{Array, Index};
+    /// use std::collections::HashMap;
+    /// use std::hash::BuildHasher;
+    /// use RuSh::variables::{Access, Value};
+    /// use RuSh::arrays::{Array, Index, SeaRandomState};
     ///
-    /// let mut arrayvars = Array;
-    /// arrayvars.set(Array { name: "TESTF", access: Access::ReadWrite }, Index::A("BLA"), Value::F(-49.3));
-    /// match arrayvars.get("TESTF", Index::A("BLA") {
-    ///     Some(v) => assert_eq!(v::F, -49.3),
+    /// let mut arrayvars = Array {
+    ///     arrayvars: HashMap::with_capacity_and_hasher(200, SeaRandomState),
+    /// };
+    /// arrayvars.set("TESTF", Index::A("BLA".to_string()), Value::F(-49.3));
+    /// match arrayvars.get("TESTF", &Index::A("BLA".to_string())) {
+    ///     Some(v) => match v {
+    ///             Value::F(val) => assert_eq!(val, -49.3),
+    ///             _ => panic!("TESTF[\"BLA\"] should be Value::F.")
+    ///         },
     ///     None => panic!("TESTF[\"BLA\"] should be defined.")
     /// }
-    /// arrayvars.set(Array { name: "TESTI", access: Access::ReadWrite }, Index::I(19), Value::I(-42));
-    /// match arrayvars.get("TESTI", Index::I(19)) {
-    ///     Some(v) => assert_eq!(v::F, -42),
+    /// arrayvars.set("TESTI", Index::I(19), Value::I(-42));
+    /// match arrayvars.get("TESTI", &Index::I(19)) {
+    ///     Some(v) => match v {
+    ///             Value::I(val) => assert_eq!(val, -42),
+    ///             _ => panic!("TESTI[19] should be Value::I.")
+    ///         },
     ///     None => panic!("TESTI[19] should be defined.")
     /// }
-    /// arrayvars.set(Array { name: "TESTS", access: Access::ReadWrite }, Index::A("TEST"), Value::S("RuSh will rock (one day)"));
-    /// match arrayvars.get("TESTS", Index::A("TEST")) {
-    ///     Some(v) => assert_eq!(v::S, "RuSh will rock (one day)"),
+    /// arrayvars.set("TESTS", Index::A("TEST".to_string()), Value::S("RuSh will rock (one day)".to_string()));
+    /// match arrayvars.get("TESTS", &Index::A("TEST".to_string())) {
+    ///     Some(v) => match v {
+    ///             Value::S(val) => assert_eq!(val, "RuSh will rock (one day)".to_string()),
+    ///             _ => panic!("TESTS[\"TEST\"] should be Value::S.")
+    ///         },
     ///     None => panic!("TESTS[\"TEST\"] variable should be defined.")
     /// }
     /// ```
@@ -186,19 +216,23 @@ impl Array {
     ///
     /// # Examples
     /// ```rust
-    /// use crate::variables::{Access, Value};
-    /// use crate::arrays::{Array, Index};
+    /// use std::collections::HashMap;
+    /// use std::hash::BuildHasher;
+    /// use RuSh::variables::{Access, Value};
+    /// use RuSh::arrays::{Array, Index, SeaRandomState};
     ///
-    /// let mut arrayvars = Array;
-    /// arrayvars.set(Array { name: "TESTF", access: Access::ReadWrite }, Index::A("BLA"), Value::F(-49.3));
+    /// let mut arrayvars = Array {
+    ///     arrayvars: HashMap::with_capacity_and_hasher(200, SeaRandomState),
+    /// };
+    /// arrayvars.set("TESTF", Index::A("BLA".to_string()), Value::F(-49.3));
     /// arrayvars.set_access("TESTF", Access::ReadOnly);
     /// assert_eq!(arrayvars.get_access("TESTF"), Some(Access::ReadOnly));
     /// arrayvars.set_access("TESTF", Access::ReadWrite);
     /// assert_eq!(arrayvars.get_access("TESTF"), Some(Access::ReadWrite));
     /// arrayvars.set_access("nonexistingentry", Access::ReadOnly);
-    /// assert_eq!(arrayvars.get_access("TESTF"), Some(Access::ReadOnly));
+    /// assert_eq!(arrayvars.get_access("nonexistingentry"), Some(Access::ReadOnly));
     /// arrayvars.set_access("nonexistingentry2", Access::ReadWrite);
-    /// assert_eq!(arrayvars.get_access("TESTF"), Some(Access::ReadWrite));
+    /// assert_eq!(arrayvars.get_access("nonexistingentry2"), Some(Access::ReadWrite));
     /// ```
     pub fn set_access(&mut self, key: &str, a: Access) {
         match self.arrayvars.get_mut(key) {
@@ -216,18 +250,21 @@ impl Array {
     ///
     /// # Examples
     /// ```rust
-    /// use crate::variables::{Access, Value};
-    /// use crate::arrays::{Array, Index};
+    /// use RuSh::variables::{Access, Value};
+    /// use RuSh::arrays::{Array, Index};
     ///
     /// let mut arrayvars = Array::init_shell_array_vars();
-    /// match arrayvars.get("RUSH_ALIASES", Index::A("egrep") {
-    ///     Some(v) => assert_eq!(v, "egrep --color=auto"),
-    ///     None => panic!("RUSH_ALIASES["egrep"] should be defined.")
+    /// match arrayvars.get("RUSH_ALIASES", &Index::A("egrep".to_string())) {
+    ///     Some(v) => match v {
+    ///             Value::S(val) => assert_eq!(val, "egrep --color=auto"),
+    ///             _ => panic!("RUSH_ALIASES[\"egrep\"] should be Value::S.")
+    ///         },
+    ///     None => panic!("RUSH_ALIASES[\"egrep\"] should be defined.")
     /// }
-    /// arrayvars.unset("RUSH_ALIASES", Index::A("egrep"));
-    /// match arrayvars.get("RUSH_ALIASES", Index::A("egrep") {
+    /// arrayvars.unset("RUSH_ALIASES", &Index::A("egrep".to_string()));
+    /// match arrayvars.get("RUSH_ALIASES", &Index::A("egrep".to_string())) {
     ///     Some(v) => panic!("RUSH_ALIASES[\"egrep\"] should have been unset."),
-    ///     None => println!("RUSH_ALIASES[\"egrep\"] is not set.")
+    ///     None => assert!(true)
     /// }
     /// ```
     pub fn unset(&mut self, key: &str, index: &Index) {
@@ -255,12 +292,12 @@ impl Array {
     ///
     /// # Examples
     /// ```rust
-    /// use crate::variables::{Access, Value};
-    /// use crate::arrays::{Array, Index};
+    /// use RuSh::variables::{Access, Value};
+    /// use RuSh::arrays::{Array, Index};
     ///
     /// let mut arrayvars = Array::init_shell_array_vars();
-    /// match arrayvars.get("RUSH_ALIASES", Index::A("grep") {
-    ///     Some(v) => println!("RUSH_ALIASES[\"grep\"] var value is: {}", v::S()),
+    /// match arrayvars.get("RUSH_ALIASES", &Index::A("grep".to_string())) {
+    ///     Some(v) => println!("RUSH_ALIASES[\"grep\"] var value is: {:?}", v),
     ///     None => println!("RUSH_ALIASES[\"grep\"] variable does not exist.")
     /// }
     /// ```

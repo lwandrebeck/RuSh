@@ -24,12 +24,14 @@
 /// prompt.rs contains prompt affiliated methods.
 /// prompt is parsed here too.
 extern crate chrono;
+extern crate pest;
 extern crate rand;
 
 use self::chrono::*;
-use crate::rush;
+use crate::prompt::pest::Parser;
+use crate::rush::RuSh;
 use crate::variables::{Access, Value, Variable};
-use pest::Parser;
+use pest_derive::Parser;
 
 /// pest grammar inclusion. dummy const so that .pest file changes are taken care of.
 #[derive(Parser)]
@@ -44,22 +46,22 @@ pub struct Prompt {
 
 /// Methods for Prompt.
 impl Prompt {
-    /// Get `Prompt` from `Variables`. Returns interpreted `Prompt`.
+    /// Get `Prompt` from `RuSh`. Returns interpreted `Prompt`.
     ///
     /// # Examples
     /// ```rust
-    /// use prompt::Prompt;
-    /// use Variables;
-    /// use variables::{Variable, Value};
-    /// let mut vars = Variables::init_shell_vars();
-    /// let mut p = Prompt::get(&mut vars, "PS2");
+    /// use crate::RuSh;
+    /// use RuSh::prompt::Prompt;
+    /// use RuSh::variables::{Variables, Variable, Value};
+    /// let mut r = RuSh::rush::RuSh::default();
+    /// let mut p = Prompt::get(&mut r, "PS2");
     /// assert_eq!(p.prompt, ">");
-    /// p = Prompt::get(&mut vars, "PS3");
+    /// p = Prompt::get(&mut r, "PS3");
     /// assert_eq!(p.prompt, ">");
-    /// p = Prompt::get(&mut vars, "PS4");
+    /// p = Prompt::get(&mut r, "PS4");
     /// assert_eq!(p.prompt, ">");
     /// ```
-    pub fn get(rush: &mut rush::RuSh, p: &str) -> Prompt {
+    pub fn get(rush: &mut RuSh, p: &str) -> Prompt {
         let mut pt = String::new();
         let ps: String = match p {
             "PS1" => match rush.shell_vars.get(p) {

@@ -25,16 +25,15 @@
 /// opt (un)setting, update methods for both shopt and options.
 extern crate seahash;
 
-use crate::variables::Access;
-use crate::variables::SeaRandomState;
+use crate::variables::{Access, SeaRandomState};
 use std::collections::HashMap;
 
 /// OptionRW structure, allows to store values for a given option.
 pub struct OptionRW {
     /// Is the option set or not ?
-    set: bool,
+    pub set: bool,
     /// Is it allowed to change option value ?
-    access: Access,
+    pub access: Access,
 }
 /// Methods linked to OptionRW
 impl OptionRW {
@@ -57,8 +56,8 @@ impl Opt {
     ///
     /// # Examples
     /// ```rust
-    /// use Opt;
-    /// use opt::OptionRW;
+    /// use RuSh::opt::Opt;
+    /// use RuSh::variables::{Access, SeaRandomState};
     /// let mut o = Opt::init_set_options();
     /// match o.get("notify") {
     ///     Some(v) => { assert_eq!(v.set, false); assert_eq!(v.access, Access::ReadWrite); },
@@ -82,12 +81,13 @@ impl Opt {
     ///
     /// # Examples
     /// ```rust
-    /// use Opt;
-    /// use opt::OptionRW;
+    /// use RuSh::opt::Opt;
+    /// use RuSh::opt::OptionRW;
+    /// use RuSh::variables::{Access, SeaRandomState};
     /// let mut o = Opt::init_shopt_options();
-    /// o.set(String::from("opttest"), OptionRW { set: false, access: access:ReadOnly });
+    /// o.set(String::from("opttest"), OptionRW { set: false, access: Access::ReadOnly });
     /// match o.get("opttest") {
-    ///     Some(v) => { assert_eq!(v.set, false); assert_eq!(v.access, access:ReadOnly); },
+    ///     Some(v) => { assert_eq!(v.set, false); assert_eq!(v.access, Access::ReadOnly); },
     ///     None => panic!("opttest shopt option should be defined.")
     /// }
     /// ```

@@ -56,7 +56,7 @@ pub enum Access {
 
 /// Value contains variable value, be it a i64, f64 or String, defined as an enum.
 #[allow(dead_code)]
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, PartialEq)]
 pub enum Value {
     I(i64),
     F(f64),
@@ -64,7 +64,7 @@ pub enum Value {
 }
 
 #[allow(dead_code)]
-#[derive(Clone)]
+#[derive(Clone, Debug, PartialEq)]
 /// Variable Structure.
 pub struct Variable {
     /// Variable value is stored as Value enum.
@@ -79,8 +79,8 @@ impl Variable {
     ///
     /// # Examples
     /// ```rust
-    /// use variables::{Variable, Value};
-    /// let var = Variable { value: Value::I(-42), access: ReadWrite };
+    /// use RuSh::variables::{Access, Variable, Value};
+    /// let var = Variable { value: Value::I(-42), access: Access::ReadWrite };
     /// assert_eq!(var.geti(), -42);
     /// ```
     pub fn geti(&self) -> i64 {
@@ -94,8 +94,8 @@ impl Variable {
     ///
     /// # Examples
     /// ```rust
-    /// use variables::{Variable, Value};
-    /// let var = Variable { value: Value::F(-42.5), access: ReadWrite };
+    /// use RuSh::variables::{Access, Variable, Value};
+    /// let var = Variable { value: Value::F(-42.5), access: Access::ReadWrite };
     /// assert_eq!(var.getf(), -42.5);
     /// ```
     pub fn getf(&self) -> f64 {
@@ -109,8 +109,8 @@ impl Variable {
     ///
     /// # Examples
     /// ```rust
-    /// use variables::{Variable, Value};
-    /// let var = Variable { value: Value::S("Forty two"), access: ReadWrite };
+    /// use RuSh::variables::{Access, Variable, Value};
+    /// let var = Variable { value: Value::S("Forty two".to_string()), access: Access::ReadWrite };
     /// assert_eq!(var.gets(), "Forty two");
     /// ```
     pub fn gets(&self) -> String {
@@ -133,8 +133,7 @@ impl Variables {
     ///
     /// # Examples
     /// ```rust
-    /// use Variables;
-    /// use variables::{Variable, Value};
+    /// use RuSh::variables::{Access, Variable, Variables, Value};
     ///
     /// let mut vars = Variables::init_shell_vars();
     /// match vars.get("RUSH_COMMAND") {
@@ -168,8 +167,7 @@ impl Variables {
     ///
     /// # Examples
     /// ```rust
-    /// use Variables;
-    /// use variables::{Variable, Value};
+    /// use RuSh::variables::{Access, Variable, Variables, Value};
     ///
     /// let mut vars = Variables::init_shell_vars();
     /// match vars.get_access("RUSH_COMMAND") {
@@ -177,12 +175,12 @@ impl Variables {
     ///     None => panic!("RUSH_COMMAND should be defined and Access::ReadWrite.")
     /// }
     /// match vars.get("EUID") {
-    ///     Some(v) => assert_eq!(v, Access::ReadOnly),
+    ///     Some(v) => assert_eq!(v.access, Access::ReadOnly),
     ///     None => panic!("EUID should be defined and Access::ReadOnly.")
     /// }
     /// match vars.get("nonexistingvar") {
-    ///     Some(v) => panic!("nonexistantvar should not give back {}", v),
-    ///     None => assert_eq!(v, None),
+    ///     Some(v) => panic!("nonexistantvar should not give back {:?}", v),
+    ///     None => assert!(true),
     /// }
     /// ```
     pub fn get_access(&self, key: &str) -> Option<Access> {
@@ -196,8 +194,7 @@ impl Variables {
     ///
     /// # Examples
     /// ```rust
-    /// use Variables;
-    /// use variables::{Variable, Value};
+    /// use RuSh::variables::{Access, Variable, Variables, Value};
     ///
     /// let mut vars = Variables::init_shell_vars();
     /// vars.set(String::from("TESTF"), Variable { value: Value::F(-49.3), access: Access::ReadWrite });
@@ -235,27 +232,26 @@ impl Variables {
     ///
     /// # Examples
     /// ```rust
-    /// use Variables;
-    /// use variables::{Variable, Value};
+    /// use RuSh::variables::{Access, Variable, Variables, Value};
     ///
     /// let mut vars = Variables::init_shell_vars();
-    /// vars.set_access("TEST", Access::ReadWrite));
+    /// vars.set_access("TEST".to_string(), Access::ReadWrite);
     /// match vars.get_access("TEST") {
     ///     Some(v) => assert_eq!(v, Access::ReadWrite),
     ///     None => panic!("TEST should be defined."),
     /// }
-    /// vars.set_access("TEST", Access::ReadOnly);
+    /// vars.set_access("TEST".to_string(), Access::ReadOnly);
     /// match vars.get_access("TEST") {
     ///     Some(v) => assert_eq!(v, Access::ReadOnly),
     ///     None => panic!("TEST should be defined."),
     /// }
-    /// match vars.set_access("doesnotexist", Access::ReadWrite) {
-    ///     Some(v) => assert_eq!(v, Access::ReadWrite),
-    ///     None => panic!("doesnotexist variable should be defined and Access::ReadWrite"),
+    /// match vars.get_access("doesnotexist") {
+    ///     Some(v) => panic!("doesnotexist variable should not be defined"),
+    ///     None => assert!(true),
     /// }
-    /// match vars.set_access("doesnotexist2", Access::ReadOnly) {
-    ///     Some(v) => assert_eq!(v, Access::ReadOnly),
-    ///     None => panic!("doesnotexist variable should be defined and Access::ReadOnly"),
+    /// match vars.get_access("doesnotexist2") {
+    ///     Some(v) => panic!("doesnotexist2 variable should not be defined"),
+    ///     None => assert!(true),
     /// }
     pub fn set_access(&mut self, key: String, v: Access) {
         // does the var already exist ?
@@ -277,8 +273,7 @@ impl Variables {
     ///
     /// # Examples
     /// ```rust
-    /// use Variables;
-    /// use variables::{Variable, Value};
+    /// use RuSh::variables::{Variable, Variables, Value};
     ///
     /// let mut vars = Variables::init_shell_vars();
     /// match vars.get("RUSH_COMMAND") {
@@ -300,13 +295,12 @@ impl Variables {
     ///
     /// # Examples
     /// ```rust
-    /// use Variables;
-    /// use variables::{Variable, Value};
+    /// use RuSh::variables::{Access, Variable, Variables, Value};
     ///
     /// let mut vars = Variables::init_shell_vars();
-    /// match var.get("RUSH") {
-    ///     Some(val) => println!("RUSH var value is: {}", val.gets());
-    ///     None => println!("RUSH variable does not exist.");
+    /// match vars.get("RUSH") {
+    ///     Some(val) => println!("RUSH var value is: {}", val.gets()),
+    ///     None => println!("RUSH variable does not exist.")
     /// }
     /// ```
     pub fn init_shell_vars() -> Variables {
