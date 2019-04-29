@@ -19,18 +19,15 @@
 // MA 02110-1301, USA.
 //
 
-/// RuSh prompt management begins here.
-///
-/// prompt.rs contains prompt affiliated methods.
-/// prompt is parsed here too.
-extern crate chrono;
-extern crate pest;
-extern crate rand;
+//! RuSh prompt management begins here.
+//!
+//! prompt.rs contains prompt affiliated methods.
+//! prompt is parsed here too.
 
-use self::chrono::*;
-use crate::prompt::pest::Parser;
+use chrono::*;
 use crate::rush::RuSh;
 use crate::variables::{Access, Value, Variable};
+use pest::Parser;
 use pest_derive::Parser;
 
 /// pest grammar inclusion. dummy const so that .pest file changes are taken care of.
@@ -50,10 +47,10 @@ impl Prompt {
     ///
     /// # Examples
     /// ```rust
-    /// use crate::RuSh;
-    /// use RuSh::prompt::Prompt;
-    /// use RuSh::variables::{Variables, Variable, Value};
-    /// let mut r = RuSh::rush::RuSh::default();
+    /// use rush::RuSh;
+    /// use rush::prompt::Prompt;
+    /// use rush::variables::{Variables, Variable, Value};
+    /// let mut r = RuSh::default();
     /// let mut p = Prompt::get(&mut r, "PS2");
     /// assert_eq!(p.prompt, ">");
     /// p = Prompt::get(&mut r, "PS3");
@@ -223,22 +220,5 @@ impl Prompt {
             };
         }
         Prompt { prompt: pt }
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    use crate::prompt::Prompt;
-    use crate::rush::RuSh;
-
-    #[test]
-    fn test_get() {
-        let mut rush = RuSh::default();
-        let mut p = Prompt::get(&mut rush, "PS2");
-        assert_eq!(p.prompt, ">");
-        p = Prompt::get(&mut rush, "PS3");
-        assert_eq!(p.prompt, ">");
-        p = Prompt::get(&mut rush, "PS4");
-        assert_eq!(p.prompt, ">");
     }
 }

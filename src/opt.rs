@@ -19,11 +19,10 @@
 // MA 02110-1301, USA.
 //
 
-/// RuSh opt (shopt, set) management begins here.
-///
-/// opt.rs contains OptionRW and Opt structures and affiliated methods.
-/// opt (un)setting, update methods for both shopt and options.
-extern crate seahash;
+//! RuSh opt (shopt, set) management begins here.
+//!
+//! opt.rs contains OptionRW and Opt structures and affiliated methods.
+//! opt (un)setting, update methods for both shopt and options.
 
 use crate::variables::{Access, SeaRandomState};
 use std::collections::HashMap;
@@ -56,8 +55,8 @@ impl Opt {
     ///
     /// # Examples
     /// ```rust
-    /// use RuSh::opt::Opt;
-    /// use RuSh::variables::{Access, SeaRandomState};
+    /// use rush::opt::Opt;
+    /// use rush::variables::{Access, SeaRandomState};
     /// let mut o = Opt::init_set_options();
     /// match o.get("notify") {
     ///     Some(v) => { assert_eq!(v.set, false); assert_eq!(v.access, Access::ReadWrite); },
@@ -81,9 +80,9 @@ impl Opt {
     ///
     /// # Examples
     /// ```rust
-    /// use RuSh::opt::Opt;
-    /// use RuSh::opt::OptionRW;
-    /// use RuSh::variables::{Access, SeaRandomState};
+    /// use rush::opt::Opt;
+    /// use rush::opt::OptionRW;
+    /// use rush::variables::{Access, SeaRandomState};
     /// let mut o = Opt::init_shopt_options();
     /// o.set(String::from("opttest"), OptionRW { set: false, access: Access::ReadOnly });
     /// match o.get("opttest") {
@@ -679,67 +678,5 @@ impl Opt {
             },
         );
         options
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    use crate::opt::Opt;
-    use crate::opt::OptionRW;
-    use crate::variables::Access;
-
-    #[test]
-    fn test_opt_get() {
-        let o = Opt::init_set_options();
-        match o.get("notify") {
-            Some(v) => {
-                assert_eq!(v.set, false);
-                assert_eq!(v.access, Access::ReadWrite);
-            }
-            None => panic!("notify set option should be defined."),
-        }
-    }
-
-    #[test]
-    fn test_opt_init_set_options() {
-        let o = Opt::init_set_options();
-        match o.get("xtrace") {
-            Some(v) => {
-                assert_eq!(v.set, false);
-                assert_eq!(v.access, Access::ReadWrite);
-            }
-            None => panic!("xtrace set option should be defined."),
-        }
-    }
-
-    #[test]
-    fn test_opt_init_shopt_options() {
-        let o = Opt::init_shopt_options();
-        match o.get("histappend") {
-            Some(v) => {
-                assert_eq!(v.set, true);
-                assert_eq!(v.access, Access::ReadWrite);
-            }
-            None => panic!("histappend shopt option should be defined."),
-        }
-    }
-
-    #[test]
-    fn test_opt_set() {
-        let mut o = Opt::init_shopt_options();
-        o.set(
-            String::from("opttest"),
-            OptionRW {
-                set: false,
-                access: Access::ReadOnly,
-            },
-        );
-        match o.get("opttest") {
-            Some(v) => {
-                assert_eq!(v.set, false);
-                assert_eq!(v.access, Access::ReadOnly);
-            }
-            None => panic!("opttest shopt option should be defined."),
-        }
     }
 }
