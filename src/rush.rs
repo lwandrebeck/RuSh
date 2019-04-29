@@ -19,8 +19,6 @@
 // MA 02110-1301, USA.
 //
 
-extern crate pest;
-
 pub use crate::arrays::Array;
 pub use crate::opt::Opt;
 pub use crate::prompt::Prompt;

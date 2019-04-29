@@ -27,16 +27,6 @@
 //! That does not mean feedback or patches are not welcome.
 //! Right now, RuSh is definitely not useable. A couple little things have been done, but 99% (at least) have to be written.
 
-/// Include arrays management.
-mod arrays;
-/// Include options management (shopt, set)
-mod opt;
-/// Include prompt management.
-mod prompt;
-/// Include rush core.
-mod rush;
-/// Include variables management.
-mod variables;
 
 extern crate chrono;
 extern crate libc;
@@ -47,16 +37,17 @@ extern crate seahash;
 extern crate term;
 #[macro_use]
 extern crate pest_derive;
+extern crate rush;
 extern crate structopt;
 extern crate structopt_derive;
 
 use pest::Parser;
 // pub for use is there so doc is generated.
-pub use crate::arrays::Array;
-pub use crate::opt::Opt;
-pub use crate::prompt::Prompt;
-pub use crate::rush::RuSh;
-pub use crate::variables::Variables;
+pub use rush::arrays::Array;
+pub use rush::opt::Opt;
+pub use rush::prompt::Prompt;
+pub use rush::rush::RuSh;
+pub use rush::variables::Variables;
 
 // pest grammar inclusion. dummy const so that .pest file changes are taken care of.
 #[derive(Parser)]
