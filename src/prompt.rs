@@ -24,9 +24,9 @@
 //! prompt.rs contains prompt affiliated methods.
 //! prompt is parsed here too.
 
-use chrono::*;
 use crate::rush::RuSh;
 use crate::variables::{Access, Value, Variable};
+use chrono::*;
 use pest::Parser;
 use pest_derive::Parser;
 

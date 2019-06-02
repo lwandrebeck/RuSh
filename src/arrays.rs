@@ -27,20 +27,7 @@
 
 use crate::variables::{Access, Value};
 use std::collections::HashMap;
-use std::hash::BuildHasher;
 use std::str;
-
-/// For seahash maps.
-#[allow(dead_code)]
-pub struct SeaRandomState;
-
-/// BuildHasher trait is needed for SeaRandomState.
-impl BuildHasher for SeaRandomState {
-    type Hasher = seahash::SeaHasher;
-    fn build_hasher(&self) -> seahash::SeaHasher {
-        seahash::SeaHasher::new()
-    }
-}
 
 /// Index can be usize or String.
 /// One can write array[-1] but it means start from the end, so it must be correctly parsed
@@ -59,7 +46,7 @@ pub struct Array {
     /// `Access` is rw/ro state of a given array.
     /// `Index` of the 2nd HashMap is the array index.
     /// `Value` is the value stored at Array[Index] in shell notation.
-    pub arrayvars: HashMap<String, (Access, HashMap<Index, Value, SeaRandomState>), SeaRandomState>,
+    pub arrayvars: HashMap<String, (Access, HashMap<Index, Value>)>,
 }
 
 /// Methods for `Array`.
@@ -69,12 +56,11 @@ impl Array {
     /// # Examples
     /// ```rust
     /// use std::collections::HashMap;
-    /// use std::hash::BuildHasher;
     /// use rush::variables::{Access, Value};
-    /// use rush::arrays::{Array, Index, SeaRandomState};
+    /// use rush::arrays::{Array, Index};
     ///
     /// let mut arrayvars = Array {
-    ///     arrayvars: HashMap::with_capacity_and_hasher(200, SeaRandomState),
+    ///     arrayvars: HashMap::with_capacity(200),
     /// };
     /// arrayvars.set("ARRAYVARNAME", Index::A("INDEX".to_string()), Value::I(42));
     /// match arrayvars.get("ARRAYVARNAME", &Index::A("INDEX".to_string())) {
@@ -131,12 +117,11 @@ impl Array {
     /// # Examples
     /// ```rustç
     /// use std::collections::HashMap;
-    /// use std::hash::BuildHasher;
     /// use RuSh::variables::{Access, Value};
     /// use RuSh::arrays::{Array, Index};
     ///
     /// let mut arrayvars = Array {
-    ///     arrayvars: HashMap::with_capacity_and_hasher(200, SeaRandomState),
+    ///     arrayvars: HashMap::with_capacity(200),
     /// };
     /// arrayvars.set(Array { name: "ARRAYVARNAME", access: Access::ReadWrite }, Index::A("INDEX"), Value::I(42));
     /// assert_eq!(arrayvars.get_access("ARRAYVARNAME"), Some(Access::ReadWrite));
@@ -152,12 +137,11 @@ impl Array {
     /// # Examples
     /// ```rust
     /// use std::collections::HashMap;
-    /// use std::hash::BuildHasher;
     /// use rush::variables::{Access, Value};
-    /// use rush::arrays::{Array, Index, SeaRandomState};
+    /// use rush::arrays::{Array, Index};
     ///
     /// let mut arrayvars = Array {
-    ///     arrayvars: HashMap::with_capacity_and_hasher(200, SeaRandomState),
+    ///     arrayvars: HashMap::with_capacity(200),
     /// };
     /// arrayvars.set("TESTF", Index::A("BLA".to_string()), Value::F(-49.3));
     /// match arrayvars.get("TESTF", &Index::A("BLA".to_string())) {
@@ -193,7 +177,7 @@ impl Array {
                             hm.insert(index, v);
                         }
                         None => {
-                            let mut hm = HashMap::with_capacity_and_hasher(20, SeaRandomState);
+                            let mut hm = HashMap::with_capacity(20);
                             hm.insert(index, v);
                             self.arrayvars.insert(key.to_string(), (a, hm));
                         }
@@ -202,7 +186,7 @@ impl Array {
                 Access::ReadOnly => (),
             },
             None => {
-                let mut hm = HashMap::with_capacity_and_hasher(20, SeaRandomState);
+                let mut hm = HashMap::with_capacity(20);
                 hm.insert(index, v);
                 self.arrayvars
                     .insert(key.to_string(), (Access::ReadWrite, hm));
@@ -215,12 +199,11 @@ impl Array {
     /// # Examples
     /// ```rust
     /// use std::collections::HashMap;
-    /// use std::hash::BuildHasher;
     /// use rush::variables::{Access, Value};
-    /// use rush::arrays::{Array, Index, SeaRandomState};
+    /// use rush::arrays::{Array, Index};
     ///
     /// let mut arrayvars = Array {
-    ///     arrayvars: HashMap::with_capacity_and_hasher(200, SeaRandomState),
+    ///     arrayvars: HashMap::with_capacity(200),
     /// };
     /// arrayvars.set("TESTF", Index::A("BLA".to_string()), Value::F(-49.3));
     /// arrayvars.set_access("TESTF", Access::ReadOnly);
@@ -238,7 +221,7 @@ impl Array {
                 arr.0 = a;
             }
             None => {
-                let hm = HashMap::with_capacity_and_hasher(20, SeaRandomState);
+                let hm = HashMap::with_capacity(20);
                 self.arrayvars.insert(key.to_string(), (a, hm));
             }
         }
@@ -301,7 +284,7 @@ impl Array {
     /// ```
     pub fn init_shell_array_vars() -> Array {
         let mut arrayvars = Array {
-            arrayvars: HashMap::with_capacity_and_hasher(200, SeaRandomState),
+            arrayvars: HashMap::with_capacity(200),
         };
         //~ // see man bash (Shell vars)
         //~ // An associative array variable whose members correspond to the internal list of aliases as maintained by the alias builtin. Elements added to this array appear in the alias list; unsetting array elements cause aliases to be removed from the alias list.

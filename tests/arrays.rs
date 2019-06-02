@@ -130,7 +130,7 @@ fn test_set() {
         "TESTS",
         Index::A("or not".to_string()),
         Value::S(String::from("RuSh will rock (one day)")),
-        );
+    );
     match array.get("TESTS", &Index::A("or not".to_string())) {
         Some(v) => match v {
             Value::S(s) => assert_eq!(s, "RuSh will rock (one day)"),
@@ -139,4 +139,3 @@ fn test_set() {
         None => panic!("TESTS[or not] array should be defined."),
     }
 }
-

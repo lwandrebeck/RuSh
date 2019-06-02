@@ -24,7 +24,7 @@
 //! opt.rs contains OptionRW and Opt structures and affiliated methods.
 //! opt (un)setting, update methods for both shopt and options.
 
-use crate::variables::{Access, SeaRandomState};
+use crate::variables::Access;
 use std::collections::HashMap;
 
 /// OptionRW structure, allows to store values for a given option.
@@ -46,7 +46,7 @@ impl OptionRW {
 //#[derive(Hash, Eq, PartialEq, Debug)]
 pub struct Opt {
     /// Opt has a single field
-    opt: HashMap<String, OptionRW, SeaRandomState>,
+    opt: HashMap<String, OptionRW>,
 }
 
 /// Methods for Opt structure.
@@ -56,7 +56,7 @@ impl Opt {
     /// # Examples
     /// ```rust
     /// use rush::opt::Opt;
-    /// use rush::variables::{Access, SeaRandomState};
+    /// use rush::variables::Access;
     /// let mut o = Opt::init_set_options();
     /// match o.get("notify") {
     ///     Some(v) => { assert_eq!(v.set, false); assert_eq!(v.access, Access::ReadWrite); },
@@ -82,7 +82,7 @@ impl Opt {
     /// ```rust
     /// use rush::opt::Opt;
     /// use rush::opt::OptionRW;
-    /// use rush::variables::{Access, SeaRandomState};
+    /// use rush::variables::Access;
     /// let mut o = Opt::init_shopt_options();
     /// o.set(String::from("opttest"), OptionRW { set: false, access: Access::ReadOnly });
     /// match o.get("opttest") {
@@ -100,7 +100,7 @@ impl Opt {
     pub fn init_shopt_options() -> Opt {
         //! 43 shopt entries. Allocate a big enough HashMap.
         let mut options = Opt {
-            opt: HashMap::with_capacity_and_hasher(43, SeaRandomState),
+            opt: HashMap::with_capacity(43),
         };
         // initialize default options.
         // If set, a command name that is the name of a directory is executed as if it were the argument to the cd command.  This option is only used by interactive shells.
@@ -486,7 +486,7 @@ impl Opt {
     pub fn init_set_options() -> Opt {
         // 27 set options. Allocate a big enough HashMap.
         let mut options = Opt {
-            opt: HashMap::with_capacity_and_hasher(27, SeaRandomState),
+            opt: HashMap::with_capacity(27),
         };
         options.set(
             "allexport".to_string(),

@@ -27,13 +27,11 @@
 //! That does not mean feedback or patches are not welcome.
 //! Right now, RuSh is definitely not useable. A couple little things have been done, but 99% (at least) have to be written.
 
-
 extern crate chrono;
 extern crate libc;
 extern crate pest;
 extern crate rand;
 extern crate rustyline;
-extern crate seahash;
 extern crate term;
 #[macro_use]
 extern crate pest_derive;

@@ -19,6 +19,11 @@
 // MA 02110-1301, USA.
 //
 
+//! RuSh main structure.
+//!
+//! This is where main shell structure is defined.
+//! default method is implemented here (called when RuSh is launched).
+
 pub use crate::arrays::Array;
 pub use crate::opt::Opt;
 pub use crate::prompt::Prompt;

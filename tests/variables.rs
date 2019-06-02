@@ -47,7 +47,7 @@ fn test_get_and_getifs() {
             value: Value::F(-49.3),
             access: Access::ReadWrite,
         },
-        );
+    );
     match vars.get("TEST") {
         Some(v) => assert_eq!(v.getf(), -49.3),
         None => panic!("TEST variable should be defined."),
@@ -63,7 +63,7 @@ fn test_set() {
             value: Value::F(-49.3),
             access: Access::ReadWrite,
         },
-        );
+    );
     match vars.get("TESTF") {
         Some(v) => assert_eq!(v.getf(), -49.3),
         None => panic!("TESTF should be defined."),
@@ -74,7 +74,7 @@ fn test_set() {
             value: Value::I(-42),
             access: Access::ReadWrite,
         },
-        );
+    );
     match vars.get("TESTI") {
         Some(v) => assert_eq!(v.geti(), -42),
         None => panic!("TESTI should be defined."),
@@ -85,7 +85,7 @@ fn test_set() {
             value: Value::S(String::from("RuSh will rock (one day)")),
             access: Access::ReadWrite,
         },
-        );
+    );
     match vars.get("TESTS") {
         Some(v) => assert_eq!(v.gets(), "RuSh will rock (one day)"),
         None => panic!("TESTS variable should be defined."),
@@ -133,4 +133,3 @@ fn test_set_access() {
         None => panic!("doesnotexist variable should be defined and Access::ReadOnly"),
     }
 }
-

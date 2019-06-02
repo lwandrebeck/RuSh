@@ -21,14 +21,13 @@ test = true
 bench = true
 
 [dependencies]
-rustyline="4.0"
+rustyline="4.1"
 chrono="0.4"
 libc="0.2"
 rand="0.6"
 term="0.5"
 pest="2.1"
 pest_derive="2.1"
-seahash="3.0"
 structopt="0.2"
 structopt-derive="0.2"
 

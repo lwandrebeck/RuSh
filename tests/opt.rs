@@ -49,7 +49,7 @@ fn test_opt_set() {
             set: false,
             access: Access::ReadOnly,
         },
-        );
+    );
     match o.get("opttest") {
         Some(v) => {
             assert_eq!(v.set, false);
@@ -58,4 +58,3 @@ fn test_opt_set() {
         None => panic!("opttest shopt option should be defined."),
     }
 }
-

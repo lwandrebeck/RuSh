@@ -25,25 +25,12 @@
 //! `Variable` and `Variables` are defined here.
 //! variables (un)setting, update methods for classical variables.
 
-use rand::Rng;
 use libc::{c_char, c_int, geteuid, getgid, getlogin, getpid, getppid, getuid, size_t};
+use rand::Rng;
 use std::collections::hash_map::Entry::{Occupied, Vacant};
 use std::collections::HashMap;
 use std::ffi::CStr;
-use std::hash::BuildHasher;
 use std::{env, str};
-
-/// For seahash maps.
-#[allow(dead_code)]
-pub struct SeaRandomState;
-
-/// BuildHasher trait is needed for SeaRandomState.
-impl BuildHasher for SeaRandomState {
-    type Hasher = seahash::SeaHasher;
-    fn build_hasher(&self) -> seahash::SeaHasher {
-        seahash::SeaHasher::new()
-    }
-}
 
 /// Access can be ReadWrite or ReadOnly
 #[derive(Clone, Debug, Eq, Hash, PartialEq)]
@@ -122,7 +109,7 @@ impl Variable {
 /// Public structure for `Variables` management.
 pub struct Variables {
     /// variables are stored in a HashMap<String, `Variable`>. First String being the variable name (key), the second the value and rw state.
-    vars: HashMap<String, Variable, SeaRandomState>,
+    vars: HashMap<String, Variable>,
 }
 
 /// Methods for `Variables`.
@@ -303,7 +290,7 @@ impl Variables {
     /// ```
     pub fn init_shell_vars() -> Variables {
         let mut vars = Variables {
-            vars: HashMap::with_capacity_and_hasher(200, SeaRandomState),
+            vars: HashMap::with_capacity(200),
         };
         // see man bash (Shell vars)
         // Expands to the full filename used to invoke this instance of rush.

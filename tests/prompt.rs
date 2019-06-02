@@ -13,4 +13,3 @@ fn test_get() {
     p = Prompt::get(&mut rush, "PS4");
     assert_eq!(p.prompt, ">");
 }
-

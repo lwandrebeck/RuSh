@@ -157,8 +157,7 @@ Right now, RuSh is definitely not useable. A couple little things have been done
 - [ ] Think of ways to get speed with RuSh (read: be faster than Bash). JIT ? Some kind of « parsed script ready to be executed » ?
 - [ ] Support float processing. (kind of done, see variable management above).
 - [ ] Deprecate several bashy thing (older versions compatibility etc, bash is so much of a noodles plate now due to history that I won’t be able to cover every point so I’ll have to focus).
-- [x] Use [seahash](https://crates.io/crates/seahash) instead of fnv.
-- [ ] Use [hashbrown](https://github.com/Amanieu/hashbrown) instead of [seahash](https://crates.io/crates/seahash) ? Soon to be used by default in std it [seems](https://github.com/rust-lang/rust/pull/58623).
+- [x] Use [hashbrown](https://github.com/Amanieu/hashbrown) instead of [seahash](https://crates.io/crates/seahash). It will be used by [default](https://github.com/rust-lang/rust/pull/58623) in std once rust 1.36 is out.
 - [x] Use of cargo clippy.
 - [x] Use of cargo fmt.
 - [x] Use of tarpaulin.

@@ -3,7 +3,6 @@
 extern crate chrono;
 extern crate pest;
 extern crate rand;
-extern crate seahash;
 
 /// Include arrays management.
 pub mod arrays;
