@@ -21,7 +21,7 @@ test = true
 bench = true
 
 [dependencies]
-rustyline="4.1"
+rustyline="5.0"
 chrono="0.4"
 libc="0.2"
 rand="0.6"
@@ -33,4 +33,3 @@ structopt-derive="0.2"
 
 [package.metadata.release]
 upload-doc = true
-
