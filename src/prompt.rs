@@ -213,7 +213,7 @@ impl Prompt {
                 Rule::prompt_esc => pt.push_str(&u8::from_str_radix("33", 8).unwrap().to_string()),
                 // 7 is octal value of ascii bell character
                 Rule::prompt_bell => pt.push_str(&u8::from_str_radix("7", 8).unwrap().to_string()),
-                Rule::prompt_backslash => pt.push_str("\\"),
+                Rule::prompt_backslash2 => pt.push_str("\\"),
                 Rule::prompt_non_print => unimplemented!(),
                 Rule::prompt_end_non_print => unimplemented!(),
                 _ => panic!(),

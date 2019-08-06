@@ -43,7 +43,7 @@ Right now, RuSh is definitely not useable. A couple little things have been done
 - [ ] ulimit builtin.
 - [ ] umask builtin.
 - [ ] unalias builtin.
-- [x] use [pest](https://github.com/pest-parser/pest) to parse prompt (\\\\ is still buggy)
+- [x] use [pest](https://github.com/pest-parser/pest) to parse prompt
 - [x] arrays support (single dimension, can be both associative and indexed, and store int, float or string.
 - [ ] $variable, ${variable} and parameter ($1 etc) expansion.
 - [ ] ${parameter-default} ${parameter:-default} If parameter not set, use default.

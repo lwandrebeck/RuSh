@@ -26,7 +26,7 @@ aslash_elmnts = _{ prompt_date |
                   prompt_non_print |
                   prompt_end_non_print |
                   prompt_octal |
-                  prompt_backslash
+                  prompt_backslash2
                 }
 prompt_date = { "d" }
 prompt_host = { "h" }
@@ -51,5 +51,6 @@ prompt_car_ret = { "r" }
 prompt_esc = { "e" | "033" | "x1b" | "x1B" }
 prompt_bell = { "a" }
 prompt_backslash = _{ "\\" }
+prompt_backslash2 = { "\\" }
 prompt_non_print = { "[" }
 prompt_end_non_print = { "]" }
