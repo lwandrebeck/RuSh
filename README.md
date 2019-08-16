@@ -100,7 +100,7 @@ Right now, RuSh is definitely not useable. A couple little things have been done
 - [ ] > < >> << 2>&1 etc redirections. don’t forget <<EOF kind.
 - [ ] <(command list) >(command list) process substitution.
 - [ ] || && operators
-- [x] echo (basic support, no -n -e -E args for now, no echo "foo" bar, just echo "foo")
+- [x] echo (complete support)
 - [ ] printf
 - [ ] read
 - [ ] cd

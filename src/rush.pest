@@ -57,20 +57,17 @@
 
 int = @{ ("0" ~ EOI) | ("-"? ~ '1'..'9' ~ ASCII_DIGIT* ~ EOI) }
 exp = { ^"e" }
-float = @{ int ~ "." ~ ASCII_DIGIT* ~ (exp ~ int)? ~ EOI }
+float = @{ "-"? ~ '0'..'9' ~ "." ~ ASCII_DIGIT* ~ (exp ~ int)? ~ EOI }
 binnum = @{ "0b" ~ ASCII_BIN_DIGIT+ ~ EOI }
 octnum = @{ "0" ~ ASCII_OCT_DIGIT+ ~ EOI }
 hexnum = @{ "0x" ~ ASCII_HEX_DIGIT+ ~ EOI }
 numbers = _{ float | hexnum | octnum | binnum | int }
-descape  = @{ "\\" ~ ("\"" | "\\" | "/" | "b" | "f" | "n" | "r" | "t" | unicode) }
+dquoted = ${ "\"" ~ ("\\\"" | !"\"" ~ ANY)* ~ "\"" }
+squoted = ${ "'" ~ ("\\'" | !"'" ~ ANY)* ~ "'" }
+btquoted = ${ "`" ~ ("\\`" | !"`" ~ ANY)* ~ "`" }
+nonquoted = ${ ( !(dquoted | squoted | btquoted) ~ ANY)+ }
 unicode = @{ "u" ~ ASCII_HEX_DIGIT{4} }
-dquoted = @{ "\"" ~ (descape | !("\"" | "\\") ~ ANY)* ~ "\"" }
 // string without quotes
-nonquoted = @{ (( descape | sescape | btescape) | !("\"" | "\\" | "\'" | "`") ~ ANY)* }
-sescape  = @{ "\\" ~ ("\'" | "\\" | "/" | "b" | "f" | "n" | "r" | "t" | unicode) }
-squoted = @{ "'" ~ (sescape | !("\'" | "\\") ~ ANY)* ~ "'" }
-btescape  = @{ "\\" ~ ("`" | "\\" | "/" | "b" | "f" | "n" | "r" | "t" | unicode) }
-btquoted = @{ "`" ~ (btescape | !("`" | "\\") ~ ANY)* ~ "`" }
 shebang = { "#!" ~ ANY* }
 comment = { "#" ~ ANY* }
 comments = _{ shebang | comment }
@@ -81,12 +78,12 @@ binvarassign = @{ varname ~ "=" ~ binnum }
 octvarassign = @{ varname ~ "=" ~ octnum }
 hexvarassign = @{ varname ~ "=" ~ hexnum }
 stringvarassign = @{ varname ~ "=" ~ (dquoted | squoted | btquoted | nonquoted) ~ EOI }
-echooptne = @{ "-ne" | "-en" }
-echooptnE = @{ "-nE" | "-En" }
-echoopte = @{ "-e" }
-echooptE = @{ "-E" }
-echooptn = @{ "-n" }
-echo = @{ ( "echo" ~ EOI ) | ( "echo" ~ WHITE_SPACE+ ~ ((echooptne | echooptnE | echoopte | echooptE | echooptn) ~ WHITE_SPACE+ )? ~ (dquoted | squoted | btquoted)* ~ EOI ) }
+echooptne = ${ "-ne" | "-en" }
+echooptnE = ${ "-nE" | "-En" }
+echoopte = ${ "-e" }
+echooptE = ${ "-E" }
+echooptn = ${ "-n" }
+echo = @{ ( "echo" ~ EOI ) | ( "echo" ~ WHITE_SPACE+ ~ ((echooptne | echooptnE | echoopte | echooptE | echooptn) ~ WHITE_SPACE+ )? ~ ((dquoted | squoted | btquoted | nonquoted) ~ WHITE_SPACE*)+ ~ EOI ) }
 localfloatvarassign = { "local" ~ " "+ ~ floatvarassign }
 localoctvarassign = { "local" ~ " "+ ~ octvarassign }
 localhexvarassign = { "local" ~ " "+ ~ hexvarassign }

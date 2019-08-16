@@ -47,7 +47,7 @@ pub use rush::prompt::Prompt;
 pub use rush::rush::RuSh;
 pub use rush::variables::Variables;
 
-// pest grammar inclusion. dummy const so that .pest file changes are taken care of.
+/// pest grammar inclusion. dummy const so that .pest file changes are taken care of.
 #[derive(Parser)]
 #[grammar = "rush.pest"]
 struct Script;
