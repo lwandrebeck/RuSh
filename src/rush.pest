@@ -52,71 +52,150 @@
 // Control operators
 // newline, ||, &&, &, ;, ;;, |, |&, (, ).
 
+caseterminator = ${ ";;" }
+casenextpattern = ${ ";;&" }
+casenextstatement = ${ ";&" }
+
 // Metacharacters (when unquoted)
 // blank, |, &, ;, (, ), <, >.
 
-int = @{ ("0" ~ EOI) | ("-"? ~ '1'..'9' ~ ASCII_DIGIT* ~ EOI) }
-exp = { ^"e" }
-float = @{ "-"? ~ '0'..'9' ~ "." ~ ASCII_DIGIT* ~ (exp ~ int)? ~ EOI }
-binnum = @{ "0b" ~ ASCII_BIN_DIGIT+ ~ EOI }
-octnum = @{ "0" ~ ASCII_OCT_DIGIT+ ~ EOI }
-hexnum = @{ "0x" ~ ASCII_HEX_DIGIT+ ~ EOI }
-numbers = _{ float | hexnum | octnum | binnum | int }
-dquoted = ${ "\"" ~ ("\\\"" | !"\"" ~ ANY)* ~ "\"" }
-squoted = ${ "'" ~ ("\\'" | !"'" ~ ANY)* ~ "'" }
-btquoted = ${ "`" ~ ("\\`" | !"`" ~ ANY)* ~ "`" }
-nonquoted = ${ ( !(dquoted | squoted | btquoted) ~ ANY)+ }
+cmdsep = ${ ";" }
+
+// potentially signed integer
+int = ${ ("0") | ("-"? ~ ASCII_NONZERO_DIGIT ~ ASCII_DIGIT*) }
+exp = ${ ^"e" }
+float = ${ ("-"? ~ ASCII_NONZERO_DIGIT+ ~ "." ~ ASCII_DIGIT* ~ (exp ~ int)?) | "NAN" | "INF" | "NEGINF" }
+binnum = ${ "0b" ~ ASCII_BIN_DIGIT+ }
+octnum = ${ "0" ~ ASCII_OCT_DIGIT+ }
+hexnum = ${ "0x" ~ ASCII_HEX_DIGIT+ }
+number = _{ float | hexnum | octnum | binnum | int }
+intnumber = _{ hexnum | octnum | binnum | int }
+
+// special strings
+// buggy example
+// echo bla${meuh/coin/zob}" ${bla-}fmuh${zoi:0:1}" bépo ` bla ` 'coin'
+noclosingbracketstring = ${ ("\\}" | !("}" | varbuiltins | varvalue) ~ ANY)+ }
+noslashstring = ${ ("\\/" | !("/" | varbuiltins | varvalue) ~ ANY)+ }
+nodquotedstring = ${ ("\\\"" | !"\"" ~ (varbuiltins | varvalue | btquoted | squoted | any))+ }
+nosquotedstring = ${ ("\\'" | !"'" ~ ANY)+ }
+nobtquotedstring = ${ ("\\`" | !"`" ~ (varbuiltins | varvalue | dquoted | any))+ }
+dquoted = ${ "\"" ~ (varbuiltins | varvalue | nodquotedstring)* ~ "\"" }
+// no interpretation of strings between single quotes
+squoted = ${ "'" ~ nosquotedstring* ~ "'" }
+btquoted = ${ "`" ~ (varbuiltins | varvalue | dquoted | nobtquotedstring)* ~ "`" }
+any = { ANY }
+nonquoted = ${ ( !(dquoted | squoted | btquoted) ~ (varbuiltins | varvalue | any))+ }
+// array index
+index = ${ "[" ~ (intnumber | varbuiltins | varvalue | varname | dquoted | squoted | btquoted | nonquoted) ~ "]" }
+
+// globbing
+globbing = ${ "*" }
+recglobbing = ${ "**" }
+wildcard = ${ "?" }
+
+// null command
+null = ${ ":" }
+
+// brace expansion FIXME not finished (string)
+braceexp = ${ "{" ~ ( (((((float | int) | string) ~ ",")+ ~ ((float | int) | string))) | (braceval ~ ".." ~ braceval2 ~ ".." ~ bracestep)) ~ "}" }
+braceval = ${ (bracepadding? ~ (float | int)) | string }
+braceval2 = ${ (float | int) | string }
+bracestep = ${ float | int }
+bracepadding = ${ "0" }
+string = ${ ASCII_ALPHANUMERIC+ }
+
+// variables
+declare = ${ "declare" ~ WHITE_SPACE+ ~ ((declarelower | declareupper) ~ WHITE_SPACE+)? ~ varname }
+declarelower = ${ "-l" }
+declareupper = ${ "-c" }
+
+arg = ${ ASCII_DIGIT }
+numarg = ${ "#" }
+allarg = ${ "@" }
+exitstatus = ${ "?" }
+pid = ${ "$" }
+varname = ${ ((ASCII_ALPHA | "_") ~ (ASCII_ALPHANUMERIC | "_")* ~ index?) | arg | numarg | allarg | exitstatus | pid }
+varvalue = ${ ("${" ~ varname ~ (varlowe | varlow | varupp | varup)? ~ "}") | ("$" ~ varname) }
+varlowe = ${ ",," }
+varlow = ${ "," }
+varupp = ${ "^^" }
+varup = ${ "^" }
+varbuiltins = _{ varmatch | varlen | varreplall | varrepl | varsubstback | varsubstfront | varlongbackmatch | varshortbackmatch | varlongfrontmatch | varshortfrontmatch | varsubstrlen | varsubstr | varerrmsg | varaltvalue | varsetdefault | varusedefault }
+varusedefault = ${ "${" ~ varname ~ "-" ~ (varbuiltins | varvalue | noclosingbracketstring)* ~ "}" }
+varsetdefault = ${ "${" ~ varname ~ "=" ~ (varbuiltins | varvalue | noclosingbracketstring)* ~ "}" }
+varaltvalue = ${ "${" ~ varname ~ ":"? ~ "+" ~ (varbuiltins | varvalue | noclosingbracketstring)* ~ "}" }
+varerrmsg = ${ "${" ~ varname ~ ":"? ~ "?" ~ (varbuiltins | varvalue | noclosingbracketstring)* ~ "}" }
+varlen = ${ "${#" ~ varname ~ "}" }
+varsubstr = ${ "${" ~ varname ~ ":" ~ (varbuiltins | varvalue | int) ~ "}" }
+varsubstrlen = ${ "${" ~ varname ~ ":" ~ (varbuiltins | varvalue | int) ~ ":" ~ (varbuiltins | varvalue | int) ~ "}" }
+varshortfrontmatch = ${ "${" ~ varname ~ "#" ~ (varbuiltins | varvalue | noclosingbracketstring)* ~ "}" }
+varlongfrontmatch = ${ "${" ~ varname ~ "##" ~ (varbuiltins | varvalue | noclosingbracketstring)* ~ "}" }
+varshortbackmatch = ${ "${" ~ varname ~ "%" ~ (varbuiltins | varvalue | noclosingbracketstring)* ~ "}" }
+varlongbackmatch = ${ "${" ~ varname ~ "%%" ~ (varbuiltins | varvalue | noclosingbracketstring)* ~ "}" }
+varrepl = ${ "${" ~ varname ~ "/" ~ (varbuiltins | varvalue | noslashstring)* ~ "/" ~ (varvalue | noclosingbracketstring)* ~ "}" }
+varreplall = ${ "${" ~ varname ~ "//" ~ (varbuiltins | varvalue | noslashstring)* ~ "/" ~ (varvalue | noclosingbracketstring)* ~ "}" }
+varsubstfront = ${ "${" ~ varname ~ "/#" ~ (varbuiltins | varvalue | noslashstring)* ~ "/" ~ (varvalue | noclosingbracketstring)* ~ "}" }
+varsubstback = ${ "${" ~ varname ~ "/%" ~ (varbuiltins | varvalue | noslashstring)* ~ "/" ~ (varvalue | noclosingbracketstring)* ~ "}" }
+varmatch = ${ "${!" ~ varname ~ ("*" | "@") ~ "}" }
+
 unicode = @{ "u" ~ ASCII_HEX_DIGIT{4} }
-// string without quotes
 shebang = { "#!" ~ ANY* }
-comment = { "#" ~ ANY* }
+comment = { (WHITE_SPACE+)? ~ "#" ~ ANY* }
 comments = _{ shebang | comment }
-varname = @{ (ASCII_ALPHA | "_") ~ (ASCII_ALPHANUMERIC | "_")* }
-intvarassign = @{ varname ~ "=" ~ int }
-floatvarassign = @{ varname ~ "=" ~ float }
-binvarassign = @{ varname ~ "=" ~ binnum }
-octvarassign = @{ varname ~ "=" ~ octnum }
-hexvarassign = @{ varname ~ "=" ~ hexnum }
-stringvarassign = @{ varname ~ "=" ~ (dquoted | squoted | btquoted | nonquoted) ~ EOI }
+intvarassign = ${ varname ~ "=" ~ int }
+floatvarassign = ${ varname ~ "=" ~ float }
+binvarassign = ${ varname ~ "=" ~ binnum }
+octvarassign = ${ varname ~ "=" ~ octnum }
+hexvarassign = ${ varname ~ "=" ~ hexnum }
+stringvarassign = ${ varname ~ "=" ~ (dquoted | squoted | btquoted | nonquoted) ~ EOI }
 echooptne = ${ "-ne" | "-en" }
 echooptnE = ${ "-nE" | "-En" }
 echoopte = ${ "-e" }
 echooptE = ${ "-E" }
 echooptn = ${ "-n" }
-echo = @{ ( "echo" ~ EOI ) | ( "echo" ~ WHITE_SPACE+ ~ ((echooptne | echooptnE | echoopte | echooptE | echooptn) ~ WHITE_SPACE+ )? ~ ((dquoted | squoted | btquoted | nonquoted) ~ WHITE_SPACE*)+ ~ EOI ) }
-localfloatvarassign = { "local" ~ " "+ ~ floatvarassign }
-localoctvarassign = { "local" ~ " "+ ~ octvarassign }
-localhexvarassign = { "local" ~ " "+ ~ hexvarassign }
-localbinvarassign = { "local" ~ " "+ ~ binvarassign }
-localintvarassign = { "local" ~ " "+ ~ intvarassign }
-localstringvarassign = { "local" ~ " "+ ~ stringvarassign }
-nop = @{ ":" }
-alnum = @{ "[:alnum:]" }
-alph = @{ "[:alpha:]" }
-blank = @{ "[:blank:]" }
-cntrl = @{ "[:cntrl:]" }
-digi = @{ "[:digit:]" }
-graph = @{ "[:graph:] "}
-lower = @{ "[:lower:]" }
-prin = @{ "[:print:]" }
-space = @{ "[:space:]" }
-upper = @{ "[:upper:]" }
-xdigit = @{ "[:xdigit:]" }
-brea = { "break" ~ int? }
-continu = { "continue" ~ int? }
-// potential argument has to be managed
-// pwd = @{ "pwd" }
-exit = { "exit" ~ int? }
-tru = @{ "true" }
-fals = @{ "false" }
-// potential argument has to be managed
-//help = { "help" }
+echo = ${ "echo" ~ ((WHITE_SPACE+ ~ (echooptne | echooptnE | echoopte | echooptE | echooptn))? ~ WHITE_SPACE+ ~ ((dquoted | squoted | btquoted) | nonquoted)* )? }
+localfloatvarassign = { "local" ~ WHITE_SPACE+ ~ floatvarassign }
+localoctvarassign = { "local" ~ WHITE_SPACE+ ~ octvarassign }
+localhexvarassign = { "local" ~ WHITE_SPACE+ ~ hexvarassign }
+localbinvarassign = { "local" ~ WHITE_SPACE+ ~ binvarassign }
+localintvarassign = { "local" ~ WHITE_SPACE+ ~ intvarassign }
+localstringvarassign = { "local" ~ WHITE_SPACE+ ~ stringvarassign }
+source = ${ "." }
+nop = ${ ":" }
+alnum = ${ "[:alnum:]" }
+alph = ${ "[:alpha:]" }
+blank = ${ "[:blank:]" }
+cntrl = ${ "[:cntrl:]" }
+digi = ${ "[:digit:]" }
+graph = ${ "[:graph:] "}
+lower = ${ "[:lower:]" }
+prin = ${ "[:print:]" }
+space = ${ "[:space:]" }
+upper = ${ "[:upper:]" }
+xdigit = ${ "[:xdigit:]" }
+brea = ${ "break" ~ int? }
+continu = ${ "continue"  ~ WHITE_SPACE+ ~ int? }
+pwdoptp = ${ "-LP" | "-PL" | "-P" }
+pwdoptl = ${ "-L" }
+pwd = ${ "pwd" ~ WHITE_SPACE+ ~ (pwdoptp | pwdoptl)? }
+exit = ${ "exit" ~ WHITE_SPACE+ ~ int? }
+tru = ${ "true" }
+fals = ${ "false" }
+// shell builtins
+helpbuiltins = ${ "job_spec" | "((" | source | nop | "[[" | "[" | "alias" | "bg" | "bind" | "break" | "builtin" | "caller" | "case" | "cd" | "command" | "compgen" | "complete" | "compopt" | "continue" | "coproc" | "declare" | "dirs" | "disown" | "echo" | "enable" | "eval" | "exit" | "export" | "false" | "fc" | "fg" | "for" | "function" | "getopts" | "hash" | "help" | "history" | "if" | "jobs" | "kill" | "let" | "local" | "logout" | "mapfile" | "popd" | "printf" | "pushd" | "pwd" | "readarray" | "readonly" | "read" | "return" | "select" | "set" | "shift" | "shopt" | "source" | "suspend" | "test" | "times" | "time" | "trap" | "true" | "typeset" | "type" | "ulimit" | "umask" | "unalias" | "unset" | "until" | "variables" | "wait" | "while" | "{" }
+help = ${ "help" ~ WHITE_SPACE+ ~ helpbuiltins }
 // potential argument has to be managed
 //bg = { "bg" }
 // potential argument has to be managed
 //fg = { "fg" }
-logout = { "logout" ~ int? }
-bla = _{ echo | localhexvarassign | localbinvarassign | localfloatvarassign | localintvarassign | localoctvarassign | localstringvarassign | alnum | alph | blank | cntrl | digi | graph | lower | prin | space | upper | xdigit | brea | continu | exit | tru | fals | logout | nop | floatvarassign | octvarassign | hexvarassign | binvarassign | intvarassign | stringvarassign | numbers | dquoted |squoted | btquoted | comments | nonquoted }
+logout = { "logout" ~ (WHITE_SPACE+ ~ int)? }
+
+//TODO
+qstrexp = ${ "$'" ~ string ~ "'" }
+ifs = ${ WHITE_SPACE }
+//cmdsubst = ${ "$(" ~ cmd ~ ")" }
+//cmd = ${ }
+bla = _{ echo | localhexvarassign | localbinvarassign | localfloatvarassign | localintvarassign | localoctvarassign | localstringvarassign | alnum | alph | blank | cntrl | digi | graph | lower | prin | space | upper | xdigit | brea | continu | exit | tru | fals | logout | nop | floatvarassign | octvarassign | hexvarassign | binvarassign | intvarassign | stringvarassign | number | dquoted |squoted | btquoted | comments | nonquoted }
 
 
 // from http://mywiki.wooledge.org/BashParser
@@ -131,5 +210,3 @@ bla = _{ echo | localhexvarassign | localbinvarassign | localfloatvarassign | lo
 // After these steps, the next command, or next line is processed. Once the end of the file is reached (end of the script or the interactive bash session is closed) bash stops and returns the exit code of the last command it has executed.
 
 data_to_execute = { ANY* ~ !( "\\" ~ "\n") ~ "\n" }
-
-
