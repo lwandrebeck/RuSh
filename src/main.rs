@@ -30,6 +30,7 @@
 extern crate chrono;
 extern crate libc;
 extern crate pest;
+extern crate pest_consume;
 extern crate rand;
 extern crate rush;
 extern crate rustyline;

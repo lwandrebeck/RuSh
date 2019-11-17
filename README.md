@@ -2,7 +2,7 @@
 [![Coverage Status](https://coveralls.io/repos/github/lwandrebeck/RuSh/badge.svg?branch=master)](https://coveralls.io/github/lwandrebeck/RuSh?branch=master)
 [![codecov](https://codecov.io/gh/lwandrebeck/RuSh/branch/master/graph/badge.svg)](https://codecov.io/gh/lwandrebeck/RuSh)
 [![License: GPL v3](https://img.shields.io/badge/License-GPL%20v3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
-[![Minimum rustc version](https://img.shields.io/badge/rustc-1.31+-blue.svg)](#rust-version-requirements)
+[![Minimum rustc version](https://img.shields.io/badge/rustc-1.37+-blue.svg)](#rust-version-requirements)
 [![dependency status](https://deps.rs/repo/github/lwandrebeck/RuSh/status.svg)](https://deps.rs/repo/github/lwandrebeck/RuSh)
 
 # RuSh: A shell written in Rust
@@ -192,7 +192,7 @@ Parsing loop still have to be rewritten, then 0.0.1 or 0.1.0 or something will b
 
 ## Building
 
-You need Rust 1.31.0 or newer. I do use latest stable versions and 2018 edition.
+You need Rust 1.37.0 or newer. I do use latest stable versions and 2018 edition.
 
 It’s as simple as:
 
